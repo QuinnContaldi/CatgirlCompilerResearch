@@ -1,0 +1,33 @@
+# Unity-generated files (retain Assets, Packages, ProjectSettings and .meta files).
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Bb]uild/
+[Bb]uilds/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# IDE-generated files.
+.vs/
+.idea/
+.vscode/
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.opendb
+*.VC.db
+
+# Local Linux compatibility libraries; not Unity project dependencies.
+/.unity-compat/
+
+# OS files.
+.DS_Store
+Thumbs.db

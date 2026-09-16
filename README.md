@@ -51,6 +51,9 @@ Application
 
 The study application is being developed in Unity as a simple page-based interface.
 
+The initial project is in `UnityProject/`. See [Unity setup and navigation](UnityProject/README.md)
+for launch instructions, the scene structure, and the initial navigation checks.
+
 Participants will:
 
 Complete a short programming-background questionnaire.
@@ -85,7 +88,7 @@ Current project files include:
 ├── DrMeowra.jpg
 ├── README.md
 ├── Research_Design_Document.pdf
-└── [Unity project files]
+└── UnityProject/
 
 Additional experiment materials, stimuli, analysis scripts, and documentation may be added as the study develops.
 
