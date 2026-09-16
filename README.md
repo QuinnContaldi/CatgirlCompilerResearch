@@ -51,8 +51,9 @@ Application
 
 The study application is being developed in Unity as a simple page-based interface.
 
-The initial project is in `UnityProject/`. See [Unity setup and navigation](UnityProject/README.md)
-for launch instructions, the scene structure, and the initial navigation checks.
+The experiment skeleton is in `UnityProject/`. See [Unity setup and architecture](UnityProject/README.md)
+for launch instructions and checks, and the [question-authoring guide](UnityProject/AUTHORING.md)
+for adding your code images, explanations, answer choices, and answer keys.
 
 Participants will:
 

@@ -1,127 +1,89 @@
-# Initial Unity application
+# Experiment authoring skeleton
 
-Created with Unity **6000.6.1f1** (`7efac9f6c10e`) using the locally installed
-**Universal 2D 7.0.0** template. Unused template tutorials, sample scenes,
-animation/tilemap tools, visual scripting, collaboration and IDE integrations
-were removed. URP, uGUI, the Input System, Sprite support and Unity's built-in
-modules remain. Unity automatically adds its Linux SDK/toolchain packages.
-There are no third-party Unity packages.
+Unity **6000.6.1f1** (`7efac9f6c10e`), based on **Universal 2D 7.0.0**.
+The project uses Unity's uGUI, Input System and URP; no third-party Unity
+packages or runtime frameworks were added.
 
-## Open and inspect
+**Start with [the authoring guide](AUTHORING.md)** for dragging in code images,
+entering your own questions and explanations, assigning A–D answer keys, and
+choosing counterbalancing orders.
 
-On the machine used for setup, run this from the repository root:
+## Open and preview
+
+From the repository root on this workstation:
 
 ```bash
 ./Tools/open-unity.sh
 ```
 
-The launcher supplies the local Linux compatibility libraries described below.
-On another machine where the Editor starts normally, add this `UnityProject`
-folder through Unity Hub. Use 6000.6.1f1 to avoid an unintended upgrade.
-You can override the launcher's Editor path with the `UNITY_EDITOR` environment
-variable.
+Open `Assets/Scenes/Experiment.unity`, press Play, choose order **1–6** and
+stimulus set **1–3**, then click **Preview layout**. All six question assets
+are intentionally blank. A scored session is enabled only when the question
+assets and Meowra introduction are complete.
 
-1. Open `Assets/Scenes/Experiment.unity`.
-2. Press Play and open the Game tab.
-3. Confirm Welcome appears first and Back is disabled.
-4. Click Next twice: Instructions, then Experiment placeholder. Next is now disabled.
-5. Click Back twice to return to Welcome.
-6. Stop and restart Play mode: Welcome should appear again.
-7. Check the Game view at 1280×720 and a smaller window for readable text and buttons.
+On a machine where Unity starts normally, add `UnityProject` through Unity Hub.
+Use the same Editor version to avoid an unintended upgrade. Override the
+launcher's Editor path with `UNITY_EDITOR` if necessary.
 
-There is no Inspector wiring left to do. The scene is already the only enabled
-entry in the build scene list. All visible text is prototype copy, not approved
-consent, study instructions or experimental stimuli.
+## Responsibility boundaries
 
-## How navigation works
+| Component / asset | Responsibility |
+| --- | --- |
+| `ScenarioData` | Your image, prompt, four answers, key and three feedback texts. |
+| `StudyDefinition` | Six scenario slots and your Meowra introduction/portrait. |
+| `Counterbalancing` | Builds a deterministic schedule from order and stimulus set. |
+| `ExperimentManager` | Runs the page/block sequence and owns the current session. |
+| `ParticipantSession` / `TrialResponse` | Keeps the assignment, responses and scores in memory. |
+| `TrialManager` | Accepts one explicit answer and scores a single submission. |
+| `TrialView` | Binds question data to the reusable trial panel. |
+| `StudyShellView` | Researcher menu and surrounding page presentation. |
+| `PageManager` | Shows one panel at a time; knows nothing about study conditions. |
 
-The scene stores the UI layout and references:
+`Awake()` connects trial UI events; `ExperimentManager.Start()` initializes the
+menu after all active objects have initialized. The manager selects a panel
+through `PageManager.ShowPage(GameObject)`. The reusable panel is the connected
+`Assets/Prefabs/TrialPanel.prefab` instance under `Canvas/Pages/TrialPage`.
 
-```text
-Main Camera
-Canvas
-  Background
-  Header
-  Pages
-    WelcomePage
-    InstructionsPage
-    PlaceholderExperimentPage
-  Navigation
-    PreviousButton
-    NextButton
-PageManager
-EventSystem
-```
+The flow is researcher setup → welcome placeholder → instructions placeholder →
+three blocks of two trials, each followed by an evaluation placeholder → trial
+section completion. The Meowra introduction appears immediately before her block
+in every order. Background questions, practice/tutorial content, questionnaires,
+final measures, timers and disk logging remain future work. This is a template
+for authoring, not a completed participant protocol.
 
-A **GameObject** is an object in the scene; components give it behavior.
-The Canvas displays UI, while the EventSystem and Input System UI module deliver
-input to buttons. The Canvas scales its 1280×720 reference layout to the window.
+Scoring is researcher-only: one point for a correct answer, zero for an incorrect
+answer. Preview responses are explicitly unscored. Inspect `ExperimentManager`
+in Play mode to see Session, Correct Count, Scored Count and individual Responses.
+Results survive page transitions and return to the researcher menu. They are
+replaced when another session starts and are lost when Play mode/app exits.
 
-`Assets/Scripts/UI/PageManager.cs` is the only application runtime script:
+## Verify
 
-- Its serialized `pages` array stores references to the three panels in order.
-  `[SerializeField]` lets Unity save these private fields and expose them in the Inspector.
-- `Awake()` runs when the component initializes in Play mode and calls `ShowPage(0)`.
-- `ShowPage(int)` activates the chosen panel and deactivates the others. Invalid
-  indices do nothing. It also updates Back/Next availability.
-- The buttons' saved **On Click()** events call `PreviousPage()` and `NextPage()`.
-- There is no wraparound at either end. `CurrentPageIndex` exposes the current
-  zero-based index without allowing another component to change it directly.
-
-Select the root **PageManager** object in the Hierarchy to inspect its references.
-Select each button to see its On Click event. To edit a hidden page, temporarily
-activate its panel while outside Play mode; `Awake()` restores one-page visibility
-when Play begins. Keep page panels as distinct siblings and keep PageManager
-outside them, so hiding a page does not disable navigation.
-
-A later ExperimentManager can decide the study stage and call `ShowPage(int)`.
-PageManager only handles visibility; participant state, trial content, surveys,
-conditions and logging will be separate responsibilities. No such systems are
-implemented yet, and no experimental-design changes have been made.
-
-## Assets and Git
-
-The requested directories exist under Assets: Scenes; Scripts/Experiment, UI,
-Data and Utilities; Prefabs; UI; Images; Data; and Fonts. Empty folders are
-reserved for later work. `.gitkeep` files retain empty folders in Git, and
-their `.meta` files preserve Unity's folder identities.
-`Assets/Settings` contains the template's render settings.
-
-`Assets/Images/DrMeowra.jpg` is a byte-for-byte copy of the root image, imported
-as a sprite. It is not displayed in the initial scene. The root image and
-research documents remain untouched.
-
-Commit the root `.gitignore`, launcher and documentation, plus this project's
-`Assets/` (including **all `.meta` files**), `Packages/` (including the lockfile),
-and `ProjectSettings/`. Include the repository's `AGENTS.md` if desired.
-Do not commit Library, Temp, Obj, Logs, Build, Builds, UserSettings, IDE output
-or `.unity-compat`. No nested Git repository was created.
-
-## Repeatable navigation check
-
-`Assets/Editor/NavigationSmokeCheck.cs` is an Editor-only integration check.
-It opens the saved scene, enters Play mode, uses the actual button event handlers,
-and checks startup, exclusive visibility, forward/back navigation, disabled
-boundary buttons and direct page selection. It does not ship in a player build.
-
-Close the Editor before running:
+Close the Editor before running this from the repository root:
 
 ```bash
 ./Tools/open-unity.sh -batchmode -nographics \
   -executeMethod NavigationSmokeCheck.Run \
-  -logFile /tmp/meowra-navigation-check.log
+  -logFile /tmp/meowra-experiment-check.log
 ```
 
-Do not add `-quit`: the check exits the Editor after Play mode completes. A
-successful check exits with code 0 and logs `NAVIGATION_CHECK_OK`. In the Editor,
-use **Tools → Navigation → Run Smoke Check** while outside Play mode. This check
-does not replace visually inspecting the Game view or clicking through it yourself.
+Do not add `-quit`; the check exits after Play mode finishes. Success is exit
+code 0 with `NAVIGATION_CHECK_OK`. In the Editor, use **Tools → Experiment →
+Run Smoke Check** outside Play mode.
 
-Initial validation passed in Unity 6000.6.1f1: scripts compiled and the Play mode
-check completed with exit code 0. The check waits for Editor startup callbacks
-before entering Play mode, allowing Unity to initialize its search index on a
-fresh project. Visual layout and physical mouse/keyboard input still need the
-manual check above.
+The checks exercise the saved UI, blank-content preview, authoring validation,
+all 18 order/set combinations, one-page visibility, exactly one Meowra
+introduction, two trials per evaluation, feedback/image binding, explicit single
+selection, no answer carryover, duplicate-submit protection and scoring.
+Synthetic test content is created only in memory and never saved into your assets.
+The checks live in `Assets/Editor` and do not ship in a player.
+
+## Version control
+
+Commit `Assets/` including all `.meta` files, `Packages/` including the lockfile,
+`ProjectSettings/`, and this documentation. The root `.gitignore` excludes Unity
+caches, builds, IDE output and the local compatibility libraries. Keep the root
+research documents and image; no nested repository is needed.
 
 ## Local Linux compatibility workaround
 

@@ -45,6 +45,12 @@ namespace Meowra.UI
             ShowPage(CurrentPageIndex - 1);
         }
 
+        public void ShowPage(GameObject page)
+        {
+            if (pages != null)
+                ShowPage(System.Array.IndexOf(pages, page));
+        }
+
         // A future experiment controller can select a page without owning UI details.
         public void ShowPage(int index)
         {

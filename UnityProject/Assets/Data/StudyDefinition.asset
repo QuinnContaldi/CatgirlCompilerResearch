@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c1c9e7d653802d17a2ac1687849a654, type: 3}
+  m_Name: StudyDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::Meowra.Data.StudyDefinition
+  scenarios:
+  - {fileID: 11400000, guid: fb147655216905c0aa17dbd70a8cf0d8, type: 2}
+  - {fileID: 11400000, guid: 1dabf3774b744a905b27d8f1b16abccd, type: 2}
+  - {fileID: 11400000, guid: 09760c72e9f170497ba17df4b454daa0, type: 2}
+  - {fileID: 11400000, guid: e905733b49820dbe3ae15c8e43cd011e, type: 2}
+  - {fileID: 11400000, guid: 1d5ff35aba6d2c888b774d303882c0e3, type: 2}
+  - {fileID: 11400000, guid: b6af74c816ccd62f5aa0748d7d92a7ad, type: 2}
+  meowraPortrait: {fileID: 21300000, guid: 32f6bc7430c81fdc7913e9cb77c6fdd6, type: 3}
+  meowraIntroduction: 

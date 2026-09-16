@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Meowra.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -17,6 +18,7 @@ public static class NavigationSmokeCheck
     private const string DeadlineKey = "Meowra.NavigationCheck.Deadline";
     private const string ErrorKey = "Meowra.NavigationCheck.Error";
     private static int playFrames;
+    private static IEnumerator checks;
 
     static NavigationSmokeCheck()
     {
@@ -24,7 +26,7 @@ public static class NavigationSmokeCheck
         Application.logMessageReceived += RecordError;
     }
 
-    [MenuItem("Tools/Navigation/Run Smoke Check")]
+    [MenuItem("Tools/Experiment/Run Smoke Check")]
     public static void Run()
     {
         // Let Editor startup callbacks finish before entering Play mode. Unity's
@@ -46,6 +48,7 @@ public static class NavigationSmokeCheck
         SessionState.SetBool(ErrorKey, false);
         SessionState.SetFloat(DeadlineKey, (float)EditorApplication.timeSinceStartup + 90);
         playFrames = 0;
+        checks = null;
         EditorApplication.EnterPlaymode();
     }
 
@@ -81,67 +84,15 @@ public static class NavigationSmokeCheck
 
         try
         {
-            CheckNavigation();
+            if (checks == null) checks = ExperimentSmokeCheck.Run();
+            if (checks.MoveNext()) return;
             Require(!SessionState.GetBool(ErrorKey, false), "Unity reported a runtime error.");
-            Finish(true, "Startup, page visibility, wired buttons, boundaries and direct selection passed.");
+            Finish(true, "Navigation, authoring validation, all 18 assignments, trial presentation and scoring passed.");
         }
         catch (Exception error)
         {
             Finish(false, error.ToString());
         }
-    }
-
-    private static void CheckNavigation()
-    {
-        var manager = UnityEngine.Object.FindFirstObjectByType<PageManager>();
-        Require(manager != null && manager.enabled, "An enabled PageManager is required.");
-        var pages = GameObject.Find("Canvas/Pages").transform;
-        var back = GameObject.Find("Canvas/Navigation/PreviousButton").GetComponent<Button>();
-        var next = GameObject.Find("Canvas/Navigation/NextButton").GetComponent<Button>();
-        var input = UnityEngine.Object.FindFirstObjectByType<InputSystemUIInputModule>();
-        Require(input != null && input.isActiveAndEnabled && input.actionsAsset != null,
-            "The EventSystem needs a configured input module.");
-        Require(pages.childCount == 3, "Expected the three initial pages.");
-        Require(back.onClick.GetPersistentEventCount() == 1 && next.onClick.GetPersistentEventCount() == 1,
-            "Both buttons need a saved On Click connection.");
-
-        AssertPage(manager, pages, back, next, 0);
-        manager.PreviousPage();
-        Click(back);
-        AssertPage(manager, pages, back, next, 0);
-        Click(next);
-        AssertPage(manager, pages, back, next, 1);
-        Click(next);
-        AssertPage(manager, pages, back, next, 2);
-        manager.NextPage();
-        Click(next);
-        AssertPage(manager, pages, back, next, 2);
-        Click(back);
-        AssertPage(manager, pages, back, next, 1);
-        Click(back);
-        AssertPage(manager, pages, back, next, 0);
-        manager.ShowPage(2);
-        AssertPage(manager, pages, back, next, 2);
-        manager.ShowPage(-1);
-        manager.ShowPage(3);
-        AssertPage(manager, pages, back, next, 2);
-        manager.ShowPage(0);
-        AssertPage(manager, pages, back, next, 0);
-    }
-
-    private static void Click(Button button)
-    {
-        var pointer = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left };
-        ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerClickHandler);
-    }
-
-    private static void AssertPage(PageManager manager, Transform pages, Button back, Button next, int index)
-    {
-        Require(manager.CurrentPageIndex == index, $"Expected page index {index}.");
-        for (int i = 0; i < pages.childCount; i++)
-            Require(pages.GetChild(i).gameObject.activeInHierarchy == (i == index), $"Incorrect visibility for page {i}.");
-        Require(back.interactable == (index > 0), "Incorrect Back availability.");
-        Require(next.interactable == (index < pages.childCount - 1), "Incorrect Next availability.");
     }
 
     private static void Require(bool condition, string message)
