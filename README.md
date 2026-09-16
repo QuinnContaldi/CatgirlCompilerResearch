@@ -1,6 +1,6 @@
 # Can a Catgirl Make Compiler Errors Better?
 
-<p align="center"> <img src="DrMeowra.jpg" alt="Dr. Meowra" width="320"> </p>
+<p align="center"> <img src="DrMeowra.jpg" alt="Dr. Meowra" width="500"> </p>
 
 Overview
 
