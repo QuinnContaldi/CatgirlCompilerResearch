@@ -112,8 +112,39 @@ While still in Play mode, select the root **ExperimentManager**, then expand
 and conditions, responses, Correct Count and Scored Count. Returning to the menu
 retains those results; starting the next session replaces them.
 
-**There is no disk logging yet.** Stopping Play mode or closing the app loses
-responses. This is an authoring/testing skeleton, not the final data-collection app.
+**Responses now save after every submission**, plus at session creation and final-measures completion.
+Select ExperimentManager in Play mode and copy **Session Directory** to find the files:
+
+```text
+Application.persistentDataPath/StudySessions/
+  Participants/<anonymous ID>/session.json + trials.csv
+  Previews/<anonymous ID>/session.json + trials.csv
+```
+
+Each new run receives a randomly generated anonymous ID. Preview files are separate
+and unscored. JSON stores the complete current session, including the planned
+scenario/condition assignment, schema version, start time in UTC, responses, and
+timing definition. JSON condition values are enum numbers (Raw = 0, Neutral = 1,
+Meowra = 2); CSV uses readable names and includes the condition order.
+
+The stopwatch starts immediately after the trial view is populated and stops on
+Submit, before file writing. `responseTimeSeconds` includes reading, answer changes,
+and time away from the app. It does not pause with Unity's game clock; there is no
+participant-facing timer. This is exploratory total scenario response time, not
+isolated comprehension speed or time per questionnaire item. UI rendering has
+frame-level onset uncertainty; this is not a laboratory stimulus-onset timer.
+
+JSON is the authoritative snapshot; CSV is an analysis-friendly trial export.
+Each file is flushed to a temporary file before replacement; `.bak` holds its
+previous snapshot. The two files are not one transaction: if writing CSV fails,
+JSON may be newer until Retry succeeds. Saving failures block progression, retain
+the response in memory, and show a Retry saving button. Keep the app open, fix disk
+space/permissions, then retry. The Console warning includes the failing path.
+
+Closing the app partway through preserves submitted responses, but there is no
+resume-session UI yet. An unanswered trial is not saved as a response. `completed`
+currently means **the trial section** is complete, not the entire research protocol.
+This remains an authoring/testing skeleton until the other protocol pages are built.
 
 ## 6. Edit the UI template
 
@@ -153,7 +184,7 @@ The surrounding pages live under `Canvas/Pages` in the scene. Welcome,
 Instructions and Evaluation are explicitly marked placeholders for later work.
 The Meowra introduction is inserted immediately before her block, regardless of
 whether she is first, second or third. No questionnaire items, consent text,
-practice scenarios, timers or statistical analysis have been added.
+practice scenarios or statistical analysis have been added. Timing and local saving are handled by the scripts.
 
 ## Check your work
 
@@ -166,6 +197,23 @@ practice scenarios, timers or statistical analysis have been added.
    automatically with temporary synthetic data. This does not assess the scientific
    quality of your authored content.
 
-Next development step after reviewing this structure: incremental local response
-saving. Questionnaires and the other protocol pages can then fill the reserved
-flow positions without moving scoring or condition logic into the UI scripts.
+5. Start a preview, wait a few seconds on a scenario, then submit. Inspect Session
+   → Responses → Response Time Seconds and open Session Directory. Confirm the JSON
+   has one response and the CSV has one data row. Stop Play mode mid-session and
+   reopen the files: that response must remain, with `completed` false.
+
+Next development step: review the questionnaire wording and response ranges, then
+implement the condition evaluation page using this same saving infrastructure.
+
+
+### End-of-study pages
+
+After all three UEQ-S evaluations, participants complete the ten supplied API
+items (5-point agreement scale), choose Raw / Neutral / Dr. Meowra on a separate
+forced-choice page, and see “Why did you prefer that style?” on a separate
+multiline response page. Prose can be submitted blank. All pages save on
+submission. See [Final measures](README.md#final-measures) for files, runtime
+Inspector locations, response flags and exact test steps. The generated panels
+are available under Canvas/Pages during Play mode. API wording is frozen in
+Assets/Scripts/Data/FinalResponses.cs; changes should be reviewed as instrument
+changes, not layout adjustments.

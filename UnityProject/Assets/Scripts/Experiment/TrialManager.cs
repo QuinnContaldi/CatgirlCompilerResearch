@@ -12,6 +12,7 @@ namespace Meowra.Experiment
         private AnswerChoice selected = AnswerChoice.Unassigned;
         private bool preview;
         private bool submitted;
+        private readonly System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
         public event Action<TrialResponse> Submitted;
 
         private void Awake()
@@ -29,11 +30,13 @@ namespace Meowra.Experiment
 
         public void Begin(TrialAssignment trial, bool isPreview, Sprite portrait, int number, int total)
         {
+            timer.Reset();
             current = trial;
             preview = isPreview;
             selected = AnswerChoice.Unassigned;
             submitted = false;
             view.Show(trial.Scenario, trial.Condition, portrait, number, total);
+            timer.Start();
         }
 
         public void SelectAnswer(AnswerChoice answer)
@@ -46,9 +49,10 @@ namespace Meowra.Experiment
         public void Submit()
         {
             if (current == null || submitted || selected == AnswerChoice.Unassigned) return;
+            timer.Stop();
             submitted = true;
             view.Lock();
-            Submitted?.Invoke(new TrialResponse(current.Scenario, current.Condition, selected, preview));
+            Submitted?.Invoke(new TrialResponse(current.Scenario, current.Condition, selected, preview, timer.Elapsed.TotalSeconds));
         }
     }
 }

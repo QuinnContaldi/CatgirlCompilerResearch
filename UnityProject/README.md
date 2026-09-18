@@ -34,7 +34,8 @@ launcher's Editor path with `UNITY_EDITOR` if necessary.
 | `Counterbalancing` | Builds a deterministic schedule from order and stimulus set. |
 | `ExperimentManager` | Runs the page/block sequence and owns the current session. |
 | `ParticipantSession` / `TrialResponse` | Keeps the assignment, responses and scores in memory. |
-| `TrialManager` | Accepts one explicit answer and scores a single submission. |
+| `TrialManager` | Times a scenario and accepts one explicit submission. |
+| `DataLogger` | Writes complete JSON and trial CSV snapshots after each response. |
 | `TrialView` | Binds question data to the reusable trial panel. |
 | `StudyShellView` | Researcher menu and surrounding page presentation. |
 | `PageManager` | Shows one panel at a time; knows nothing about study conditions. |
@@ -45,17 +46,17 @@ through `PageManager.ShowPage(GameObject)`. The reusable panel is the connected
 `Assets/Prefabs/TrialPanel.prefab` instance under `Canvas/Pages/TrialPage`.
 
 The flow is researcher setup → welcome placeholder → instructions placeholder →
-three blocks of two trials, each followed by an evaluation placeholder → trial
-section completion. The Meowra introduction appears immediately before her block
-in every order. Background questions, practice/tutorial content, questionnaires,
-final measures, timers and disk logging remain future work. This is a template
+three blocks of two trials, each followed by all eight UEQ-S items → ten API items → final preference →
+open-ended explanation → completion. The Meowra introduction appears immediately before her block
+in every order. Background questions, practice/tutorial content, other questionnaires remain future work. Scenario timing and incremental disk logging are implemented. This is a template
 for authoring, not a completed participant protocol.
 
 Scoring is researcher-only: one point for a correct answer, zero for an incorrect
 answer. Preview responses are explicitly unscored. Inspect `ExperimentManager`
 in Play mode to see Session, Correct Count, Scored Count and individual Responses.
-Results survive page transitions and return to the researcher menu. They are
-replaced when another session starts and are lost when Play mode/app exits.
+Results survive page transitions and return to the researcher menu. The in-memory session is
+replaced when another session starts; saved files remain after Play mode/app exits.
+See the authoring guide for storage paths and timing semantics.
 
 ## Verify
 
@@ -74,7 +75,10 @@ Run Smoke Check** outside Play mode.
 The checks exercise the saved UI, blank-content preview, authoring validation,
 all 18 order/set combinations, one-page visibility, exactly one Meowra
 introduction, two trials per evaluation, feedback/image binding, explicit single
-selection, no answer carryover, duplicate-submit protection and scoring.
+selection, no answer carryover, duplicate-submit protection, scoring, real elapsed
+time with game time stopped, partial JSON/CSV snapshots, and save-failure retry.
+Synthetic session files go into a unique `MeowraLoggingCheck-*` temporary folder
+reported in the Console, never into participant storage.
 Synthetic test content is created only in memory and never saved into your assets.
 The checks live in `Assets/Editor` and do not ship in a player.
 
@@ -110,3 +114,89 @@ If this local folder is removed, download those packages, verify their hashes,
 then extract each with `dpkg-deb -x <downloaded-package.deb> .unity-compat` from
 the repository root. This is a workstation workaround, not a Unity asset or a
 dependency to distribute with the study application.
+
+## UEQ-S after each block
+
+After each pair of tasks, the same questionnaire asks all eight supplied items,
+with seven selectable positions and no default answers. All eight are required.
+`UeqsView` builds the rows when Play mode starts; inspect them under
+`Canvas/Pages/EvaluationPlaceholderPage` during Play mode. The existing panel name
+is retained so scene references remain intact. `ToggleGroup` makes choices within
+one row mutually exclusive. `ExperimentManager` supplies the completed block's
+condition; the view does not decide condition order.
+
+`UeqsResponse` stores block number, condition, UTC submission time, and eight
+positions in item order. Positions are **1 = left anchor, 7 = right anchor**;
+no scale means or statistical analyses are calculated in Unity. Session schema 3
+includes `ueqsResponses`. Each submitted questionnaire is saved in `session.json`
+and `ueqs.csv` under the session directory before proceeding. CSV has eight rows
+per evaluation, including item number, dimension, both anchors and position.
+Existing trial saving and preview/participant separation remain in place.
+Selections on an unsubmitted questionnaire are not yet saved. A failed submission
+save retains the response in memory and shows the existing retry screen.
+
+To inspect manually, enter Preview layout, answer two tasks, and check that Submit
+stays disabled until all eight rows have a selection. Change a selection, submit,
+and repeat for the other two blocks. Each new questionnaire must start blank.
+Inspect `ExperimentManager.Session.UeqsResponses` and the files at Session Directory:
+a complete run has three evaluations and 24 data rows in `ueqs.csv`.
+The smoke check verifies this across all 18 order/set assignments and reads back
+partial and completed files. Item wording and seven-position ranges are exactly
+as requested; counterbalancing, stimuli and Meowra introduction placement are unchanged.
+
+## Final measures
+
+After all three blocks and their UEQ-S evaluations, the study shows three separate
+pages: **API**, **Final preferred condition**, and **Why did you prefer that style?**
+This follows the research document's end-of-study placement even when Meowra is
+first or second. The ten supplied statements retain their exact wording: five
+Engaging items followed by five Credible items. All ten require an answer, with
+no preselection. API uses 1 = Strongly disagree, 2 = Disagree, 3 = Neutral,
+4 = Agree, 5 = Strongly agree. These are selected API subscales, not the full API.
+Scale reference: [Ryu and Baylor's API paper](https://www.researchgate.net/publication/237627605_The_API_Agent_Persona_Instrument_for_Assessing_Pedagogical_Agent_Persona).
+
+Preference requires exactly one explicit choice: Raw, Neutral, or Dr. Meowra.
+The subsequent multiline explanation may be submitted blank; its submission is
+still recorded. No names are requested. Nothing is preselected or carried into
+the next participant's session.
+
+`FinalResponses.cs` holds the fixed item wording and validated API response data.
+`FinalMeasuresView` creates three panels during Play mode using the existing
+questionnaire's font, colors and button. A `ToggleGroup` is a Unity component
+that permits only one selected toggle in its group: each API row has its own
+group, and the preference page has one group for its three choices. An
+`InputField` captures the written explanation. `ExperimentManager` chooses the
+next stage; `PageManager` only controls which panel is visible.
+
+Inspect `Canvas/Pages/ApiPage`, `PreferencePage`, and `OpenResponsePage` in Play
+mode. They are generated at startup and do not require scene reference changes.
+The session's `apiSubmitted`, `preferenceSubmitted`, and `reasonSubmitted` flags
+distinguish missing responses from an enum's default value or blank prose.
+Schema 3 saves each submitted page before continuing. `session.json` retains
+API ratings and submission timestamps, preference and explanation; `api.csv`
+has ten rows after API submission and `preference.csv` has one row after the
+preference, updated after the explanation. CSV quotes embedded commas, quotes
+and newlines. `completed` becomes true only at the final submission. Unsubmitted
+page edits are not saved, and this does not add session resumption after restart.
+
+Manual check: preview order 5 (Meowra first), finish all three blocks and UEQ-S
+pages, then verify API appears once at the end. Fill nine API rows: Submit must
+remain disabled. Fill the tenth, change an answer, and submit. Choose one
+preference, change it, submit, and enter multiline text on the next page. Inspect
+the session directory for ten API rows and the exact preference/reason. Repeat
+with a fresh preview to confirm all inputs reset. The smoke check automates all
+18 order/set assignments, partial snapshots, blank prose, CSV escaping, and a
+failed final save/retry.
+
+Research impact: adds the requested secondary persona and final-preference
+measures; existing UEQ-S wording, stimuli, condition order and introduction
+placement are unchanged. Next step: visually pilot the three pages at the
+participant workstation's intended display resolution.
+
+Files for this change: add `Assets/Scripts/Data/FinalResponses.cs` and
+`Assets/Scripts/UI/FinalMeasuresView.cs` with their `.meta` files; include updates
+to `ParticipantSession.cs`, `DataLogger.cs`, `ExperimentManager.cs`,
+`PageManager.cs`, `StudyShellView.cs`, `Assets/Editor/ExperimentSmokeCheck.cs`,
+this README and `AUTHORING.md`. `DataLogger.cs` and the earlier UEQ-S work were
+already uncommitted when this change began; include those dependencies when
+committing the combined working implementation. No commit was made automatically.

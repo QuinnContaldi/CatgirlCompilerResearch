@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Reflection;
 using Meowra.Data;
 using Meowra.Experiment;
 using Meowra.UI;
@@ -33,6 +35,10 @@ public static class ExperimentSmokeCheck
         Require(navigation.CurrentPageIndex == pages.childCount - 1, "PageManager must not wrap forwards.");
         navigation.ShowPage(0);
 
+        string testDirectory = Path.Combine(Path.GetTempPath(), "MeowraLoggingCheck-" + Guid.NewGuid().ToString("N"));
+        var logger = new DataLogger(testDirectory);
+        SetLogger(manager, logger);
+        Debug.Log("LOGGING_CHECK_DIRECTORY: " + testDirectory);
         var original = Field<StudyDefinition>(manager, "study");
         string originalJson = JsonUtility.ToJson(original);
         var study = ScriptableObject.CreateInstance<StudyDefinition>();
@@ -88,6 +94,7 @@ public static class ExperimentSmokeCheck
         }
         finally
         {
+            Time.timeScale = 1;
             SetStudy(manager, original);
             foreach (var scenario in study.scenarios) if (scenario != null) Object.Destroy(scenario);
             foreach (var sprite in sprites) Object.Destroy(sprite);
@@ -106,6 +113,8 @@ public static class ExperimentSmokeCheck
         Click(setup.Find(preview ? "PreviewLayoutButton" : "StartSessionButton").gameObject);
         yield return null;
         Require(manager.Stage == ExperimentStage.Welcome, "Start must reach Welcome.");
+        CheckSnapshot(manager, 0);
+        Require(manager.SessionDirectory.Contains(preview ? "Previews" : "Participants"), "Preview storage must be separate.");
         Click(GameObject.Find("Canvas/Pages/WelcomePage/ContinueButton"));
         Click(GameObject.Find("Canvas/Pages/InstructionsPage/ContinueButton"));
         yield return null;
@@ -116,7 +125,7 @@ public static class ExperimentSmokeCheck
         var pages = GameObject.Find("Canvas/Pages").transform;
         while (manager.Stage != ExperimentStage.Complete)
         {
-            Require(++steps <= 12, "Session did not finish in the expected number of stages.");
+            Require(++steps <= 15, "Session did not finish in the expected number of stages.");
             AssertOnePage(pages);
             if (manager.Stage == ExperimentStage.Introduction)
             {
@@ -129,7 +138,92 @@ public static class ExperimentSmokeCheck
             {
                 evaluations++;
                 Require(submitted == evaluations * 2, "Each evaluation follows exactly two trials.");
-                Click(GameObject.Find("Canvas/Pages/EvaluationPlaceholderPage/ContinueButton"));
+                var questionnaire = Object.FindAnyObjectByType<UeqsView>();
+                var options = questionnaire.GetComponentsInChildren<Toggle>();
+                Require(options.Length == 56 && options.All(t => !t.isOn), "UEQ-S must reset all eight rows.");
+                manager.ContinueEvaluation();
+                Require(manager.Stage == ExperimentStage.Evaluation && manager.Session.UeqsResponses.Count == evaluations - 1,
+                    "Incomplete UEQ-S must not advance or record.");
+                for (int item = 0; item < 8; item++)
+                {
+                    options[item * 7 + (item % 7)].isOn = true;
+                    if (item < 7) Require(!questionnaire.IsComplete, "All eight answers are required.");
+                }
+                options[1].isOn = true;
+                Require(!options[0].isOn, "UEQ-S choices must be exclusive within each item.");
+                Click(questionnaire.GetComponentInChildren<Button>().gameObject);
+                Require(manager.Session.UeqsResponses.Count == evaluations, "Each block must record one evaluation.");
+                var rating = manager.Session.UeqsResponses[evaluations - 1];
+                Require(rating.BlockNumber == evaluations && rating.Condition == manager.Session.Responses[submitted - 1].Condition,
+                    "UEQ-S must retain the completed block's condition.");
+                Require(rating.Positions[0] == 2 && rating.Positions[6] == 7 && rating.Positions[7] == 1, "UEQ-S positions changed.");
+                Require(!manager.Session.Record(rating), "Duplicate evaluations must be rejected.");
+                CheckSnapshot(manager, submitted);
+            }
+            else if (manager.Stage == ExperimentStage.Api)
+            {
+                Require(evaluations == 3 && !manager.Session.Completed, "API follows all three blocks before completion.");
+                var questionnaire = Object.FindAnyObjectByType<FinalMeasuresView>();
+                var options = questionnaire.GetComponentsInChildren<Toggle>();
+                Require(options.Length == 50 && options.All(t => !t.isOn), "API must start with ten unanswered five-point items.");
+                manager.ContinueApi();
+                Require(!manager.Session.ApiSubmitted && manager.Stage == ExperimentStage.Api, "Incomplete API must not advance.");
+                for (int item = 0; item < 10; item++)
+                {
+                    options[item * 5 + item % 5].isOn = true;
+                    if (item < 9) Require(!questionnaire.ApiComplete, "All ten API items are required.");
+                }
+                options[1].isOn = true;
+                Require(!options[0].isOn, "API answers must be exclusive per row.");
+                Click(questionnaire.GetComponentInChildren<Button>().gameObject);
+                manager.ContinueApi();
+                Require(manager.Stage == ExperimentStage.Preference && manager.Session.ApiResponse.Ratings[0] == 2,
+                    "API must save once and show preference.");
+                Require(!manager.Session.Record(new ApiResponse(questionnaire.CopyRatings())), "Duplicate API must be rejected.");
+                CheckSnapshot(manager, submitted);
+            }
+            else if (manager.Stage == ExperimentStage.Preference)
+            {
+                var questionnaire = Object.FindAnyObjectByType<FinalMeasuresView>();
+                var options = questionnaire.GetComponentsInChildren<Toggle>();
+                Require(options.Length == 3 && options.All(t => !t.isOn), "Preference must have three choices with no default.");
+                manager.ContinuePreference();
+                Require(!manager.Session.PreferenceSubmitted, "Preference requires an explicit choice.");
+                options[0].isOn = true;
+                int selected = order % 3;
+                options[selected].isOn = true;
+                Require(options.Count(t => t.isOn) == 1, "Preference must be forced single choice.");
+                Click(questionnaire.GetComponentInChildren<Button>().gameObject);
+                manager.ContinuePreference();
+                Require(manager.Stage == ExperimentStage.OpenResponse && (int)manager.Session.PreferredCondition == selected,
+                    "Preference must save before the separate explanation page.");
+                Require(!manager.Session.RecordPreference(FeedbackCondition.Raw), "Duplicate preference must be rejected.");
+                CheckSnapshot(manager, submitted);
+            }
+            else if (manager.Stage == ExperimentStage.OpenResponse)
+            {
+                var questionnaire = Object.FindAnyObjectByType<FinalMeasuresView>();
+                var input = questionnaire.GetComponentInChildren<InputField>();
+                Require(input.text == "" && !manager.Session.Completed, "Prose must reset and session must remain incomplete.");
+                string reason = preview ? "" : "Clear, \"helpful\" feedback.\nNya — readable.";
+                input.text = reason;
+                // Exercise retry on the final save too: completion must never skip a failed write.
+                var working = (DataLogger)typeof(ExperimentManager).GetField("logger", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(manager);
+                bool fail = !preview && order == 1 && set == 1;
+                if (fail) SetLogger(manager, new DataLogger(Path.Combine(working.RootDirectory, "blocked-by-file")));
+                Click(questionnaire.GetComponentInChildren<Button>().gameObject);
+                if (fail)
+                {
+                    Require(manager.SavePending && manager.Stage == ExperimentStage.OpenResponse, "Failed final save must block completion page.");
+                    var previous = JsonUtility.FromJson<ParticipantSession>(File.ReadAllText(Path.Combine(manager.SessionDirectory, "session.json")));
+                    Require(!previous.Completed && previous.PreferenceSubmitted && !previous.ReasonSubmitted, "Previous durable snapshot must remain intact.");
+                    manager.ContinueOpenResponse();
+                    SetLogger(manager, working);
+                    manager.RetrySave();
+                }
+                manager.ContinueOpenResponse();
+                Require(manager.Stage == ExperimentStage.Complete && manager.Session.PreferenceReason == reason, "Final prose must be preserved verbatim.");
+                CheckSnapshot(manager, submitted);
             }
             else
             {
@@ -157,9 +251,42 @@ public static class ExperimentSmokeCheck
                 if (!preview && submitted % 2 == 1) answer = (answer + 1) % 4;
                 toggles[answer].isOn = true;
                 Require(submit.interactable, "A selected answer must enable Submit.");
+                // Real elapsed time must still accumulate while Unity game time is stopped.
+                float previousScale = Time.timeScale;
+                Time.timeScale = 0;
+                var elapsed = System.Diagnostics.Stopwatch.StartNew();
+                yield return null;
+                yield return null;
+                double minimumSeconds = elapsed.Elapsed.TotalSeconds;
+                bool testFailure = !preview && order == 1 && set == 1 && submitted == 0;
+                DataLogger workingLogger = null;
+                if (testFailure)
+                {
+                    workingLogger = (DataLogger)typeof(ExperimentManager).GetField("logger", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(manager);
+                    string blocker = Path.Combine(workingLogger.RootDirectory, "blocked-by-file");
+                    File.WriteAllText(blocker, "This file intentionally prevents creating a directory.");
+                    SetLogger(manager, new DataLogger(blocker));
+                }
                 Click(submit.gameObject);
+                if (testFailure)
+                {
+                    Require(manager.SavePending && manager.Stage == ExperimentStage.Trial, "Failed saves must block progression.");
+                    Require(manager.Session.Responses.Count == 1, "Failed save must retain the response in memory.");
+                    CheckSnapshot(manager, 0);
+                    manager.ContinueEvaluation();
+                    manager.ReturnToSetup();
+                    Object.FindAnyObjectByType<TrialManager>().Submit();
+                    Require(manager.Session.Responses.Count == 1, "Retry must not duplicate a response.");
+                    SetLogger(manager, workingLogger);
+                    manager.RetrySave();
+                    Require(!manager.SavePending && manager.CurrentTrial.Scenario != assignment.Scenario, "Retry must save and advance once.");
+                }
+                Time.timeScale = previousScale;
                 Object.FindAnyObjectByType<TrialManager>().Submit();
                 submitted++;
+                CheckSnapshot(manager, submitted);
+                Require(manager.Session.Responses[submitted - 1].ResponseTimeSeconds >= minimumSeconds,
+                    "Timing must use elapsed seconds independently of Unity time scale.");
                 Require(manager.Session.Responses.Count == submitted, "A repeated submit duplicated or skipped a response.");
                 var response = manager.Session.Responses[submitted - 1];
                 Require(response.ScenarioId == assignment.Scenario.scenarioId && response.Condition == assignment.Condition,
@@ -174,10 +301,50 @@ public static class ExperimentSmokeCheck
         Require(manager.Session.Completed && manager.Session.OrderNumber == order && manager.Session.StimulusSet == set,
             "Session must retain its selected assignment.");
         Require(manager.Session.CorrectCount == (preview ? 0 : 3) && manager.Session.ScoredCount == (preview ? 0 : 6), "Incorrect total score.");
+        CheckSnapshot(manager, 6);
         var completed = manager.Session;
         Click(GameObject.Find("Canvas/Pages/CompletionPage/SetupButton"));
         Require(manager.Session == completed && manager.Stage == ExperimentStage.Setup, "Retain results on return to setup.");
         yield return null;
+    }
+
+    private static void SetLogger(ExperimentManager manager, DataLogger logger)
+    {
+        typeof(ExperimentManager).GetField("logger", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(manager, logger);
+    }
+
+    private static void CheckSnapshot(ExperimentManager manager, int count)
+    {
+        // Read the actual files, including partial sessions, rather than only checking memory.
+        string json = File.ReadAllText(Path.Combine(manager.SessionDirectory, "session.json"));
+        var restored = JsonUtility.FromJson<ParticipantSession>(json);
+        Require(restored.ParticipantId == manager.Session.ParticipantId && restored.Responses.Count == count,
+            "Saved JSON must preserve identity and submitted responses.");
+        Require(restored.OrderNumber == manager.Session.OrderNumber && restored.StimulusSet == manager.Session.StimulusSet,
+            "Saved assignment differs from the session.");
+        if (count == manager.Session.Responses.Count)
+            Require(json == JsonUtility.ToJson(manager.Session, true), "JSON must round-trip the entire current snapshot.");
+        var apiCsv = File.ReadAllLines(Path.Combine(manager.SessionDirectory, "api.csv"));
+        Require(apiCsv.Length == (restored.ApiSubmitted ? 11 : 1), "API CSV must have ten rows only after submission.");
+        if (restored.ApiSubmitted)
+            Require(apiCsv[1].EndsWith(",1,Engaging,\"Dr. Meowra was expressive.\",2") &&
+                apiCsv[10].Contains(",10,Credible,\"Dr. Meowra was instructor-like.\",5"), "API export must preserve wording, order and ratings.");
+        string preferenceCsv = File.ReadAllText(Path.Combine(manager.SessionDirectory, "preference.csv"));
+        if (restored.PreferenceSubmitted)
+            Require(preferenceCsv.Contains(restored.ParticipantId + "," + restored.PreferredCondition + ","), "Preference CSV lost the chosen condition.");
+        if (restored.ReasonSubmitted)
+            Require(preferenceCsv.Contains("\"" + restored.PreferenceReason.Replace("\"", "\"\"") + "\""), "CSV must quote commas, quotes, Unicode and newlines correctly.");
+        var ratings = File.ReadAllLines(Path.Combine(manager.SessionDirectory, "ueqs.csv"));
+        Require(ratings.Length == restored.UeqsResponses.Count * 8 + 1, "UEQ-S CSV must preserve eight rows per saved evaluation.");
+        if (restored.UeqsResponses.Count > 0)
+            Require(ratings[1].EndsWith(",1,Pragmatic,obstructive,supportive,2"), "UEQ-S CSV must retain item wording and selected position.");
+        var csv = File.ReadAllLines(Path.Combine(manager.SessionDirectory, "trials.csv"));
+        Require(csv.Length == count + 1 && csv[0].EndsWith("response_time_seconds"), "CSV must have one row per submitted response and timing units.");
+        if (count > 0)
+        {
+            Require(restored.Responses[count - 1].ResponseTimeSeconds > 0, "Elapsed time must survive serialization.");
+            Require(File.Exists(Path.Combine(manager.SessionDirectory, "session.json.bak")), "Replacement must retain a previous snapshot.");
+        }
     }
 
     private static void CheckOrders(StudyDefinition study)

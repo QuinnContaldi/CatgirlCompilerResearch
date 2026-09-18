@@ -35,6 +35,14 @@ namespace Meowra.UI
             ShowPage(0);
         }
 
+        public void RegisterPage(GameObject page)
+        {
+            if (page == null || System.Array.IndexOf(pages, page) >= 0) return;
+            System.Array.Resize(ref pages, pages.Length + 1);
+            pages[pages.Length - 1] = page;
+            page.SetActive(false);
+        }
+
         public void NextPage()
         {
             ShowPage(CurrentPageIndex + 1);
