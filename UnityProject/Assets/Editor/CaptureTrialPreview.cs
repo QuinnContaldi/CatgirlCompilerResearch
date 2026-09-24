@@ -30,12 +30,27 @@ public static class CaptureTrialPreview
         {
             GameObject.Find("Canvas/Pages/ResearcherSetupPage/OrderDropdown").GetComponent<Dropdown>().Hide();
             var manager = Object.FindAnyObjectByType<ExperimentManager>();
-            manager.PreviewLayout(); manager.ContinueWelcome(); manager.ContinueInstructions();
+            manager.PreviewLayout();
+        }
+        if (frames == 75) ScreenCapture.CaptureScreenshot("/tmp/meowra-preview-consent.png");
+        if (frames == 80) Object.FindAnyObjectByType<ExperimentManager>().ContinueWelcome();
+        if (frames == 85) ScreenCapture.CaptureScreenshot("/tmp/meowra-preview-host-introduction.png");
+        if (frames == 90)
+        {
+            var manager = Object.FindAnyObjectByType<ExperimentManager>();
+            manager.ContinueIntroduction(); manager.ContinueInstructions();
         }
         if (frames == 100) ScreenCapture.CaptureScreenshot("/tmp/meowra-preview-trial-top.png");
         if (frames == 120) GameObject.Find("Canvas/Pages/TrialPage/TrialScroll").GetComponent<ScrollRect>().verticalNormalizedPosition = 0;
         if (frames == 140) ScreenCapture.CaptureScreenshot("/tmp/meowra-preview-trial-bottom.png");
-        if (frames == 160)
+        if (frames == 150 || frames == 155)
+        {
+            var trials = Object.FindAnyObjectByType<TrialManager>();
+            trials.SelectAnswer(Meowra.Data.AnswerChoice.A);
+            trials.Submit();
+        }
+        if (frames == 165) ScreenCapture.CaptureScreenshot("/tmp/meowra-preview-survey.png");
+        if (frames == 180)
         {
             SessionState.SetBool("Meowra.CapturePreview", false);
             EditorApplication.Exit(0);

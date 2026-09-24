@@ -6748,8 +6748,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1014289558}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.65}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.04, y: 0.84}
+  m_AnchorMax: {x: 0.96, y: 0.98}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6906,8 +6906,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1014289558}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0.6}
+  m_AnchorMin: {x: 0.04, y: 0.18}
+  m_AnchorMax: {x: 0.96, y: 0.8}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6933,7 +6933,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 27
+    m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
@@ -6944,7 +6944,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '[Your condition-neutral instructions / tutorial content]'
+  m_Text: "Let's take this one question at a time, nya!\n\nRead the code, feedback, and question. Choose the answer you think is correct, then click Continue to save it and move on. Scroll down if you need to see more.\n\nAfter each pair of questions, I'll ask how the feedback felt to use.\n\nTake your time. When you're ready, click Continue and we'll begin!"
 --- !u!222 &1913513632
 CanvasRenderer:
   m_ObjectHideFlags: 0

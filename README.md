@@ -1762,3 +1762,22 @@ A strong result would justify larger and more targeted research.
 A weak or null result would still provide useful evidence about whether persona-based compiler feedback deserves further investment.
 
 Either outcome is informative if the study is run transparently and the claims remain proportional to the evidence.
+
+### Editing participant consent
+
+Select `UnityProject/Assets/Data/StudyDefinition.asset` in Unity's Project window.
+Enter your participant information, risks, and other consent details in the multiline
+**Consent Text** box in the Inspector, outside Play mode, and save the asset.
+The existing Welcome page now presents this text in a scrollable box before the
+instructions. Participants click **Accept**; no checkbox or typed response is needed.
+An empty consent field blocks a real session; Preview Layout displays a placeholder.
+
+`ConsentView` presents the text, `ExperimentManager` handles progression, and
+`ParticipantSession` stores acceptance, its UTC timestamp, and the exact displayed
+wording. These fields are saved immediately in `session.json` before advancing.
+Preview acceptance stays in the existing separate preview output folder.
+
+To check the page, enter Play mode, choose Preview Layout, read/scroll the consent
+text, then click Accept and confirm that instructions appear. Test a long passage
+to check scrolling. `Tools > Experiment > Run Smoke Check` also checks consent and
+saved session snapshots using synthetic content without changing study assets.

@@ -1,22 +1,23 @@
 # Add your questions without changing C#
 
-The project contains **six blank scenario assets**. No study questions,
-explanations or answer keys have been authored for you.
+The project contains **six authored scenario assets**, each with a comprehension
+question, three incorrect choices, one correct choice, and an explicit answer key.
+Code and condition-specific feedback are stored as plain text in each scenario asset.
+The keys for Scenario01 through Scenario06 are **B, D, A, C, A, B**.
+Review the wording and difficulty before freezing the stimuli for data collection.
 
 A *ScriptableObject asset* is a saved form in Unity's Project window. It holds
 content independently of the Canvas. A *prefab* is a reusable saved UI object.
 The TrialPanel prefab reads whichever scenario the experiment manager assigns,
 so you do not need six copies of the Canvas or separate pages for each condition.
 
-## 1. Import your code images
+## 1. Prepare plain text
 
-1. Drag your screenshots into `Assets/Images/Code` in the Project window.
-2. Select each image. In its Inspector, set **Texture Type → Sprite (2D and UI)**,
-   **Sprite Mode → Single**, then click **Apply**.
-3. Use readable crops and a resolution sufficient for the code. Consider disabling
-   texture compression and increasing Max Size if Unity makes small text blurry.
-4. Do not put the answer key or condition-specific explanation in the code image:
-   the same code image is used for that scenario in every condition.
+Paste C source into **Code Text** and diagnostics/explanations into the three
+feedback fields. Keep indentation, leading blank lines and diagnostic caret lines.
+Do not add color tags: `StudyTextFormatter` supplies syntax coloring automatically.
+The same code text is used in every condition. TextMeshPro renders the colored
+characters using the bundled Liberation Mono font; no live compiler or AI runs.
 
 ## 2. Fill the six scenario assets
 
@@ -26,7 +27,7 @@ Each Inspector has these fields:
 | Field | What you provide |
 | --- | --- |
 | Scenario ID | A unique stable ID; defaults to `scenario-01` through `scenario-06`. |
-| Code Image | Drag your imported Sprite here. |
+| Code Text | Paste the C source, preserving indentation and line breaks. |
 | Question | Your comprehension prompt. |
 | Answer A, B, C, D | The four answer texts in fixed order. |
 | Correct Answer | Explicitly select A, B, C or D. It starts as **Unassigned**. |
@@ -44,10 +45,10 @@ You can create replacement assets through **Assets → Create → Meowra → Sce
 Then assign them in the study definition. Merely creating a new asset does not
 add it to the session automatically.
 
-**Drag the image into the scenario asset's Code Image field**, rather than onto
-the TrialPage image in the scene. TrialView fills the scene's Image and Text
-components from the selected scenario at runtime; direct content edits to those
-components are overwritten when a trial begins.
+**Edit the scenario asset**, rather than the trial panel's text in the scene.
+TrialView replaces panel contents with the assigned scenario when a trial begins.
+The original image references remain hidden archival fields; they are never
+used as fallbacks, and missing text blocks a scored session.
 
 ## 3. Configure the study asset
 
@@ -157,13 +158,13 @@ TrialPanel
     Viewport
       Content
         CodeHeading
-        CodeArea
-          CodeImage
-          CodePlaceholder
+        CodeTextPanel
+          Text (TextMeshPro)
         FeedbackHeader
           Heading
           MeowraPortrait
-        Explanation
+        FeedbackTextPanel
+          Text (TextMeshPro)
         QuestionPrompt
         Answers
           AnswerA / AnswerB / AnswerC / AnswerD
@@ -171,10 +172,10 @@ TrialPanel
 ```
 
 The Inspector's TrialView component has serialized references to these controls.
-Keep those references connected if you rename or rearrange objects. The image
-preserves its aspect ratio. The content scrolls vertically so longer explanations
-and answers can expand without overlapping. Test your longest real content and
-code-image readability at the actual study resolution.
+Keep those references connected if you rename or rearrange objects. Both text
+panels use the same 24-unit font size and dark background. Layout groups measure
+the text and expand each panel; the existing page scrolls vertically. Long lines
+wrap without shrinking the font. Test the longest content at the study resolution.
 
 All conditions share this prefab, typography, spacing and answer controls. The
 Meowra portrait is only shown in her condition. Space for the feedback heading
@@ -189,7 +190,7 @@ practice scenarios or statistical analysis have been added. Timing and local sav
 ## Check your work
 
 1. Preview orders 1 and 5 to see Meowra last and first.
-2. Check that each image, explanation and all four answers are readable; scroll
+2. Check that each code snippet, explanation and all four answers are readable; scroll
    to the final answer and verify Submit stays available outside the scroll area.
 3. After authoring all six assets, run a scored walkthrough with known correct
    and incorrect selections and inspect Session in Play mode.

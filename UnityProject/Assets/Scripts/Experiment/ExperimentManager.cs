@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Meowra.Experiment
 {
-    public enum ExperimentStage { Setup, Welcome, Instructions, Introduction, Trial, Evaluation, Complete, Api, Preference, OpenResponse }
+    public enum ExperimentStage { Setup, Welcome, Instructions, Introduction, Trial, Evaluation, Complete, Api, Preference, OpenResponse, HostIntroduction }
 
     public sealed class ExperimentManager : MonoBehaviour
     {
@@ -29,6 +29,7 @@ namespace Meowra.Experiment
         [SerializeField] private int trialIndex;
         private List<TrialAssignment> schedule;
         private DataLogger logger;
+        private ConsentView consent;
         private UeqsView evaluation;
         private FinalMeasuresView api;
         private FinalMeasuresView preference;
@@ -44,11 +45,13 @@ namespace Meowra.Experiment
 
         private void Start()
         {
-            logger = new DataLogger(Path.Combine(Application.persistentDataPath, "StudySessions"));
+            logger = new DataLogger(StudyResults.RootDirectory);
             view.SaveRetryRequested += RetrySave;
             trials.Submitted += OnTrialSubmitted;
             var orders = new List<string>();
             for (int i = 1; i <= 6; i++) orders.Add(Counterbalancing.GetOrderLabel(i));
+            consent = welcomePage.AddComponent<ConsentView>();
+            consent.Build();
             evaluation = evaluationPage.AddComponent<UeqsView>();
             evaluation.Build(ContinueEvaluation);
             api = FinalMeasuresView.Create(evaluationPage, "ApiPage", ContinueApi);
@@ -60,8 +63,16 @@ namespace Meowra.Experiment
             pages.RegisterPage(api.gameObject);
             pages.RegisterPage(preference.gameObject);
             pages.RegisterPage(openResponse.gameObject);
+            view.BuildHost(welcomePage.transform.parent);
             view.Configure(orders);
+            view.BuildResultsAccess(() => OpenSavedData(false), () => OpenSavedData(true));
             ShowSetup();
+        }
+
+        private void OpenSavedData(bool latestParticipant)
+        {
+            if (stage != ExperimentStage.Setup) return;
+            view.ShowResultsStatus(StudyResults.OpenSavedData(logger.RootDirectory, latestParticipant));
         }
 
         private void OnDestroy()
@@ -86,12 +97,23 @@ namespace Meowra.Experiment
             trialIndex = 0;
             view.ShowSession(preview);
             sessionDirectory = logger.GetSessionDirectory(session);
-            SaveThen(() => Navigate(ExperimentStage.Welcome, welcomePage));
+            consent.Show(study.consentText);
+            SaveThen(() =>
+            {
+                Debug.Log($"{(preview ? "Preview" : "Live survey")} files: {sessionDirectory}");
+                Navigate(ExperimentStage.Welcome, welcomePage);
+            });
         }
 
         public void ContinueWelcome()
         {
-            if (!SavePending && stage == ExperimentStage.Welcome) Navigate(ExperimentStage.Instructions, instructionsPage);
+            if (SavePending || stage != ExperimentStage.Welcome) return;
+            if (!session.AcceptConsent(consent.DisplayedText)) return;
+            SaveThen(() =>
+            {
+                view.ShowPersonaMessage(study.hostIntroduction);
+                Navigate(ExperimentStage.HostIntroduction, introductionPage);
+            });
         }
 
         public void ContinueInstructions()
@@ -111,7 +133,9 @@ namespace Meowra.Experiment
 
         public void ContinueIntroduction()
         {
-            if (!SavePending && stage == ExperimentStage.Introduction) ShowTrial();
+            if (SavePending) return;
+            if (stage == ExperimentStage.HostIntroduction) Navigate(ExperimentStage.Instructions, instructionsPage);
+            else if (stage == ExperimentStage.Introduction) ShowTrial();
         }
 
         private void ShowTrial()
@@ -123,6 +147,7 @@ namespace Meowra.Experiment
         private void OnTrialSubmitted(TrialResponse response)
         {
             if (SavePending || stage != ExperimentStage.Trial || !session.Record(response)) return;
+            response.SetEncouragement(study.answerEncouragements[trialIndex % study.answerEncouragements.Length]);
             SaveThen(AdvanceAfterTrial);
         }
 
@@ -230,6 +255,24 @@ namespace Meowra.Experiment
         {
             stage = nextStage;
             pages.ShowPage(page);
+            string quote = study == null ? "" : study.hostQuote;
+            if (study != null)
+            {
+                if (nextStage == ExperimentStage.Trial) quote = study.answerEncouragements[trialIndex % study.answerEncouragements.Length];
+                else if (nextStage == ExperimentStage.Welcome) quote = study.consentQuote;
+                else if (nextStage == ExperimentStage.HostIntroduction) quote = study.hostIntroductionQuote;
+                else if (nextStage == ExperimentStage.Instructions) quote = study.instructionsQuote;
+                else if (nextStage == ExperimentStage.Introduction) quote = study.blockIntroductionQuote;
+                // Follow block position, so wording is fixed across counterbalanced orders.
+                else if (nextStage == ExperimentStage.Evaluation)
+                    quote = trialIndex == 2 ? study.surveyQuote :
+                        trialIndex == 4 ? study.secondEvaluationQuote : study.thirdEvaluationQuote;
+                else if (nextStage == ExperimentStage.Api) quote = study.personaMeasuresQuote;
+                else if (nextStage == ExperimentStage.Preference) quote = study.preferenceQuote;
+                else if (nextStage == ExperimentStage.OpenResponse) quote = study.openResponseQuote;
+                else if (nextStage == ExperimentStage.Complete) quote = study.completionQuote;
+            }
+            view.ShowHost(study, quote, nextStage == ExperimentStage.Trial);
         }
     }
 }

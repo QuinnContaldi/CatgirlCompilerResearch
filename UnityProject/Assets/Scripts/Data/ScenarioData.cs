@@ -9,7 +9,13 @@ namespace Meowra.Data
     public sealed class ScenarioData : ScriptableObject
     {
         public string scenarioId;
-        public Sprite codeImage;
+        [TextArea(6, 24)] public string codeText;
+
+        // Retained only as references to the original stimuli; participant UI uses text.
+        [HideInInspector] public Sprite codeImage;
+        [HideInInspector] public Sprite rawFeedbackImage;
+        [HideInInspector] public Sprite neutralFeedbackImage;
+        [HideInInspector] public Sprite meowraFeedbackImage;
         [TextArea(2, 6)] public string question;
         [TextArea(2, 6)] public string answerA;
         [TextArea(2, 6)] public string answerB;
@@ -32,6 +38,17 @@ namespace Meowra.Data
             }
         }
 
+        public Sprite GetFeedbackImage(FeedbackCondition condition)
+        {
+            switch (condition)
+            {
+                case FeedbackCondition.Raw: return rawFeedbackImage;
+                case FeedbackCondition.Neutral: return neutralFeedbackImage;
+                case FeedbackCondition.Meowra: return meowraFeedbackImage;
+                default: throw new System.ArgumentOutOfRangeException(nameof(condition));
+            }
+        }
+
         public string GetFeedback(FeedbackCondition condition)
         {
             switch (condition)
@@ -47,7 +64,7 @@ namespace Meowra.Data
         public string GetValidationError()
         {
             if (string.IsNullOrWhiteSpace(scenarioId)) return "Assign a unique Scenario ID.";
-            if (codeImage == null) return "Assign a Code Image sprite.";
+            if (string.IsNullOrWhiteSpace(codeText)) return "Enter Code Text.";
             if (string.IsNullOrWhiteSpace(question)) return "Enter the Question.";
             for (int i = 0; i < 4; i++)
                 if (string.IsNullOrWhiteSpace(GetAnswer((AnswerChoice)i))) return $"Enter answer {(AnswerChoice)i}.";

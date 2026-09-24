@@ -13,13 +13,17 @@ MonoBehaviour:
   m_Name: Scenario01
   m_EditorClassIdentifier: Assembly-CSharp::Meowra.Data.ScenarioData
   scenarioId: scenario-01
-  codeImage: {fileID: 0}
-  question: 
-  answerA: 
-  answerB: 
-  answerC: 
-  answerD: 
-  correctAnswer: -1
-  rawFeedback: 
-  neutralFeedback: 
-  meowraFeedback: 
+  codeText: "\nint main()\n{\n    cat = 5\n}"
+  codeImage: {fileID: 21300000, guid: d43959f25d176488fab8df76f207897f, type: 3}
+  rawFeedbackImage: {fileID: 21300000, guid: b048dfd1178050d62b4d82808627dd77, type: 3}
+  neutralFeedbackImage: {fileID: 21300000, guid: 0076cfde822ec85079c54bdfe4076617, type: 3}
+  meowraFeedbackImage: {fileID: 21300000, guid: 2084ed1f440ce1ea2b57cb1d79cdc8da, type: 3}
+  question: "Which punctuation mark is missing at the end of the assignment statement?"
+  answerA: "A comma (,)."
+  answerB: "A semicolon (;)."
+  answerC: "A colon (:)."
+  answerD: "A period (.)."
+  correctAnswer: 1
+  rawFeedback: "statement_termination.c: In function ‘main’:\nstatement_termination.c:4:5: error: ‘cat’ undeclared (first use in this function)\n    4 |     cat = 5;\n      |     ^~~\nstatement_termination.c:4:5: note: each undeclared identifier is reported only once for each function it appears in"
+  neutralFeedback: "statement_termination.c:4:16: error: This statement is missing a semicolon at the end. In C, statements like this need to end with a semicolon before the program can continue.\n    4 |     int cat = 5\n      |                ^"
+  meowraFeedback: "statement_termination.c:4:16: error: Nya, this statement is missing a semicolon at the end. In C, statements like this need to end with a semicolon before the program can continue, meow!\n    4 |     int cat = 5\n      |                ^"

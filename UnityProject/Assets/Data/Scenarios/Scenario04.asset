@@ -13,13 +13,17 @@ MonoBehaviour:
   m_Name: Scenario04
   m_EditorClassIdentifier: Assembly-CSharp::Meowra.Data.ScenarioData
   scenarioId: scenario-04
-  codeImage: {fileID: 0}
-  question: 
-  answerA: 
-  answerB: 
-  answerC: 
-  answerD: 
-  correctAnswer: -1
-  rawFeedback: 
-  neutralFeedback: 
-  meowraFeedback: 
+  codeText: "\nint main()\n{\n    int x;\n\n    x = \"Meow\";\n}"
+  codeImage: {fileID: 21300000, guid: 11275254d5a5cd4a8ad81b0ef1b2314c, type: 3}
+  rawFeedbackImage: {fileID: 21300000, guid: 729f0676c2391803f9058ec05e9dcb22, type: 3}
+  neutralFeedbackImage: {fileID: 21300000, guid: e9bc220e62bf0ed71b45a0e24a79538d, type: 3}
+  meowraFeedbackImage: {fileID: 21300000, guid: 25bcb72ef6df788438ea3c7b6a4b60b0, type: 3}
+  question: "Why is assigning \"Meow\" to 'x' incompatible with its declared type?"
+  answerA: "The variable 'x' has not been declared before the assignment."
+  answerB: "An int variable cannot be assigned a value after its declaration."
+  answerC: "The value is a string literal, but 'x' is declared as an int."
+  answerD: "String literals in C must use single quotes instead of double quotes."
+  correctAnswer: 2
+  rawFeedback: "type_use.c: In function ‘main’:\ntype_use.c:6:7: error: assignment to ‘int’ from ‘char *’ makes integer from pointer without a cast [-Wint-conversion]\n    6 |     x = \"Meow\";\n      |       ^"
+  neutralFeedback: "type_use.c:6:9: error: The value being assigned to 'x' does not match the variable's declared type. Check the type of 'x' and the type of the value being assigned to it.\n    6 |     x = \"Meow\";\n      |         ^~~~~~"
+  meowraFeedback: "type_use.c:6:9: error: The value being assigned to 'x' does not match the variable's declared type, meow. Check the type of 'x' and the type of the value being assigned to it.\n    6 |     x = \"Meow\";\n      |         ^~~~~~"

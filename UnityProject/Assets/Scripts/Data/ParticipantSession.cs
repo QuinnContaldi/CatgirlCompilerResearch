@@ -16,6 +16,10 @@ namespace Meowra.Data
         [SerializeField] private bool correct;
         [SerializeField] private double responseTimeSeconds;
 
+        [SerializeField] private string encouragement;
+        public string Encouragement => encouragement;
+        public void SetEncouragement(string message) => encouragement = message;
+
         public string ScenarioId => scenarioId;
         public FeedbackCondition Condition => condition;
         public AnswerChoice SelectedAnswer => selectedAnswer;
@@ -43,7 +47,14 @@ namespace Meowra.Data
     [Serializable]
     public sealed class ParticipantSession
     {
-        [SerializeField] private int schemaVersion = 3;
+        [SerializeField] private int schemaVersion = 5;
+        [SerializeField] private string personaProtocol = "persistent-host-v2; post-consent introduction; correctness-independent on-question encouragement; large form portrait";
+        [SerializeField] private bool consentAccepted;
+        [SerializeField] private string consentAcceptedUtc;
+        [SerializeField] private string consentText;
+        public bool ConsentAccepted => consentAccepted;
+        public string ConsentText => consentText;
+        public string ConsentAcceptedUtc => consentAcceptedUtc;
         [SerializeField] private string participantId;
         [SerializeField] private string startedUtc;
         [SerializeField] private string timingDefinition = "Scenario displayed to Submit; includes time away from app; seconds.";
@@ -81,6 +92,8 @@ namespace Meowra.Data
         public int CorrectCount => correctCount;
         public int ScoredCount => scoredCount;
         public IReadOnlyList<TrialResponse> Responses => responses;
+        public IReadOnlyList<string> PlannedScenarioIds => plannedScenarioIds;
+        public IReadOnlyList<FeedbackCondition> PlannedConditions => plannedConditions;
 
         public ParticipantSession(int order, int set, bool isPreview, IReadOnlyList<TrialAssignment> schedule)
         {
@@ -94,6 +107,15 @@ namespace Meowra.Data
                 plannedScenarioIds.Add(trial.Scenario.scenarioId);
                 plannedConditions.Add(trial.Condition);
             }
+        }
+
+        public bool AcceptConsent(string displayedText)
+        {
+            if (consentAccepted || completed || string.IsNullOrWhiteSpace(displayedText)) return false;
+            consentText = displayedText;
+            consentAcceptedUtc = DateTime.UtcNow.ToString("O");
+            consentAccepted = true;
+            return true;
         }
 
         public bool Record(TrialResponse response)

@@ -7,6 +7,7 @@ using System.Reflection;
 using Meowra.Data;
 using Meowra.Experiment;
 using Meowra.UI;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -40,6 +41,34 @@ public static class ExperimentSmokeCheck
         SetLogger(manager, logger);
         Debug.Log("LOGGING_CHECK_DIRECTORY: " + testDirectory);
         var original = Field<StudyDefinition>(manager, "study");
+        Require(original.GetValidationError(true) == null, "The authored study must allow preview: " + original.GetValidationError(true));
+        yield return null; // Let reactivated graphics register with the canvas raycaster.
+        ClickAtCenter(GameObject.Find("Canvas/Pages/ResearcherSetupPage/OpenSavedDataButton"), false);
+        ClickAtCenter(GameObject.Find("Canvas/Pages/ResearcherSetupPage/OpenLatestCsvButton"), false);
+        ClickAtCenter(GameObject.Find("Canvas/Pages/ResearcherSetupPage/PreviewLayoutButton"));
+        Require(manager.Stage == ExperimentStage.Welcome, "The authored preview button must open consent.");
+        manager.ReturnToSetup();
+        var textView = Object.FindAnyObjectByType<TrialView>(FindObjectsInactive.Include);
+        navigation.ShowPage(textView.transform.GetSiblingIndex());
+        foreach (var scenario in original.scenarios)
+            foreach (FeedbackCondition condition in Enum.GetValues(typeof(FeedbackCondition)))
+            {
+                textView.Show(scenario, condition, original.meowraPortrait, 1, 6);
+                yield return null;
+                Canvas.ForceUpdateCanvases();
+                AssertRenderedText(Field<TMP_Text>(textView, "codeText"), scenario.codeText);
+                AssertRenderedText(Field<TMP_Text>(textView, "explanation"), scenario.GetFeedback(condition));
+                Require(textView.GetComponentsInChildren<Image>().All(image => image.sprite == null || image.sprite != scenario.codeImage),
+                    "Scenario code must render as text, never its archived picture.");
+            }
+        var codeLabel = Field<TMP_Text>(textView, "codeText");
+        foreach (string literal in new[] { "#include <stdio.h>\nif (x < 5 && x > 0) {}",
+            "printf(\"<color=red></noparse> & \\\n\"); // int 42", "/* int \"text\" */\nint n = 12;" })
+        {
+            codeLabel.text = StudyTextFormatter.Code(literal);
+            AssertRenderedText(codeLabel, literal);
+        }
+        navigation.ShowPage(0);
         string originalJson = JsonUtility.ToJson(original);
         var study = ScriptableObject.CreateInstance<StudyDefinition>();
         var texture = new Texture2D(16, 4);
@@ -65,7 +94,7 @@ public static class ExperimentSmokeCheck
                 var scenario = study.scenarios[i];
                 var sprite = Sprite.Create(texture, new Rect(i * 2, 0, 2, 4), new Vector2(.5f, .5f));
                 sprites.Add(sprite);
-                scenario.codeImage = sprite;
+                scenario.codeText = "int fixture = " + i + ";";
                 scenario.question = "test prompt " + i;
                 scenario.answerA = "test A"; scenario.answerB = "test B";
                 scenario.answerC = "test C"; scenario.answerD = "test D";
@@ -79,17 +108,44 @@ public static class ExperimentSmokeCheck
             }
             study.meowraPortrait = sprites[0];
             study.meowraIntroduction = "test introduction";
+            Require(study.GetValidationError() != null, "Missing consent text must block scored sessions.");
+            study.consentText = string.Join("\n", Enumerable.Repeat("Synthetic consent information for testing scrolling.", 80));
             Require(study.GetValidationError() == null, "Complete synthetic authoring data must validate.");
             string savedId = study.scenarios[1].scenarioId;
             study.scenarios[1].scenarioId = study.scenarios[0].scenarioId;
             Require(study.GetValidationError() != null, "Duplicate scenario IDs must be rejected.");
             study.scenarios[1].scenarioId = savedId;
             CheckOrders(study);
+            CheckPersistence(study);
 
             // Each saved menu option drives a complete run using the actual UI events.
+            var previousFiles = new Dictionary<string, string>();
             for (int order = 1; order <= 6; order++)
                 for (int set = 1; set <= 3; set++)
+                {
+                    SetLogger(manager, new DataLogger(testDirectory));
                     foreach (var item in WalkSession(manager, false, order, set)) yield return item;
+                    foreach (var file in previousFiles)
+                        Require(File.ReadAllText(file.Key) == file.Value, "A new session modified a previous participant's files.");
+                    foreach (string file in Directory.GetFiles(manager.SessionDirectory))
+                        previousFiles[file] = File.ReadAllText(file);
+                }
+            // Exercise the shipped scenarios too, without supplying participant consent
+            // or changing research content in the saved asset.
+            var authoredStudy = Object.Instantiate(original);
+            try
+            {
+                authoredStudy.consentText = study.consentText;
+                Require(authoredStudy.GetValidationError() == null,
+                    "Authored live content must validate once consent is supplied: " + authoredStudy.GetValidationError());
+                SetStudy(manager, authoredStudy);
+                foreach (var item in WalkSession(manager, false, 1, 1)) yield return item;
+            }
+            finally
+            {
+                SetStudy(manager, study);
+                Object.Destroy(authoredStudy);
+            }
             Require(JsonUtility.ToJson(original) == originalJson, "Tests must not mutate authoring assets.");
         }
         finally
@@ -110,12 +166,32 @@ public static class ExperimentSmokeCheck
         setup.Find("StimulusSetDropdown").GetComponent<Dropdown>().value = set - 1;
         // Changing the test study happens only in memory; refresh validation first.
         Object.FindAnyObjectByType<StudyShellView>().ShowSetup(Field<StudyDefinition>(manager, "study"));
-        Click(setup.Find(preview ? "PreviewLayoutButton" : "StartSessionButton").gameObject);
+        yield return null;
+        ClickAtCenter(setup.Find(preview ? "PreviewLayoutButton" : "StartSessionButton").gameObject);
         yield return null;
         Require(manager.Stage == ExperimentStage.Welcome, "Start must reach Welcome.");
         CheckSnapshot(manager, 0);
         Require(manager.SessionDirectory.Contains(preview ? "Previews" : "Participants"), "Preview storage must be separate.");
-        Click(GameObject.Find("Canvas/Pages/WelcomePage/ContinueButton"));
+        Require(!manager.Session.ConsentAccepted, "Consent must start unaccepted.");
+        var consent = Object.FindAnyObjectByType<ConsentView>();
+        string displayedConsent = consent.DisplayedText;
+        var acceptButton = GameObject.Find("Canvas/Pages/WelcomePage/ContinueButton");
+        Require(acceptButton.GetComponentInChildren<Text>().text == "Accept", "Consent needs an Accept button.");
+        if (!preview)
+        {
+            var scroll = consent.GetComponentInChildren<ScrollRect>();
+            Canvas.ForceUpdateCanvases();
+            Require(scroll.content.rect.height > scroll.viewport.rect.height, "Long consent must be scrollable.");
+        }
+        Click(acceptButton);
+        Require(manager.Stage == ExperimentStage.HostIntroduction && manager.Session.ConsentAccepted,
+            "Accept must record consent and immediately introduce the host.");
+        Click(GameObject.Find("Canvas/Pages/MeowraIntroductionPage/ContinueButton"));
+        Require(manager.Stage == ExperimentStage.Instructions, "Host introduction must lead to instructions.");
+        Require(manager.Session.ConsentText == displayedConsent && !string.IsNullOrEmpty(manager.Session.ConsentAcceptedUtc),
+            "Consent must retain the displayed wording and timestamp.");
+        manager.ContinueWelcome();
+        CheckSnapshot(manager, 0);
         Click(GameObject.Find("Canvas/Pages/InstructionsPage/ContinueButton"));
         yield return null;
         int introductions = 0;
@@ -125,8 +201,20 @@ public static class ExperimentSmokeCheck
         var pages = GameObject.Find("Canvas/Pages").transform;
         while (manager.Stage != ExperimentStage.Complete)
         {
-            Require(++steps <= 15, "Session did not finish in the expected number of stages.");
+            Require(++steps <= 22, "Session did not finish in the expected number of stages.");
             AssertOnePage(pages);
+            var host = GameObject.Find("Canvas/MeowraHost/Portrait").GetComponent<Image>();
+            Require(host.enabled == (!preview && manager.Stage == ExperimentStage.Trial),
+                "Head portrait appears on questions only.");
+            var large = GameObject.Find("Canvas/MeowraLargePortrait").GetComponent<Image>();
+            Require(large.enabled == (!preview && manager.Stage != ExperimentStage.Trial),
+                "Other forms must show the large portrait.");
+            if (manager.Stage == ExperimentStage.Trial)
+            {
+                string expected = Field<StudyDefinition>(manager, "study").answerEncouragements[submitted];
+                Require(GameObject.Find("Canvas/MeowraHost/Dialogue").GetComponent<Text>().text.EndsWith(expected),
+                    "Encouragement must be visible before answering.");
+            }
             if (manager.Stage == ExperimentStage.Introduction)
             {
                 introductions++;
@@ -234,11 +322,11 @@ public static class ExperimentSmokeCheck
                 var submit = Field<Button>(view, "submitButton");
                 Require(toggles.Length == 4 && toggles.All(t => !t.isOn), "No answer may be preselected, including after a frame.");
                 Require(!submit.interactable, "Submit must wait for an explicit selection.");
-                Require(Field<Image>(view, "codeImage").sprite == assignment.Scenario.codeImage, "Incorrect code image binding.");
-                Require(Field<Text>(view, "explanation").text == (preview ? "[Explanation]" : assignment.Scenario.GetFeedback(assignment.Condition)),
+                Require(Field<TMP_Text>(view, "codeText").text == StudyTextFormatter.Code(preview ? "[Code snippet]" : assignment.Scenario.codeText), "Incorrect code text binding.");
+                Require(Field<TMP_Text>(view, "explanation").text == StudyTextFormatter.Feedback(preview ? "[Explanation]" : assignment.Scenario.GetFeedback(assignment.Condition)),
                     "Feedback must match both scenario and assigned condition.");
                 var portrait = Field<Image>(view, "portrait");
-                Require(portrait.gameObject.activeSelf == (!preview && assignment.Condition == FeedbackCondition.Meowra), "Persona image leaked into another condition.");
+                Require(!portrait.gameObject.activeSelf, "Trial should use the shared host portrait without a duplicate.");
                 Click(submit.gameObject);
                 Object.FindAnyObjectByType<TrialManager>().Submit();
                 Require(manager.Session.Responses.Count == submitted, "An unanswered trial was recorded.");
@@ -279,7 +367,7 @@ public static class ExperimentSmokeCheck
                     Require(manager.Session.Responses.Count == 1, "Retry must not duplicate a response.");
                     SetLogger(manager, workingLogger);
                     manager.RetrySave();
-                    Require(!manager.SavePending && manager.CurrentTrial.Scenario != assignment.Scenario, "Retry must save and advance once.");
+                    Require(!manager.SavePending && manager.Stage == ExperimentStage.Trial && manager.CurrentTrial.Scenario != assignment.Scenario, "Retry must save and advance directly to the next question.");
                 }
                 Time.timeScale = previousScale;
                 Object.FindAnyObjectByType<TrialManager>().Submit();
@@ -289,6 +377,8 @@ public static class ExperimentSmokeCheck
                     "Timing must use elapsed seconds independently of Unity time scale.");
                 Require(manager.Session.Responses.Count == submitted, "A repeated submit duplicated or skipped a response.");
                 var response = manager.Session.Responses[submitted - 1];
+                Require(response.Encouragement == Field<StudyDefinition>(manager, "study").answerEncouragements[submitted - 1],
+                    "Saved encouragement must match the message shown while answering.");
                 Require(response.ScenarioId == assignment.Scenario.scenarioId && response.Condition == assignment.Condition,
                     "Response assignment was not retained.");
                 Require(response.SelectedAnswer == (AnswerChoice)answer, "Wrong selected answer recorded.");
@@ -308,6 +398,16 @@ public static class ExperimentSmokeCheck
         yield return null;
     }
 
+    private static void AssertRenderedText(TMP_Text text, string expected)
+    {
+        text.ForceMeshUpdate(true, true);
+        Require(text.GetParsedText() == expected, "Highlighting must preserve literal characters: " + expected);
+        Require(text.font != null && text.font.name == "StudyMono", "Use the bundled monospace font.");
+        Require(!text.enableAutoSizing && text.fontSize == 24, "All conditions must retain the same readable font size.");
+        Require(text.textInfo.characterInfo.Take(text.textInfo.characterCount).All(c => !c.isVisible || c.textElement != null),
+            "Every visible character must have a font glyph.");
+    }
+
     private static void SetLogger(ExperimentManager manager, DataLogger logger)
     {
         typeof(ExperimentManager).GetField("logger", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(manager, logger);
@@ -324,6 +424,18 @@ public static class ExperimentSmokeCheck
             "Saved assignment differs from the session.");
         if (count == manager.Session.Responses.Count)
             Require(json == JsonUtility.ToJson(manager.Session, true), "JSON must round-trip the entire current snapshot.");
+        var assignment = File.ReadAllLines(Path.Combine(manager.SessionDirectory, "assignment.csv"));
+        Require(assignment.Length == 7, "Even an unanswered session must export all six planned tasks.");
+        string taskOrder = string.Join(" > ", restored.PlannedScenarioIds);
+        string conditionOrder = string.Join(" > ", Counterbalancing.GetOrder(restored.OrderNumber));
+        for (int i = 0; i < 6; i++)
+        {
+            string expected = restored.ParticipantId + "," + restored.OrderNumber + ",\"" + conditionOrder + "\"," +
+                restored.StimulusSet + ",\"" + taskOrder + "\"," + (restored.IsPreview ? "true" : "false") + "," +
+                (restored.Completed ? "true" : "false") + "," + (i + 1) + "," + (i / 2 + 1) + "," + (i % 2 + 1) +
+                ",\"" + restored.PlannedScenarioIds[i] + "\"," + restored.PlannedConditions[i] + "," + (i < count ? "true" : "false");
+            Require(assignment[i + 1] == expected, "Assignment CSV must preserve rotation, condition order and partial progress.");
+        }
         var apiCsv = File.ReadAllLines(Path.Combine(manager.SessionDirectory, "api.csv"));
         Require(apiCsv.Length == (restored.ApiSubmitted ? 11 : 1), "API CSV must have ten rows only after submission.");
         if (restored.ApiSubmitted)
@@ -339,6 +451,8 @@ public static class ExperimentSmokeCheck
         if (restored.UeqsResponses.Count > 0)
             Require(ratings[1].EndsWith(",1,Pragmatic,obstructive,supportive,2"), "UEQ-S CSV must retain item wording and selected position.");
         var csv = File.ReadAllLines(Path.Combine(manager.SessionDirectory, "trials.csv"));
+        Require(csv[0].Contains(",session_completed,") && csv[0].Contains(",task_order,block_number,trial_in_block,"),
+            "Trial CSV must label completion and task order explicitly.");
         Require(csv.Length == count + 1 && csv[0].EndsWith("response_time_seconds"), "CSV must have one row per submitted response and timing units.");
         if (count > 0)
         {
@@ -385,6 +499,56 @@ public static class ExperimentSmokeCheck
     {
         Require(target != null && target.activeInHierarchy, "Missing active UI target.");
         ExecuteEvents.Execute(target, new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left }, ExecuteEvents.pointerClickHandler);
+    }
+    private static void ClickAtCenter(GameObject target, bool execute = true)
+    {
+        Require(target != null && target.activeInHierarchy, "Missing active pointer target.");
+        Canvas.ForceUpdateCanvases();
+        var rect = (RectTransform)target.transform;
+        var canvas = target.GetComponentInParent<Canvas>();
+        var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+        var pointer = new PointerEventData(EventSystem.current) {
+            button = PointerEventData.InputButton.Left,
+            position = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center))
+        };
+        var hits = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, hits);
+        Require(hits.Count > 0, "No pointer hit for " + target.name);
+        var receiver = ExecuteEvents.GetEventHandler<IPointerClickHandler>(hits[0].gameObject);
+        Require(receiver == target, target.name + " is blocked by " + UnityEditor.AnimationUtility.CalculateTransformPath(hits[0].gameObject.transform, null));
+        if (execute) ExecuteEvents.Execute(receiver, pointer, ExecuteEvents.pointerClickHandler);
+    }
+
+    private static void CheckPersistence(StudyDefinition study)
+    {
+        string root = Path.Combine(Path.GetTempPath(), "MeowraPersistenceCheck-" + Guid.NewGuid().ToString("N"));
+        Require(StudyResults.FindLatestParticipantDirectory(root) == null, "No results must be handled before the first session.");
+        var schedule = Counterbalancing.BuildSchedule(study, 1, 1);
+        var first = new ParticipantSession(1, 1, false, schedule);
+        first.AcceptConsent("Synthetic persistence-check consent.");
+        first.Record(new TrialResponse(schedule[0].Scenario, schedule[0].Condition, AnswerChoice.A, false, 1.25));
+        var logger = new DataLogger(root);
+        logger.Save(first);
+        string firstDirectory = logger.GetSessionDirectory(first);
+        var saved = Directory.GetFiles(firstDirectory).ToDictionary(path => path, File.ReadAllText);
+
+        // Recreate the storage service without any reference to the previous session.
+        logger = new DataLogger(root);
+        var second = new ParticipantSession(1, 1, false, schedule);
+        logger.Save(second);
+        string secondDirectory = logger.GetSessionDirectory(second);
+        Require(firstDirectory != secondDirectory, "Each participant needs a distinct storage folder.");
+        File.SetLastWriteTimeUtc(Path.Combine(firstDirectory, "session.json"), DateTime.UtcNow.AddMinutes(-2));
+        File.SetLastWriteTimeUtc(Path.Combine(secondDirectory, "session.json"), DateTime.UtcNow.AddMinutes(-1));
+        logger.Save(new ParticipantSession(1, 1, true, schedule));
+        Require(StudyResults.FindLatestParticipantDirectory(root) == secondDirectory,
+            "Latest live results must be discoverable from disk, excluding newer previews.");
+        foreach (var file in saved)
+            Require(File.ReadAllText(file.Key) == file.Value, "Starting another session must preserve partial-session JSON and CSV.");
+        var restored = JsonUtility.FromJson<ParticipantSession>(File.ReadAllText(Path.Combine(firstDirectory, "session.json")));
+        Require(!restored.Completed && restored.Responses.Count == 1 && restored.Responses[0].ResponseTimeSeconds == 1.25,
+            "Submitted partial data must remain readable after recreating storage.");
+        Debug.Log("PERSISTENCE_CHECK_DIRECTORY: " + root);
     }
     private static void AssertOnePage(Transform pages)
     {

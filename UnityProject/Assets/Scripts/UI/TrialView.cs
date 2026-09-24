@@ -1,5 +1,6 @@
 using System;
 using Meowra.Data;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,9 +9,8 @@ namespace Meowra.UI
     public sealed class TrialView : MonoBehaviour
     {
         [SerializeField] private Text progress;
-        [SerializeField] private Image codeImage;
-        [SerializeField] private GameObject codePlaceholder;
-        [SerializeField] private Text explanation;
+        [SerializeField] private TMP_Text codeText;
+        [SerializeField] private TMP_Text explanation;
         [SerializeField] private Text question;
         [SerializeField] private Image portrait;
         [SerializeField] private Toggle[] answers;
@@ -38,14 +38,12 @@ namespace Meowra.UI
         public void Show(ScenarioData scenario, FeedbackCondition condition, Sprite persona, int number, int total)
         {
             progress.text = $"Question {number} of {total}";
-            codeImage.sprite = scenario.codeImage;
-            codeImage.preserveAspect = true;
-            codeImage.enabled = scenario.codeImage != null;
-            codePlaceholder.SetActive(scenario.codeImage == null);
-            explanation.text = ContentOrPlaceholder(scenario.GetFeedback(condition), "[Explanation]");
+            codeText.text = StudyTextFormatter.Code(ContentOrPlaceholder(scenario.codeText, "[Code snippet]"));
+            explanation.text = StudyTextFormatter.Feedback(ContentOrPlaceholder(scenario.GetFeedback(condition), "[Explanation]"));
             question.text = ContentOrPlaceholder(scenario.question, "[Question prompt]");
             portrait.sprite = persona;
-            portrait.gameObject.SetActive(condition == FeedbackCondition.Meowra && persona != null);
+            // The shared host displays the portrait consistently across all conditions.
+            portrait.gameObject.SetActive(false);
             var group = answers[0].group;
             group.allowSwitchOff = true;
             for (int i = 0; i < answers.Length; i++)

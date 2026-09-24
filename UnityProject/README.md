@@ -4,7 +4,7 @@ Unity **6000.6.1f1** (`7efac9f6c10e`), based on **Universal 2D 7.0.0**.
 The project uses Unity's uGUI, Input System and URP; no third-party Unity
 packages or runtime frameworks were added.
 
-**Start with [the authoring guide](AUTHORING.md)** for dragging in code images,
+**Start with [the authoring guide](AUTHORING.md)** for entering code text,
 entering your own questions and explanations, assigning A–D answer keys, and
 choosing counterbalancing orders.
 
@@ -29,7 +29,7 @@ launcher's Editor path with `UNITY_EDITOR` if necessary.
 
 | Component / asset | Responsibility |
 | --- | --- |
-| `ScenarioData` | Your image, prompt, four answers, key and three feedback texts. |
+| `ScenarioData` | Your code text, prompt, four answers, key and three feedback texts. |
 | `StudyDefinition` | Six scenario slots and your Meowra introduction/portrait. |
 | `Counterbalancing` | Builds a deterministic schedule from order and stimulus set. |
 | `ExperimentManager` | Runs the page/block sequence and owns the current session. |
@@ -74,7 +74,7 @@ Run Smoke Check** outside Play mode.
 
 The checks exercise the saved UI, blank-content preview, authoring validation,
 all 18 order/set combinations, one-page visibility, exactly one Meowra
-introduction, two trials per evaluation, feedback/image binding, explicit single
+introduction, two trials per evaluation, feedback/text binding, explicit single
 selection, no answer carryover, duplicate-submit protection, scoring, real elapsed
 time with game time stopped, partial JSON/CSV snapshots, and save-failure retry.
 Synthetic session files go into a unique `MeowraLoggingCheck-*` temporary folder
@@ -200,3 +200,110 @@ to `ParticipantSession.cs`, `DataLogger.cs`, `ExperimentManager.cs`,
 this README and `AUTHORING.md`. `DataLogger.cs` and the earlier UEQ-S work were
 already uncommitted when this change began; include those dependencies when
 committing the combined working implementation. No commit was made automatically.
+
+See [Highlighted study text](../Study_Text.md) for code/diagnostic formatting, transcription provenance, and existing stimulus mismatches requiring review.
+
+### Starting previews and live surveys
+
+Open `Assets/Scenes/Experiment.unity` and enter Play mode. Choose condition order
+1–6 and stimulus set 1–3, then select **Preview layout** or **Start session**.
+The setup status now explains separately why either mode is unavailable.
+If live mode requests consent, stop Play mode, select
+`Assets/Data/StudyDefinition.asset`, enter the researcher-approved **Consent Text**,
+save, and restart Play mode. Preview can run without this text.
+
+The Console prints the session folder after its first successful save; it is also
+shown in **ExperimentManager → Session Directory** during Play mode. On Linux,
+live files are under
+`~/.config/unity3d/CatgirlCompilerResearch/Compiler Feedback Study/StudySessions/Participants/<anonymous-ID>/`.
+Preview files go under `StudySessions/Previews/` instead.
+Each submission updates `session.json` and the relevant CSV snapshots:
+`trials.csv`, `ueqs.csv`, `api.csv`, and `preference.csv`. These are separate files
+per anonymous session, not a shared CSV that mixes participants and previews.
+
+The smoke check now clicks the setup buttons through Unity's UI raycaster and
+checks the saved study asset before using synthetic fixtures. It also completes
+a live-mode run with the authored scenarios and temporary test consent, with all
+test output isolated under `/tmp/MeowraLoggingCheck-*`. It never supplies consent
+to the saved study asset. Edit study content through the Inspector: malformed
+hand-edited Unity YAML can disable both modes even when the text looks complete.
+
+### Scored-session CSV fields
+
+Scored sessions save after every submitted response. Question timing uses
+`Stopwatch`: elapsed seconds from question display until Submit, including time
+away from the app. Selecting another answer does not restart the timer. Saving
+and questionnaire time are excluded from the question's response time.
+
+- `trials.csv`: one row per submitted question, with selected answer (A–D),
+  `scored`, `correct`, `response_time_seconds`, scenario ID, condition, trial
+  number, block number, and position within the block.
+- `ueqs.csv`: eight rows per submitted block evaluation; keeps the original
+  selected positions 1–7, item anchors, dimension, block, and condition.
+- `assignment.csv`: all six planned tasks, saved before any answers; includes
+  each task's condition, block, position, and whether it has been submitted.
+
+All three files include anonymous participant ID, counterbalance `order_number`
+(1–6), readable `condition_order`, rotation `stimulus_set` (1–3), full `task_order`,
+and `preview`. The order comes from the schedule frozen when the session starts.
+`session_completed` in trials and assignment becomes true only after the entire
+study is submitted. It replaces the misleading old `trial_section_completed`
+column name; analysis scripts should use column names rather than positions.
+Preview sessions remain unscored and in a separate folder. A completed scored
+session has six trial rows, 24 UEQ-S rows, and six assignment rows (plus headers).
+
+### Instructions and viewing CSV files
+
+The instructions page now speaks in Dr. Meowra's voice, as requested. This is a
+change from the original condition-neutral tutorial: participants receive persona
+framing before their assigned blocks. Question feedback, questionnaires, and
+counterbalancing are unchanged. The trial submission button is labeled **Continue**
+in all conditions; it still saves the selected answer before advancing.
+Edit the instructions in `Experiment.unity` under
+**Canvas → Pages → InstructionsPage → Body → Text** (outside Play mode).
+The body rectangle leaves space for the Continue button below it.
+
+To inspect a session's CSVs:
+1. Start a live session or preview and submit some responses.
+2. Select **ExperimentManager** in the Hierarchy. Copy **Session Directory** from
+   the Inspector (the Console also prints this path when the session starts).
+3. Paste the path into your file manager's location bar, usually Ctrl+L.
+4. Open `trials.csv`, `ueqs.csv`, or `assignment.csv` in LibreOffice Calc or Excel.
+   If an import dialog appears, choose UTF-8, comma separator, and double-quote
+   text delimiter. A text editor can also open these files.
+
+`trials.csv` contains question times in seconds and correctness; `ueqs.csv`
+contains questionnaire responses; `assignment.csv` contains the counterbalance
+and task rotation. Files update after submissions; reopen or reload them to see
+new responses. Before responses are submitted, response CSVs contain headers only.
+Preview files are under `Previews`; live files are under `Participants`.
+On Linux the parent folder is
+`~/.config/unity3d/CatgirlCompilerResearch/Compiler Feedback Study/StudySessions/`.
+
+### One-click access to saved data
+
+On the researcher setup screen:
+- **Open saved data** opens the permanent `StudySessions` folder, containing
+  `Participants` and `Previews`.
+- **Latest live CSVs** opens the most recently saved live session's folder,
+  including partial sessions. It ignores previews and works after app restarts.
+
+The same shortcuts are available under **Tools → Experiment → Open saved data**
+and **Open latest live CSVs**, including outside Play mode. Open the desired CSV
+in your spreadsheet app. The setup status/Editor Console also shows the path.
+Desktop folder opening uses Unity's local-folder support:
+[Application.OpenURL](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Application.OpenURL.html).
+
+Every new session gets a unique anonymous ID and a separate folder. Submitted
+responses are flushed to disk before the app advances; CSV and JSON files persist
+when Play mode stops, Unity closes, or another participant starts. Save failures
+block progression and show Retry. Previous snapshots are retained as `.bak` files.
+The smoke check verifies that later sessions do not modify previous sessions and
+that partial results can be read by a fresh storage service.
+
+An unsubmitted answer remains only on screen and is not saved. A partially
+completed session's submitted data remain available, but the app does not yet
+resume that participant's place after a restart. Storage is local to this computer
+and user account; it is not an off-device backup. Copy the `StudySessions` folder
+to your approved backup location after collection. Keep the Unity Company Name
+and Product Name unchanged to keep using the same persistent storage location.
