@@ -8,7 +8,7 @@ This is a draft based on standard informed-consent elements, not an IRB approval
 or a determination that the study is exempt or minimal risk. Before participant
 recruitment, replace the bracketed contact and data-policy fields and use the
 wording and consent process required by your institution. The draft's 12–18
-minute estimate comes from `Research_Design_Document.pdf` and README.md; confirm
+minute estimate comes from `Research_Design_Document.pdf` and Research_Design.md; confirm
 it in a pilot. No payment is stated following the requested no-reward description.
 Confirm that this matches recruitment arrangements, including any course credit.
 Do not promise that a participant can skip a required questionnaire and continue:

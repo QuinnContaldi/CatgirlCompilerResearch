@@ -15,7 +15,7 @@ public static class ImportStudyPictures
     [MenuItem("Tools/Experiment/Archive/Import Original Study Pictures")]
     public static void Run()
     {
-        string sourceRoot = Path.GetFullPath(Path.Combine(Application.dataPath, "../../Pictures"));
+        string sourceRoot = Path.GetFullPath(Path.Combine(Application.dataPath, "../../Stimuli/ReferenceImages"));
         for (int i = 0; i < Families.Length; i++)
         {
             string family = Families[i];

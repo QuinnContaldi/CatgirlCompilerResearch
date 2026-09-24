@@ -1,4 +1,4 @@
-# Unity-generated files (retain Assets, Packages, ProjectSettings and .meta files).
+# Unity-generated folders. Keep Assets, Packages, ProjectSettings and .meta files.
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -8,6 +8,30 @@
 [Uu]ser[Ss]ettings/
 [Mm]emoryCaptures/
 [Rr]ecordings/
+
+# Crash reports, logs and temporary/backup snapshots.
+mono_crash.*
+crash.dmp
+sysinfo.txt
+*.stackdump
+*.log
+*.tmp
+*.bak
+
+# Participant/preview records and copied study exports are private local data.
+# Deliberately do not ignore every CSV or JSON: research inputs and Unity package
+# manifests may legitimately be source-controlled.
+StudySessions/
+MeowraLoggingCheck-*/
+MeowraPersistenceCheck-*/
+/Results/
+/DataExports/
+session.json
+assignment.csv
+trials.csv
+ueqs.csv
+api.csv
+preference.csv
 
 # IDE-generated files.
 .vs/
@@ -25,9 +49,13 @@
 *.opendb
 *.VC.db
 
-# Local Linux compatibility libraries; not Unity project dependencies.
+# Local workstation dependencies and configuration.
 /.unity-compat/
+.env
+.env.*
+!.env.example
 
 # OS files.
 .DS_Store
 Thumbs.db
+Desktop.ini

@@ -25,7 +25,7 @@ prefab renders them with TextMeshPro and the bundled Liberation Mono font.
 
 ## Transcription and research review
 
-Code was copied from the six `coding/*.c` files, checked against `Pictures/Coding`,
+Code was copied from the six `Stimuli/SourceCode/*.c` files, checked against `Stimuli/ReferenceImages/Coding`,
 with leading blank lines retained and unused trailing blank lines removed.
 Feedback was transcribed from the original 18 feedback pictures. Terminal-width
 line breaks inside sentences were removed so Unity can wrap naturally. Source

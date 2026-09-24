@@ -5,7 +5,7 @@ for the current implementation and stimulus-review notes. The description below
 records the earlier image implementation; pictures are retained for comparison.
 The archive importer no longer modifies the trial prefab.
 
-All 24 source PNGs in `Pictures/` are copied unchanged into
+All 24 source PNGs in `Stimuli/ReferenceImages/` are copied unchanged into
 `UnityProject/Assets/Images/Study/`. Each is imported as an uncompressed Sprite
 (a Unity image asset usable by the UI), with mipmaps disabled for clear text.
 
@@ -18,7 +18,7 @@ All 24 source PNGs in `Pictures/` are copied unchanged into
 | Scenario05 | function_call |
 | Scenario06 | operator_use |
 
-This follows the scenario-family order in the README. Source filename aliases
+This follows the scenario-family order in Research_Design.md. Source filename aliases
 `statment_termination`, `delimitor_matching`, and Neutral's `type_mismatch`
 map to the corresponding correctly spelled family names in Unity.
 

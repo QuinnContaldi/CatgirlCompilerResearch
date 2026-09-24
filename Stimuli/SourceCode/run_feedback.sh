@@ -15,6 +15,10 @@
 # ============================================================
 
 
+# Resolve source files relative to this tool, even when launched from the repo root.
+stimulus_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd -- "$stimulus_dir" || exit 1
+
 MODE="$1"
 CONDITION="$2"
 
