@@ -23,7 +23,7 @@ namespace Meowra.UI
         }
         public int[] CopyPositions() => (int[])positions.Clone();
 
-        public void Build(System.Action onSubmit)
+        public void Build(System.Action onSubmit, StudyDefinition study)
         {
             var existingText = GetComponentInChildren<Text>(true);
             font = existingText.font;
@@ -32,12 +32,12 @@ namespace Meowra.UI
             foreach (Transform child in transform) child.gameObject.SetActive(child.gameObject == submit.gameObject);
             submit.onClick = new Button.ButtonClickedEvent();
             submit.onClick.AddListener(() => onSubmit());
-            submit.GetComponentInChildren<Text>(true).text = "Submit and continue";
+            submit.GetComponentInChildren<Text>(true).text = study.submitLabel;
             Place((RectTransform)submit.transform, .35f, .02f, .65f, .095f);
-            Label("Title", "UEQ-S", 28, 0, .89f, 1, .98f);
-            Label("Instructions", "Please rate the feedback style from the two tasks you just completed.\nSelect one position between each pair of words.", 20, 0, .79f, 1, .9f);
-            Label("PragmaticQuality", "Pragmatic Quality", 20, 0, .735f, 1, .79f);
-            Label("HedonicQuality", "Hedonic Quality", 20, 0, .395f, 1, .45f);
+            Label("Title", study.ueqsHeading, 28, 0, .89f, 1, .98f);
+            Label("Instructions", study.ueqsInstructions, 20, 0, .79f, 1, .9f);
+            Label("PragmaticQuality", study.pragmaticHeading, 20, 0, .735f, 1, .79f);
+            Label("HedonicQuality", study.hedonicHeading, 20, 0, .395f, 1, .45f);
             for (int item = 0; item < UeqsItems.Count; item++)
             {
                 float top = item < 4 ? .735f - item * .07f : .395f - (item - 4) * .07f;

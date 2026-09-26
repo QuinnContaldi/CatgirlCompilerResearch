@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 617ff3bb43bfadd10950d83f0f31a239, type: 3}
+  m_Name: B3
+  m_EditorClassIdentifier: Assembly-CSharp::Meowra.Data.ScenarioData
+  scenarioId: B3
+  taskSet: B
+  matchedPairId: pair-3
+  errorCategory: delimiter-mismatch
+  codeText: "int value = 7;\n\nif (value < 10 {\n    printf(\"Small\");\n}"
+  question: What is the primary issue in this code?
+  answerA: The condition is missing its comparison operator.
+  answerB: The if block is missing its closing brace.
+  answerC: The closing parenthesis of the if condition is missing.
+  answerD: There is no issue with the code.
+  correctAnswer: 2

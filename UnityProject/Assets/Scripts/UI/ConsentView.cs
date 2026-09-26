@@ -1,3 +1,4 @@
+using Meowra.Data;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,12 +11,12 @@ namespace Meowra.UI
         private ScrollRect scroll;
         public string DisplayedText => body.text;
 
-        public void Build()
+        public void Build(StudyDefinition study)
         {
             var title = transform.Find("Title").GetComponent<Text>();
-            title.text = "Consent to participate";
+            title.text = study.consentHeading;
             Place(title.rectTransform, .04f, .84f, .96f, .98f);
-            transform.Find("ContinueButton").GetComponentInChildren<Text>().text = "Accept";
+            transform.Find("ContinueButton").GetComponentInChildren<Text>().text = study.acceptLabel;
             body = transform.Find("Body").GetComponent<Text>();
 
             var box = new GameObject("ConsentTextBox", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
@@ -47,16 +48,14 @@ namespace Meowra.UI
 
             var hint = Instantiate(title, transform);
             hint.name = "ScrollHint";
-            hint.text = "Scroll to read all information.";
+            hint.text = study.scrollHint;
             hint.fontSize = 18;
             Place(hint.rectTransform, .04f, .145f, .96f, .19f);
         }
 
         public void Show(string text)
         {
-            body.text = string.IsNullOrWhiteSpace(text)
-                ? "[Preview: enter your consent information in Study Definition > Consent Text.]"
-                : text;
+            body.text = text;
             scroll.StopMovement();
             scroll.content.anchoredPosition = Vector2.zero;
             scroll.verticalNormalizedPosition = 1;

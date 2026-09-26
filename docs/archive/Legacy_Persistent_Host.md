@@ -1,3 +1,6 @@
+> LEGACY: superseded experiment. See [the current protocol](../../Research_Design.md).
+> Historical descriptions and paths below are preserved for provenance only.
+
 # Persistent Dr. Meowra host — September 2026
 
 Requested protocol revision: Dr. Meowra is now present across the whole study.

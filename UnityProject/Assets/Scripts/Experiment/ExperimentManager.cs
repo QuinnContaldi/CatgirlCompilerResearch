@@ -7,7 +7,8 @@ using UnityEngine;
 
 namespace Meowra.Experiment
 {
-    public enum ExperimentStage { Setup, Welcome, Instructions, Introduction, Trial, Evaluation, Complete, Api, Preference, OpenResponse, HostIntroduction }
+    // Api is a reserved historical value, never entered by the current flow.
+    public enum ExperimentStage { Setup, Welcome, Instructions, Introduction, Trial, Evaluation, Complete, Api, Preference, OpenResponse, HostIntroduction, Background, Transition, BlockCompletion }
 
     public sealed class ExperimentManager : MonoBehaviour
     {
@@ -31,7 +32,7 @@ namespace Meowra.Experiment
         private DataLogger logger;
         private ConsentView consent;
         private UeqsView evaluation;
-        private FinalMeasuresView api;
+        private FinalMeasuresView background;
         private FinalMeasuresView preference;
         private FinalMeasuresView openResponse;
         private Action afterSave;
@@ -49,18 +50,18 @@ namespace Meowra.Experiment
             view.SaveRetryRequested += RetrySave;
             trials.Submitted += OnTrialSubmitted;
             var orders = new List<string>();
-            for (int i = 1; i <= 6; i++) orders.Add(Counterbalancing.GetOrderLabel(i));
+            for (int i = 1; i <= Counterbalancing.CellCount; i++) orders.Add(Counterbalancing.GetOrderLabel(i));
             consent = welcomePage.AddComponent<ConsentView>();
-            consent.Build();
+            consent.Build(study);
             evaluation = evaluationPage.AddComponent<UeqsView>();
-            evaluation.Build(ContinueEvaluation);
-            api = FinalMeasuresView.Create(evaluationPage, "ApiPage", ContinueApi);
-            api.BuildApi("1 = Strongly disagree    2 = Disagree    3 = Neutral    4 = Agree    5 = Strongly agree");
-            preference = FinalMeasuresView.Create(evaluationPage, "PreferencePage", ContinuePreference);
+            evaluation.Build(ContinueEvaluation, study);
+            background = FinalMeasuresView.Create(evaluationPage, "BackgroundPage", ContinueBackground, study);
+            background.BuildReason(study.backgroundPrompt);
+            preference = FinalMeasuresView.Create(evaluationPage, "PreferencePage", ContinuePreference, study);
             preference.BuildPreference();
-            openResponse = FinalMeasuresView.Create(evaluationPage, "OpenResponsePage", ContinueOpenResponse);
-            openResponse.BuildReason();
-            pages.RegisterPage(api.gameObject);
+            openResponse = FinalMeasuresView.Create(evaluationPage, "OpenResponsePage", ContinueOpenResponse, study);
+            openResponse.BuildReason(study.reasonPrompt);
+            pages.RegisterPage(background.gameObject);
             pages.RegisterPage(preference.gameObject);
             pages.RegisterPage(openResponse.gameObject);
             view.BuildHost(welcomePage.transform.parent);
@@ -92,8 +93,9 @@ namespace Meowra.Experiment
                 view.ShowSetup(study);
                 return;
             }
-            schedule = Counterbalancing.BuildSchedule(study, view.OrderNumber, view.StimulusSet);
-            session = new ParticipantSession(view.OrderNumber, view.StimulusSet, preview, schedule);
+            schedule = Counterbalancing.BuildSchedule(study, view.OrderNumber);
+            session = new ParticipantSession(view.OrderNumber, preview, schedule);
+            session.SetStudyVersion(study.studyVersion);
             trialIndex = 0;
             view.ShowSession(preview);
             sessionDirectory = logger.GetSessionDirectory(session);
@@ -111,61 +113,80 @@ namespace Meowra.Experiment
             if (!session.AcceptConsent(consent.DisplayedText)) return;
             SaveThen(() =>
             {
-                view.ShowPersonaMessage(study.hostIntroduction);
+                view.ShowPersonaMessage(study.overview, study.overviewHeading);
                 Navigate(ExperimentStage.HostIntroduction, introductionPage);
             });
         }
 
         public void ContinueInstructions()
         {
-            if (!SavePending && stage == ExperimentStage.Instructions) BeginBlock();
+            if (!SavePending && stage == ExperimentStage.Instructions) ShowTrial();
+        }
+
+        public void ContinueBackground()
+        {
+            if (SavePending || stage != ExperimentStage.Background || !session.RecordBackground(background.Reason)) return;
+            SaveThen(BeginBlock);
         }
 
         private void BeginBlock()
         {
-            if (CurrentTrial.Condition == FeedbackCondition.Meowra)
-            {
-                view.ShowIntroduction(study);
-                Navigate(ExperimentStage.Introduction, introductionPage);
-            }
-            else ShowTrial();
+            bool meowra = CurrentTrial.Condition == FeedbackCondition.Meowra;
+            view.ShowPersonaMessage(meowra ? study.meowraBlockIntroduction : study.neutralIntroduction,
+                meowra ? study.meowraName : study.introductionHeading);
+            Navigate(ExperimentStage.Introduction, introductionPage);
         }
 
         public void ContinueIntroduction()
         {
             if (SavePending) return;
-            if (stage == ExperimentStage.HostIntroduction) Navigate(ExperimentStage.Instructions, instructionsPage);
-            else if (stage == ExperimentStage.Introduction) ShowTrial();
+            if (stage == ExperimentStage.HostIntroduction)
+            {
+                background.Begin();
+                Navigate(ExperimentStage.Background, background.gameObject);
+            }
+            else if (stage == ExperimentStage.Introduction)
+            {
+                view.ShowPersonaMessage(CurrentTrial.Condition == FeedbackCondition.Meowra ? study.meowraTutorial : study.neutralTutorial, study.tutorialHeading);
+                Navigate(ExperimentStage.Instructions, introductionPage);
+            }
+            else if (stage == ExperimentStage.Instructions || stage == ExperimentStage.Transition) ShowTrial();
+            else if (stage == ExperimentStage.BlockCompletion)
+            {
+                evaluation.Begin();
+                Navigate(ExperimentStage.Evaluation, evaluationPage);
+            }
         }
 
         private void ShowTrial()
         {
             Navigate(ExperimentStage.Trial, trialPage);
-            trials.Begin(CurrentTrial, session.IsPreview, study.meowraPortrait, trialIndex + 1, schedule.Count);
+            trials.Begin(CurrentTrial, session.IsPreview, study, trialIndex % 4 + 1, 4);
         }
 
         private void OnTrialSubmitted(TrialResponse response)
         {
             if (SavePending || stage != ExperimentStage.Trial || !session.Record(response)) return;
-            response.SetEncouragement(study.answerEncouragements[trialIndex % study.answerEncouragements.Length]);
+
             SaveThen(AdvanceAfterTrial);
         }
 
         private void AdvanceAfterTrial()
         {
+            bool meowra = CurrentTrial.Condition == FeedbackCondition.Meowra;
             trialIndex++;
-            if (trialIndex % 2 == 0)
-            {
-                evaluation.Begin();
-                Navigate(ExperimentStage.Evaluation, evaluationPage);
-            }
-            else ShowTrial();
+            bool complete = trialIndex % 4 == 0;
+            string message = complete
+                ? (meowra ? study.meowraCompletion : study.neutralCompletion)
+                : (meowra ? study.meowraTransitions : study.neutralTransitions)[trialIndex % 4 - 1];
+            view.ShowPersonaMessage(message, complete ? study.completionHeading : study.progressHeading);
+            Navigate(complete ? ExperimentStage.BlockCompletion : ExperimentStage.Transition, introductionPage);
         }
 
         public void ContinueEvaluation()
         {
             if (SavePending || stage != ExperimentStage.Evaluation || !evaluation.IsComplete) return;
-            var response = new UeqsResponse(trialIndex / 2, schedule[trialIndex - 1].Condition, evaluation.CopyPositions());
+            var response = new UeqsResponse(trialIndex / 4, schedule[trialIndex - 1].Condition, evaluation.CopyPositions());
             if (!session.Record(response)) return;
             SaveThen(AdvanceAfterEvaluation);
         }
@@ -175,20 +196,9 @@ namespace Meowra.Experiment
             if (trialIndex < schedule.Count) BeginBlock();
             else
             {
-                api.Begin();
-                Navigate(ExperimentStage.Api, api.gameObject);
-            }
-        }
-
-        public void ContinueApi()
-        {
-            if (SavePending || stage != ExperimentStage.Api || !api.ApiComplete) return;
-            if (!session.Record(new ApiResponse(api.CopyRatings()))) return;
-            SaveThen(() =>
-            {
                 preference.Begin();
                 Navigate(ExperimentStage.Preference, preference.gameObject);
-            });
+            }
         }
 
         public void ContinuePreference()
@@ -209,7 +219,7 @@ namespace Meowra.Experiment
             session.Complete();
             SaveThen(() =>
             {
-                view.ShowCompletion(session.IsPreview);
+                view.ShowCompletion(session.IsPreview, study);
                 Navigate(ExperimentStage.Complete, completionPage);
             });
         }
@@ -234,7 +244,7 @@ namespace Meowra.Experiment
             }
             catch (Exception error) when (error is IOException || error is UnauthorizedAccessException || error is System.Security.SecurityException)
             {
-                view.ShowSaveError();
+                view.ShowSaveError(study);
                 Debug.LogWarning($"Session save failed at {sessionDirectory}: {error.Message}");
                 return;
             }
@@ -255,24 +265,23 @@ namespace Meowra.Experiment
         {
             stage = nextStage;
             pages.ShowPage(page);
-            string quote = study == null ? "" : study.hostQuote;
-            if (study != null)
+            bool treatment = nextStage == ExperimentStage.Introduction || nextStage == ExperimentStage.Instructions ||
+                nextStage == ExperimentStage.Trial || nextStage == ExperimentStage.Transition || nextStage == ExperimentStage.BlockCompletion;
+            int index = nextStage == ExperimentStage.Transition || nextStage == ExperimentStage.BlockCompletion ? trialIndex - 1 : trialIndex;
+            bool meowra = treatment && schedule[index].Condition == FeedbackCondition.Meowra;
+            string dialogue = treatment ? study.taskHeading : study.studyHeading;
+            if (meowra)
             {
-                if (nextStage == ExperimentStage.Trial) quote = study.answerEncouragements[trialIndex % study.answerEncouragements.Length];
-                else if (nextStage == ExperimentStage.Welcome) quote = study.consentQuote;
-                else if (nextStage == ExperimentStage.HostIntroduction) quote = study.hostIntroductionQuote;
-                else if (nextStage == ExperimentStage.Instructions) quote = study.instructionsQuote;
-                else if (nextStage == ExperimentStage.Introduction) quote = study.blockIntroductionQuote;
-                // Follow block position, so wording is fixed across counterbalanced orders.
-                else if (nextStage == ExperimentStage.Evaluation)
-                    quote = trialIndex == 2 ? study.surveyQuote :
-                        trialIndex == 4 ? study.secondEvaluationQuote : study.thirdEvaluationQuote;
-                else if (nextStage == ExperimentStage.Api) quote = study.personaMeasuresQuote;
-                else if (nextStage == ExperimentStage.Preference) quote = study.preferenceQuote;
-                else if (nextStage == ExperimentStage.OpenResponse) quote = study.openResponseQuote;
-                else if (nextStage == ExperimentStage.Complete) quote = study.completionQuote;
+                switch (nextStage)
+                {
+                    case ExperimentStage.Introduction: dialogue = study.meowraIntroductionDialogue; break;
+                    case ExperimentStage.Instructions: dialogue = study.meowraTutorialDialogue; break;
+                    case ExperimentStage.Trial: dialogue = study.meowraTaskDialogue[trialIndex % 4]; break;
+                    case ExperimentStage.Transition: dialogue = study.meowraTransitions[index % 4]; break;
+                    case ExperimentStage.BlockCompletion: dialogue = study.meowraCompletionDialogue; break;
+                }
             }
-            view.ShowHost(study, quote, nextStage == ExperimentStage.Trial);
+            view.ShowHost(study, dialogue, meowra);
         }
     }
 }

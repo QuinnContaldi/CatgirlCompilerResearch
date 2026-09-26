@@ -1,25 +1,13 @@
-# Original stimulus materials
+# Current programming tasks
 
-- `SourceCode/`: six C examples and `run_feedback.sh`, the original diagnostic
-  authoring helper. It requires Bash and GCC and can be called from any directory:
+Scientific authority: [Research_Design.md](../Research_Design.md), sections 12–20.
+`SetA/` and `SetB/` each contain four editable JSON task definitions, with embedded
+answer keys (`correctAnswer`: 0=A, 1=B, 2=C, 3=D) and matched-pair IDs.
 
-  ```bash
-  ./Stimuli/SourceCode/run_feedback.sh all raw
-  ```
+Use **Tools → Experiment → Import Study Content** to update Unity's eight runtime
+assets. Do not edit those generated copies independently. Each task is usable in
+either condition; condition presentation lives in `study-content/`.
 
-- `ReferenceImages/`: original screenshots grouped into Coding, Raw, Neutral,
-  and Meowra. Original spellings are preserved so source material is unchanged.
-
-These are reference/authoring materials, not participant-session inputs.
-The current code and feedback text live in Unity's six Scenario assets under
-`UnityProject/Assets/Data/Scenarios/`. See [Study_Text.md](../Study_Text.md) for
-transcription notes and unresolved content differences. Editing a C source or
-reference image does not update those text assets automatically.
-
-**Tools → Experiment → Archive → Import Original Study Pictures** copies these
-images into the existing Unity archive and updates only the hidden image
-references. It does not replace the participant-facing text.
-
-Former locations: `coding/` is now `Stimuli/SourceCode/`; `Pictures/` is now
-`Stimuli/ReferenceImages/`. The original files were moved without changing the
-C snippets or screenshots.
+These are draft stimuli. The dated [review](../docs/Content_Review.md) records
+remaining pilot considerations. Original six-task/compiler-feedback materials are
+in [the archive](../docs/archive/compiler-feedback/README.md).

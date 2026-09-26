@@ -20,14 +20,13 @@ namespace Meowra.UI
 
         private Text hostDialogue;
         private Image hostPortrait;
-        private Image largePortrait;
-        private RectTransform pagesRect;
+                private RectTransform pagesRect;
         private Sprite headPortrait;
         private Sprite portraitSource;
 
         public void BuildHost(Transform pageContainer)
         {
-            // Reserve space outside the pages so the same host remains visible everywhere.
+            // Keep identical page geometry, whether the header includes Meowra or not.
             var canvas = setupStatus.canvas.rootCanvas.transform;
             var header = canvas.Find("Header");
             if (header != null) header.gameObject.SetActive(false);
@@ -67,14 +66,13 @@ namespace Meowra.UI
             hostDialogue.rectTransform.offsetMax = new Vector2(-16, -10);
         }
 
-        public void ShowHost(StudyDefinition study, string quote, bool questionPage)
+        public void ShowHost(StudyDefinition study, string quote, bool showMeowra)
         {
             var source = study == null ? null : study.meowraPortrait;
             if (source != portraitSource)
             {
                 if (headPortrait != null) Destroy(headPortrait);
                 portraitSource = source;
-                // Crop the displayed sprite only; the original artwork stays untouched.
                 if (source != null)
                 {
                     var r = source.rect;
@@ -83,24 +81,12 @@ namespace Meowra.UI
                             r.width * .41f, r.height * .40f), new Vector2(.5f, .5f));
                 }
             }
-            if (largePortrait == null)
-            {
-                var artwork = new GameObject("MeowraLargePortrait", typeof(RectTransform), typeof(Image));
-                artwork.transform.SetParent(setupStatus.canvas.rootCanvas.transform, false);
-                largePortrait = artwork.GetComponent<Image>();
-                largePortrait.preserveAspect = true;
-                largePortrait.raycastTarget = false;
-                largePortrait.rectTransform.anchorMin = new Vector2(.025f, .12f);
-                largePortrait.rectTransform.anchorMax = new Vector2(.34f, .77f);
-                largePortrait.rectTransform.offsetMin = largePortrait.rectTransform.offsetMax = Vector2.zero;
-            }
+            // Fixed page geometry across conditions: artwork must not change task width.
             hostPortrait.sprite = headPortrait;
-            hostPortrait.enabled = questionPage && source != null;
-            largePortrait.sprite = source;
-            largePortrait.enabled = !questionPage && source != null;
-            pagesRect.anchorMin = new Vector2(questionPage ? .06f : .36f, pagesRect.anchorMin.y);
-            hostDialogue.rectTransform.anchorMin = new Vector2(questionPage ? .2f : .025f, 0);
-            hostDialogue.text = "Dr. Meowra\n" + quote;
+            hostPortrait.enabled = showMeowra && source != null;
+            pagesRect.anchorMin = new Vector2(.06f, pagesRect.anchorMin.y);
+            hostDialogue.rectTransform.anchorMin = new Vector2(.2f, 0);
+            hostDialogue.text = showMeowra ? study.meowraName + "\n" + quote : quote;
         }
 
         private void OnDestroy()
@@ -108,7 +94,7 @@ namespace Meowra.UI
             if (headPortrait != null) Destroy(headPortrait);
         }
 
-        public void ShowPersonaMessage(string message)
+        public void ShowPersonaMessage(string message, string heading)
         {
             introduction.text = message;
             var scroll = introduction.GetComponentInParent<ScrollRect>(true);
@@ -117,7 +103,7 @@ namespace Meowra.UI
             scrollRect.anchorMax = new Vector2(.95f, .82f);
             scroll.verticalNormalizedPosition = 1;
             var title = scroll.transform.parent.Find("Title");
-            if (title != null) title.GetComponent<Text>().text = "Dr. Meowra";
+            if (title != null) title.GetComponent<Text>().text = heading;
             introductionPortrait.gameObject.SetActive(false);
         }
 
@@ -125,7 +111,6 @@ namespace Meowra.UI
         public event Action SaveRetryRequested;
 
         public int OrderNumber => orderDropdown.value + 1;
-        public int StimulusSet => stimulusSetDropdown.value + 1;
 
         public void BuildResultsAccess(Action openAll, Action openLatest)
         {
@@ -158,8 +143,11 @@ namespace Meowra.UI
         {
             orderDropdown.ClearOptions();
             orderDropdown.AddOptions(orders);
-            stimulusSetDropdown.ClearOptions();
-            stimulusSetDropdown.AddOptions(new List<string> { "1: Original pairs", "2: Rotate pairs once", "3: Rotate pairs twice" });
+            stimulusSetDropdown.gameObject.SetActive(false);
+            var parent = orderDropdown.transform.parent;
+            parent.Find("SetLabel").gameObject.SetActive(false);
+            parent.Find("OrderLabel").GetComponent<Text>().text = "Assignment cell";
+
         }
 
         public void ShowSetup(StudyDefinition study)
@@ -176,7 +164,7 @@ namespace Meowra.UI
             previewBanner.SetActive(false);
         }
 
-        public void ShowSaveError()
+        public void ShowSaveError(StudyDefinition study)
         {
             if (saveErrorPanel == null)
             {
@@ -194,7 +182,7 @@ namespace Meowra.UI
                 message.font = setupStatus.font;
                 message.fontSize = 24;
                 message.alignment = TextAnchor.MiddleCenter;
-                message.text = "Unable to save. Please notify the researcher.\nYour response is held in memory. Keep this app open.\nRetry after restoring access to the save folder.";
+                message.text = study.saveErrorMessage;
                 message.rectTransform.sizeDelta = new Vector2(760, 200);
                 message.rectTransform.anchoredPosition = new Vector2(0, 70);
                 var button = Instantiate(startButton, rect);
@@ -202,7 +190,7 @@ namespace Meowra.UI
                 button.onClick = new Button.ButtonClickedEvent();
                 button.onClick.AddListener(() => SaveRetryRequested?.Invoke());
                 button.interactable = true;
-                button.GetComponentInChildren<Text>().text = "Retry saving";
+                button.GetComponentInChildren<Text>().text = study.retryLabel;
                 var buttonRect = (RectTransform)button.transform;
                 buttonRect.anchorMin = buttonRect.anchorMax = new Vector2(.5f, .5f);
                 buttonRect.pivot = new Vector2(.5f, .5f);
@@ -221,17 +209,11 @@ namespace Meowra.UI
 
         public void ShowSession(bool preview) => previewBanner.SetActive(preview);
 
-        public void ShowIntroduction(StudyDefinition study)
-        {
-            ShowPersonaMessage(string.IsNullOrWhiteSpace(study.meowraIntroduction)
-                ? "Alright, now it's my turn to help you with the errors, nya!" : study.meowraIntroduction);
-        }
-
-        public void ShowCompletion(bool preview)
+        public void ShowCompletion(bool preview, StudyDefinition study)
         {
             completion.text = preview
-                ? "Layout preview complete. Preview answers are not scored."
-                : "Study complete. Thank you! Please notify the researcher.";
+                ? study.previewCompletion
+                : study.studyCompletion;
         }
     }
 }

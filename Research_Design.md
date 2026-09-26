@@ -1,692 +1,890 @@
-> Research-design reference preserved from the original README. For the current
-> application, setup, and results access, see [README.md](README.md). Some planned
-> protocol sections below are not yet implemented; the application README identifies
-> the current flow and differences.
+# Designing for the Participant
 
-# Can a Catgirl Make Compiler Errors Better?
+## Exploring Playful Interfaces in Programming Language User Studies
 
-<p align="center">
-  <img src="DrMeowra.jpg" alt="Dr. Meowra" width="340">
-</p>
+**Working research-design document — September 2026**
 
-<p align="center">
-  <strong>Dr. Meowra Persona-Based Compiler Feedback Study</strong><br>
-  Programming Languages + Human-Computer Interaction + AI
-</p>
+**Planned implementation:** Unity  
+**Design:** Two-condition within-subject crossover study  
+**Primary UX instrument:** UEQ-S  
+**Primary comparison:** Dr. Meowra vs. Neutral on UEQ-S Hedonic Quality  
+**Secondary UX outcome:** UEQ-S Pragmatic Quality  
+**Secondary task outcomes:** Accuracy and response time  
+**Preference outcome:** Preferred format for participating in a future similar study  
+**Qualitative outcome:** Open-ended explanation of preference  
+**Target completion date for data collection:** October 9, 2026
 
 ---
 
-## Current Protocol Status
+# 1. Study in One Page
 
-**Current protocol date:** September 18, 2026  
-**Study type:** Small exploratory within-subject HCI study  
-**Implementation:** Unity  
-**Primary measurement:** UEQ-S  
-**Persona characterization:** Agent Persona Instrument (Credible + Engaging subscales)  
-**Planned sample:** approximately 15–20 participants, with 18 as the practical target
+Programming-language research increasingly recognizes the importance of empirical evidence about programmers. However, human-subject studies remain comparatively uncommon in programming-language research, and user evaluations are difficult and costly to conduct. Stefik et al. (2014) documented the limited empirical basis used for human-factors decisions in programming-language research; in the comparison that motivates this project, programming-language user studies were the least represented group among the research categories shown. Related work in software engineering has also documented practical barriers to user evaluation, including participant recruitment and researcher time.
 
-This README is intended to be the **canonical high-level description of the current experiment** and the best starting point for another researcher who wants to understand or reproduce the study.
+This project asks a different methodological question from a conventional PL user study:
 
+> **Can the participant-facing interface of a programming-language user study be intentionally designed to improve the participant experience without changing the underlying scientific task?**
 
-# 1. Study Overview
+The study compares two versions of the same short programming-language experiment:
 
-Compiler diagnostics are an interface between a programming language implementation and a programmer. They are technically generated messages, but they are consumed by humans.
+1. **Neutral Study Interface**  
+   A conventional, plain research interface. Instructions are factual and administrative. There is no character, social host, playful framing, or encouragement beyond what is functionally necessary.
 
-A conventional compiler error may be accurate while still being terse, impersonal, difficult to interpret, or unpleasant to work with. Modern large language models make it practical to transform raw diagnostics into contextual natural-language explanations. That creates a new HCI question:
+2. **Dr. Meowra Study Interface**  
+   A playful, encouraging, character-mediated research interface. Dr. Meowra is visibly present throughout the experimental block, greets the participant, presents the same functional instructions in a conversational style, acknowledges progress, and encourages the participant to continue. She does **not** provide task hints, correctness feedback, or additional technical information.
 
-> **If the technical explanation is already good, does giving that explanation a recognizable social persona improve the user experience of compiler feedback?**
+The scientific task itself is held as constant as practical. Participants answer short multiple-choice questions about simple C/C-like programming errors. Two matched four-question task sets are used so that participants do not answer the exact same questions twice.
 
-This study explores that question using **Dr. Meowra**, a friendly anthropomorphic catgirl programming assistant.
+The primary question is whether the Meowra interface produces a measurably better **hedonic user experience**. The study also examines whether the playful presentation introduces tradeoffs in **pragmatic user experience**, task accuracy, or task response time.
 
-The experiment compares three feedback conditions:
+The final question asks which format participants would prefer if they were invited to participate in another programming-language study of similar length and difficulty, followed by an open-ended explanation of why.
 
-| Condition | Participant sees | Scientific purpose |
-| --- | --- | --- |
-| **Raw** | Conventional compiler diagnostic | Technical baseline |
-| **Neutral** | Human-centered natural-language explanation | Measures the benefit of explanatory rewriting |
-| **Dr. Meowra** | Approximately matched technical explanation delivered through a persistent social persona | Measures the added effect of persona/social framing |
+---
 
-The conceptual progression is:
+# 2. Core Contribution
+
+This study is not primarily about catgirls, anthropomorphism, compiler diagnostics, or AI-generated explanations.
+
+The methodological contribution is:
+
+> **The participant-facing interface of a user study is itself an interactive system and can therefore be treated as a design variable.**
+
+Programming-language researchers routinely make careful decisions about:
+
+- experimental tasks;
+- treatment ordering;
+- measurements;
+- statistical analysis;
+- sampling;
+- validity threats; and
+- implementation.
+
+This study asks whether the **experience of participating in the experiment itself** should also receive deliberate design attention.
+
+The project explores whether a playful, supportive participant-facing layer can improve the experience of participating in a PL study while preserving the same underlying scientific task.
+
+---
+
+# 3. Problem Statement
+
+Programming-language design includes many decisions that directly affect human programmers, yet empirical evidence about those human effects has historically been limited.
+
+Stefik et al. (2014) systematically examined empirical evidence used for human-factors decisions in programming-language research. Their analysis was motivated by the broader concern that human-facing language-design claims often lack the kind of empirical evidence expected in other human-centered disciplines.
+
+The practical difficulty of running user evaluations is also well documented outside PL. Buse, Sadowski, and Weimer (2011) surveyed software-engineering researchers about barriers to user evaluation. Most respondents agreed that user evaluation was difficult; recruitment and time commitment were among the most commonly identified barriers.
+
+These observations create a methodological tension:
 
 ```text
-Raw Compiler
-     |
-     | add human-centered explanation
-     v
-Neutral Explanation
-     |
-     | add social/persona framing
-     v
-Dr. Meowra
+PL needs evidence about programmers
+              ↓
+evidence requires participant studies
+              ↓
+participant studies are expensive and difficult
+              ↓
+the participant experience itself may deserve design attention
 ```
 
-This structure allows the study to ask two distinct questions rather than comparing only a bad baseline with a much richer treatment.
+Research methodology usually focuses on scientific validity from the researcher's perspective. This project adds a participant-centered question:
+
+> **Can we design the research interface so that participation itself is a better user experience while still preserving the study task?**
+
+The present experiment is intentionally narrow. It does not attempt to prove that playful interfaces solve recruitment, retention, fatigue, motivation, or any other broad problem. It first tests the more fundamental premise that the participant-facing study environment can be redesigned in a way that measurably changes UX without obviously compromising the underlying task.
 
 ---
 
-# 2. Research Framing
+# 4. Research Scope
 
-The project is primarily an **HCI + AI study in a programming-languages context**.
+## 4.1 What This Study Tests
 
-It is not intended to prove that:
+The study tests whether a **playful, character-mediated participant-facing interface** changes:
 
-- Dr. Meowra makes programmers faster;
-- persona-based feedback improves debugging performance;
-- cat ears themselves improve user experience;
-- a single wording choice causes an effect;
-- an LLM is intrinsically better than a compiler diagnostic; or
-- results from a small student sample generalize to all programmers.
+- Hedonic Quality;
+- Pragmatic Quality;
+- stated preference for future participation;
+- programming-task accuracy; and
+- programming-task response time.
 
-Instead, the study asks whether **persona-based compiler feedback is a promising UX design direction worth deeper investigation**.
+## 4.2 What This Study Does Not Test
 
-The broader PL+HCI motivation is that programming tools are often evaluated primarily in terms of correctness, performance, language features, and technical capability. Those tools are also interactive systems. Their users experience trust, frustration, clarity, engagement, cognitive effort, and preference.
+The study does **not** claim to establish that:
 
-Compiler feedback is therefore not only technical output. It is part of the programming-language user experience.
+- all user studies should contain characters;
+- catgirl interfaces are universally better;
+- playful interfaces increase actual recruitment rates;
+- playful interfaces reduce attrition;
+- playful interfaces improve truthfulness;
+- playful interfaces improve learning;
+- playful interfaces improve programming ability;
+- playful interfaces eliminate period effects;
+- playful interfaces are appropriate for every research population;
+- any single Meowra design feature independently causes an effect; or
+- a nonsignificant task-performance difference proves equivalence.
 
----
-
-# 3. Research Question and Hypotheses
-
-## Primary Research Question
-
-> **RQ1. How does compiler-feedback presentation style affect programmers’ subjective user experience when the amount of technical guidance and explanatory content are controlled as closely as practical across conditions?**
-
-## H1 — Information-Design Effect
-
-> **Neutral human-centered explanations will receive higher UEQ-S Pragmatic Quality scores than Raw compiler diagnostics.**
-
-This comparison asks whether explanatory rewriting improves the practical experience of compiler feedback.
-
-```text
-Raw Pragmatic Quality
-        vs.
-Neutral Pragmatic Quality
-```
-
-## H2 — Persona Effect
-
-> **Dr. Meowra will receive higher UEQ-S Hedonic Quality scores than Neutral explanations.**
-
-This comparison asks whether adding a recognizable social persona changes the experiential quality of the interaction after the technical explanation has already been improved.
-
-```text
-Neutral Hedonic Quality
-        vs.
-Dr. Meowra Hedonic Quality
-```
-
-The **Neutral vs. Dr. Meowra comparison** is the most important comparison for the persona argument because the technical guidance is intended to remain approximately matched.
-
-A direct Raw vs. Meowra comparison can still be shown descriptively, but it is not the cleanest causal test of persona because those two conditions differ in both explanation quality and persona framing.
+The treatment is intentionally a **package**. If the package appears promising, future studies can isolate individual design components.
 
 ---
 
-# 4. Why Dr. Meowra Is a “Persona Package”
+# 5. Research Questions and Hypothesis
 
-Dr. Meowra is intentionally not reduced to one isolated design element.
+## RQ1 — Participant User Experience
 
-The treatment includes:
+> **How does a playful, character-mediated study interface affect the user experience of participating in a programming-language user study compared with a neutral study interface?**
 
-- a persistent character identity;
-- the name **Dr. Meowra**;
-- a static visual avatar;
-- feline `kemonomimi`/catgirl visual cues;
-- warm and encouraging language;
-- a competent and nonjudgmental communication style;
-- a brief introduction before the Meowra condition; and
-- continuity across the two Meowra tasks.
+### H1 — Hedonic Quality
 
-The current experiment therefore evaluates **persona-based presentation as a composite treatment**.
+> **Participants will report higher UEQ-S Hedonic Quality in the Dr. Meowra condition than in the Neutral condition.**
 
-The study does **not** claim that any one component caused an observed effect.
+This is the primary confirmatory hypothesis.
 
-For example, if Meowra receives higher Hedonic Quality ratings, the current experiment cannot determine whether that increase came primarily from:
+The purpose of this outcome is not merely to ask whether a deliberately playful interface is "fun." It serves two functions:
 
-- the avatar;
-- the name;
-- the catgirl visual design;
-- supportive wording;
-- social framing;
-- encouragement;
-- character continuity; or
-- the combination of these features.
+1. it tests whether the actual implementation successfully produces the intended experiential change; and
+2. it quantifies the magnitude of that UX change using a validated instrument.
 
-That limitation is intentional and acceptable for an exploratory first study.
-
-The first question is:
-
-> **Does a strong persona treatment appear promising at all?**
-
-If the answer is encouraging, later studies can decompose the package using more targeted factorial or component-level designs.
-
-Possible follow-up studies could independently manipulate avatar/no avatar, warm/neutral wording, named/anonymous assistant, encouragement/no encouragement, or different visual personas.
+A good idea can still be executed poorly. If Dr. Meowra is annoying, distracting, flat, confusing, or unappealing, the intervention may fail to produce a meaningful Hedonic Quality improvement. The UEQ-S therefore evaluates the **implemented treatment**, not the abstract concept.
 
 ---
 
-# 5. Dr. Meowra Design Principles
+## RQ2 — Future-Participation Preference
 
-Dr. Meowra should be recognizable and personable without becoming a parody that overwhelms the technical content.
+> **Which interface would participants prefer if they were invited to participate in another programming-language study of similar length and difficulty, and why?**
 
-Her intended personality is:
+The forced-choice preference provides an intuitive participant-centered outcome.
 
-- competent;
-- knowledgeable;
-- kind;
-- encouraging;
-- supportive;
-- nonjudgmental;
-- mildly playful; and
-- technically accurate.
+The open-ended explanation provides qualitative evidence about the reasons behind that preference.
 
-Avoid excessive:
+This question is deliberately broader than "Which interface was more fun?" A participant could prefer Neutral despite finding Meowra novel, or prefer Meowra because the study felt more welcoming, supportive, engaging, or pleasant.
 
-- “nya” language;
-- meme language;
-- baby talk;
-- flirtation;
-- jokes that distract from the task;
-- emotional overreaction; or
-- unnecessary verbosity.
+---
 
-Dr. Meowra is not being designed around a specific anime personality archetype such as *moe*. The catgirl visual identity is used as a distinctive anthropomorphic character design, while the behavioral persona emphasizes competence, warmth, and support.
+## RQ3 — Tradeoffs
 
-The personality should be strong enough that participants clearly experience a character, but the **technical explanation must remain the primary content**.
+> **Does the playful Dr. Meowra condition show evidence of a tradeoff in pragmatic user experience, task accuracy, or task response time relative to the Neutral condition?**
+
+This question addresses an important methodological concern:
+
+> A more enjoyable experiment is not useful if the participant-facing treatment substantially interferes with the scientific task.
+
+The study therefore records:
+
+- UEQ-S Pragmatic Quality;
+- task accuracy; and
+- task response time.
+
+These are primarily secondary or exploratory outcomes.
+
+A failure to find a statistically significant performance difference will **not** be interpreted as proof that the two interfaces are equivalent. Formal equivalence or non-inferiority testing would require a prespecified acceptable margin and substantially stronger performance measurement.
 
 ---
 
 # 6. Experimental Design
 
-## Design Type
+## 6.1 Design Type
 
-The study uses a **within-subject / repeated-measures design**.
+The experiment uses a **within-subject crossover design**.
 
-Every participant experiences:
+Every participant experiences both:
 
-- Raw;
-- Neutral; and
-- Dr. Meowra.
+- the Neutral interface; and
+- the Dr. Meowra interface.
 
-Each participant therefore serves as their own comparison.
+This allows each participant to serve as their own comparison.
 
-This is particularly useful for a small study because people differ substantially in:
-
-- programming experience;
-- confidence;
-- rating behavior;
-- tolerance for compiler diagnostics;
-- familiarity with C;
-- familiarity with AI assistants; and
-- general preference for playful interfaces.
-
-A within-subject design reduces some of that between-person variability because the same participant evaluates every condition.
-
-## Number of Tasks
-
-The baseline design contains **six short compiler-error tasks**:
-
-- 2 Raw tasks;
-- 2 Neutral tasks;
-- 2 Dr. Meowra tasks.
-
-Participants do not type or repair code directly.
-
-Instead, they read a small code example, view the assigned feedback condition, and answer a lightweight multiple-choice interpretation/comprehension question.
-
-The objective of the task is to expose the participant to the feedback style in a controlled way so they can meaningfully evaluate the experience.
-
-This is not intended to be a full debugging-performance experiment.
+Within-subject comparison is useful for a small exploratory study because stable individual differences in rating style, programming experience, personality, and general interface preferences are reduced as sources of between-person noise.
 
 ---
 
-# 7. Why Participants Do Not Directly Edit Code
+## 6.2 Why There Are Two Task Sets
 
-Direct code editing introduces additional constructs that are not central to the current study, including:
+Participants cannot answer the exact same four programming questions twice because they may remember the answers during the second condition.
+
+The study therefore uses:
+
+```text
+Task Set A: four questions
+Task Set B: four matched questions
+```
+
+Both sets contain the same four error categories.
+
+The individual code examples differ, but the underlying concepts and question structures are matched as closely as practical.
+
+---
+
+## 6.3 Four-Cell Crossover Assignment
+
+Participants are distributed across four assignment cells:
+
+| Assignment | Block 1 | Block 2 |
+| --- | --- | --- |
+| 1 | Neutral + Set A | Meowra + Set B |
+| 2 | Meowra + Set A | Neutral + Set B |
+| 3 | Neutral + Set B | Meowra + Set A |
+| 4 | Meowra + Set B | Neutral + Set A |
+
+This controls two potential confounds:
+
+### Condition-order effect
+
+Half the assignments begin with Neutral and half begin with Meowra.
+
+### Task-set effect
+
+Each task set appears under both Neutral and Meowra.
+
+The intended result is that interface condition is not permanently tied to one set of programming questions.
+
+---
+
+# 7. The Experimental Manipulation
+
+The experiment manipulates the **participant-facing research interface**.
+
+The programming task remains functionally equivalent.
+
+The treatment is not merely a few "nya" phrases. Dr. Meowra acts as a persistent study host throughout her assigned block.
+
+---
+
+# 8. Neutral Condition
+
+The Neutral interface represents a conventional plain research application.
+
+It should be:
+
+- clear;
+- professional;
+- factual;
+- minimal;
+- non-social; and
+- non-playful.
+
+The Neutral condition contains the same functional information as the Meowra condition.
+
+Examples:
+
+### Introduction
+
+> You will complete four short programming questions in this section.
+
+### Tutorial
+
+> Review each code example and select the answer that best identifies the primary issue. Select one response and press Submit.
+
+### Progress
+
+> Question 2 of 4 complete. Two questions remain.
+
+### Completion
+
+> This section is complete.
+
+The Neutral condition should **not** be intentionally unpleasant, confusing, ugly, or hostile.
+
+It is a competent conventional baseline.
+
+The experiment is not:
+
+```text
+bad interface vs. good interface
+```
+
+It is:
+
+```text
+conventional neutral study presentation
+                vs.
+playful participant-centered study presentation
+```
+
+---
+
+# 9. Dr. Meowra Condition
+
+Dr. Meowra is a persistent character-mediated study host.
+
+The treatment consists of multiple participant-facing elements that operate together as one composite intervention.
+
+## 9.1 Visual Identity
+
+During the Meowra experimental block:
+
+- Dr. Meowra's avatar is visible on study-interface screens;
+- her name is displayed;
+- her visual identity remains consistent;
+- the interface may use presentation elements that support her presence while preserving task readability.
+
+Her presence should continue across:
+
+- condition introduction;
+- tutorial;
+- task screens;
+- progress/transition screens; and
+- completion.
+
+The UEQ-S and final evaluation screens are **not** hosted by Meowra and should remain neutral.
+
+---
+
+## 9.2 Social Framing
+
+Meowra communicates in the first person as a study host.
+
+Example:
+
+> Hi! I'm Dr. Meowra, and I'll be guiding you through this section.
+
+The purpose is to make the study feel socially hosted rather than administratively presented.
+
+---
+
+## 9.3 Tutorial Presentation
+
+The Meowra tutorial communicates the **same functional information** as Neutral.
+
+Example:
+
+> I'll show you four short programming questions. For each one, take a look at the code and choose the answer that best identifies the issue. Once you've made your choice, press Submit and we'll keep going together.
+
+The Meowra tutorial may be warmer and more conversational, but it must not teach participants how to solve the programming questions.
+
+---
+
+## 9.4 Encouragement
+
+Meowra may provide encouragement related to **participation**, not correctness.
+
+Allowed examples:
+
+> Nice work — you're halfway there!
+
+> Two more to go. You've got this!
+
+> Thanks for sticking with me!
+
+> One more question!
+
+Not allowed:
+
+> Great answer!
+
+> You got that one right!
+
+> Remember that `==` checks equality!
+
+> Look closely at the parentheses.
+
+The first category supports the participant.
+
+The second category changes the scientific task.
+
+---
+
+## 9.5 Playfulness
+
+Meowra may use light playful language, but playfulness must not overwhelm instructions.
+
+The character should be:
+
+- warm;
+- friendly;
+- enthusiastic;
+- encouraging;
+- supportive;
+- recognizable; and
+- mildly playful.
+
+Avoid:
+
+- excessive "nya";
+- constant cat puns;
+- baby talk;
+- flirtation;
+- answer hints;
+- distracting jokes;
+- task-specific technical commentary;
+- correctness feedback.
+
+The treatment should feel intentionally different from the Neutral interface without turning the programming task itself into a joke.
+
+---
+
+# 10. What Must Remain Controlled
+
+The following properties should remain identical or closely matched between conditions:
+
+| Feature | Neutral | Meowra |
+| --- | --- | --- |
+| Number of programming tasks | 4 | 4 |
+| Task categories | Matched | Matched |
+| Question format | Same | Same |
+| Number of answer options | Same | Same |
+| Functional tutorial content | Same | Same |
+| Technical hints | None | None |
+| Correctness feedback | None | None |
+| Button behavior | Same | Same |
+| Code font | Same | Same |
+| Code size | Same | Same |
+| Task layout | Same | Same |
+| Response controls | Same | Same |
+| UEQ-S screen | Neutral | Neutral |
+| Task-response timing rule | Same | Same |
+
+The manipulated properties include:
+
+| Feature | Neutral | Meowra |
+| --- | --- | --- |
+| Character | None | Dr. Meowra |
+| Avatar | None | Present |
+| Named host | None | Present |
+| Social framing | Minimal | Present |
+| Encouragement | Administrative only | Supportive |
+| Progress language | Neutral | Encouraging |
+| Tone | Plain | Playful/warm |
+
+---
+
+# 11. Consent and Ethics
+
+The **actual informed-consent process is neutral and identical for every participant**.
+
+Dr. Meowra does not persuade participants to consent and does not act as the mechanism through which voluntary consent is solicited.
+
+The flow begins:
+
+```text
+neutral consent
+      ↓
+consent accepted
+      ↓
+experimental application
+```
+
+After consent, the participant may encounter either Neutral or Meowra first depending on the crossover assignment.
+
+This distinction is important because informed consent is an ethical requirement, not an experimental treatment.
+
+Before collecting publishable data:
+
+- obtain the required institutional IRB/ethics determination;
+- use approved consent language;
+- avoid unnecessary identifying information;
+- follow approved data-storage and retention procedures; and
+- obtain permission for the use of participant quotations if required.
+
+---
+
+# 12. Programming Task Design
+
+The programming questions exist to provide a real PL-style study task while the participant-facing interface is manipulated.
+
+They are **not** the central research contribution.
+
+The task should therefore be:
+
+- short;
+- standardized;
+- easy to understand;
+- easy to reproduce;
+- low in irrelevant complexity; and
+- similar in difficulty across matched pairs.
+
+Denny, Prather, and Becker (2020) provide useful methodological precedent for using predetermined debugging material so that participants encounter the same errors rather than generating different errors through open-ended code writing.
+
+Hristova et al. (2003) provide a published list of common novice programming errors. The present task categories draw on that style of common-error taxonomy while adapting examples to short C/C-like snippets.
+
+---
+
+# 13. Why Multiple Choice Instead of Coding
+
+Participants are not asked to repair or rewrite code.
+
+Direct coding would introduce additional constructs:
 
 - typing speed;
 - syntax recall;
 - IDE familiarity;
-- code-navigation skill;
+- navigation skill;
 - debugging strategy;
 - trial-and-error behavior;
-- familiarity with build systems;
-- willingness to experiment;
-- task-specific programming expertise.
+- tool familiarity; and
+- individual solution style.
 
-The present study is focused on **reading, interpreting, and experiencing compiler feedback**.
+Those constructs are unnecessary for the present research question.
 
-A controlled multiple-choice task allows the study to isolate that interaction more cleanly.
+The experimental payload only needs to be cognitively meaningful enough that participants are genuinely completing a small PL task.
 
-This design comes with an ecological-validity limitation: answering a controlled question in Unity is not the same as debugging a real program in an IDE.
+Multiple-choice questions provide:
 
-That limitation should be reported directly. Real debugging performance is a natural follow-up study.
+- standardized exposure;
+- objective accuracy;
+- easy response-time measurement; and
+- reduced variability in task execution.
 
----
-
-# 8. Scenario Design
-
-The planned six scenario families are:
-
-| Scenario family | Example |
-| --- | --- |
-| Statement termination | Missing semicolon |
-| Name resolution | Undeclared identifier |
-| Delimiter matching | Missing parenthesis or brace |
-| Type use | Simple incompatible type |
-| Function call | Wrong number/type of arguments |
-| Operator use | Invalid operand/operator pairing |
-
-Each scenario should:
-
-- contain one primary error;
-- be short enough to understand quickly;
-- avoid cascading diagnostics;
-- avoid obscure language behavior;
-- avoid relying heavily on programmer intent;
-- have a clearly defensible correct interpretation; and
-- use a compiler message that can be frozen exactly.
-
-Each scenario record should eventually contain at least:
-
-```text
-scenario_id
-error_family
-code_snippet
-raw_diagnostic
-neutral_explanation
-meowra_explanation
-question
-answer_options
-correct_answer
-```
-
-The six final stimuli should be stored in a version-controlled structured format rather than embedded directly into UI code.
+This improves control for a study whose main manipulated variable is the participant-facing environment.
 
 ---
 
-# 9. Illustrative Scenario
+# 14. Final Task Categories
 
-Example code:
+Both Set A and Set B contain one example from each category:
+
+1. assignment versus comparison (`=` vs. `==`);
+2. incompatible value/type use;
+3. delimiter mismatch;
+4. incorrect separators in a `for` loop.
+
+The categories are intentionally simple.
+
+The study is not attempting to distinguish advanced programming expertise.
+
+---
+
+# 15. Standard Task Prompt
+
+Every question should use the same basic prompt:
+
+> **What is the primary issue in this code?**
+
+Each question contains four response options.
+
+The number of options, interaction style, and submission process remain the same across all eight tasks.
+
+---
+
+# 16. Task Set A
+
+## A1 — Assignment vs. Comparison
 
 ```c
-int main() {
-    int total = 10
-    printf("%d\n", total);
+int score = 4;
+
+if (score = 5) {
+    printf("Match");
 }
 ```
 
-Example feedback treatments:
+**Question**
 
-### Raw
+> What is the primary issue in this code?
 
-```text
-error: expected ',' or ';' before 'printf'
-```
+**Correct concept**
 
-### Neutral
-
-```text
-The compiler reached `printf` while it was still expecting the previous
-statement to end. Inspect the statement immediately above `printf` for a
-missing terminator.
-```
-
-### Dr. Meowra
-
-```text
-Dr. Meowra: The compiler reached `printf` while it was still waiting for
-the previous statement to finish. Take a look at the line just above
-`printf` for a missing terminator. You're close—you've got this!
-```
-
-The Meowra version should **not add extra technical information** that is absent from Neutral.
-
-For example, saying “this is only a small syntax error” adds a technical classification and should be avoided unless the Neutral condition communicates the same information.
+The assignment operator `=` is being used where a comparison with `==` appears to be intended.
 
 ---
 
-# 10. AI Generation and Stimulus Freezing
+## A2 — Type/Value Mismatch
 
-The Neutral and Dr. Meowra explanations should be produced through the **same underlying generation pipeline**.
+```c
+int count = "five";
+```
 
-The model should receive the same:
+**Question**
 
-- source code;
-- compiler output;
-- code context;
-- technical constraints; and
-- target level of guidance.
+> What is the primary issue in this code?
 
-The persona treatment should change the **social presentation**, not the underlying technical assistance.
+**Correct concept**
 
-Before data collection:
+A string value is being assigned to an integer variable.
 
-1. generate all candidate outputs;
-2. manually review them for accuracy;
-3. check Neutral/Meowra pairs for technical equivalence;
-4. remove accidental answer leakage;
-5. approximately match message length and amount of guidance;
-6. freeze the final text;
-7. record the model/version/date;
-8. save the prompts/persona instructions; and
-9. version-control the final stimuli.
+**Implementation note**
 
-The participant-facing application should **not call a live LLM**.
-
-No live AI calls are needed during the experiment.
-
-Freezing outputs avoids:
-
-- model drift;
-- stochastic differences;
-- latency differences;
-- API failures;
-- accidental differences in technical quality;
-- changing outputs during data collection; and
-- reproducibility problems.
-
-A replication should be able to use the exact frozen messages that participants originally saw.
+In strict C, the exact compiler behavior depends on compiler and warning settings. The study therefore asks participants to identify the programming issue rather than asking whether the line must fail compilation.
 
 ---
 
-# 11. Condition-Control Requirements
+## A3 — Delimiter Mismatch
 
-Neutral and Meowra should be matched as closely as practical on:
+```c
+int total = 3;
 
-| Feature | Neutral | Dr. Meowra |
-| --- | --- | --- |
-| Technical facts | Same | Same |
-| Amount of guidance | Same | Same |
-| Resolution hint | Same level | Same level |
-| Approximate length | Similar | Similar |
-| Complete answer | Prohibited | Prohibited |
-| Tone | Professional / impersonal | Warm / supportive |
-| Named identity | None | Dr. Meowra |
-| Avatar | None | Dr. Meowra image |
-| Persistent social role | None | Present |
+if (total > 2 {
+    printf("Large");
+}
+```
 
-The rest of the interface should remain visually consistent.
+**Question**
 
-Do not make the Meowra condition easier to read simply because it is visually prettier.
+> What is the primary issue in this code?
 
-Where possible, preserve the same:
+**Correct concept**
 
-- code font;
-- code size;
-- question layout;
-- button positions;
-- panel sizes;
-- background;
-- spacing;
-- response controls; and
-- navigation behavior.
+The closing parenthesis for the `if` condition is missing.
 
 ---
 
-# 12. Persona Introduction
+## A4 — `for`-Loop Separators
 
-The general study tutorial must remain **condition-neutral**.
-
-Participants should learn how to:
-
-- read a scenario;
-- select an answer;
-- submit;
-- use the UEQ-S screen; and
-- move forward.
-
-Dr. Meowra should not appear in that neutral tutorial.
-
-Instead, a short Dr. Meowra introduction is inserted **immediately before the participant begins the Meowra condition**, regardless of whether Meowra is first, second, or third.
-
-The introduction should establish:
-
-- her name;
-- her role as a programming assistant;
-- her visual identity;
-- her supportive personality; and
-- continuity across the next two tasks.
-
-Example concept:
-
-```text
-Hi! I'm Dr. Meowra.
-
-I'm a programming assistant, and my job is to help explain what the compiler
-is trying to tell you. I'll be helping with the next examples.
-
-Read each explanation normally and choose the response that makes the most
-sense to you.
+```c
+for (int i = 0, i < 5, i++) {
+    printf("%d\n", i);
+}
 ```
 
-The introduction is part of the **persona treatment**.
+**Question**
+
+> What is the primary issue in this code?
+
+**Correct concept**
+
+The expressions in the `for` header should be separated by semicolons rather than commas.
 
 ---
 
-# 13. Counterbalancing
+# 17. Task Set B
 
-The condition order must not always be:
+## B1 — Assignment vs. Comparison
 
-```text
-Raw -> Neutral -> Meowra
+```c
+int attempts = 2;
+
+if (attempts = 3) {
+    printf("Done");
+}
 ```
 
-All six possible condition orders should be used:
+**Question**
 
-| Order | Sequence |
-| ---: | --- |
-| 1 | Raw → Neutral → Meowra |
-| 2 | Raw → Meowra → Neutral |
-| 3 | Neutral → Raw → Meowra |
-| 4 | Neutral → Meowra → Raw |
-| 5 | Meowra → Raw → Neutral |
-| 6 | Meowra → Neutral → Raw |
+> What is the primary issue in this code?
 
-This reduces systematic order effects caused by:
+**Correct concept**
 
-- practice;
-- fatigue;
-- novelty;
-- contrast; and
-- learning how the experiment works.
-
-## Scenario Rotation
-
-Condition order alone is not enough.
-
-If one condition always receives easier compiler errors, the task difficulty becomes confounded with the condition.
-
-Use three scenario-assignment sets.
-
-For six scenarios `S1`–`S6`, a simple rotation is:
-
-| Stimulus set | Raw | Neutral | Meowra |
-| --- | --- | --- | --- |
-| **A** | S1, S2 | S3, S4 | S5, S6 |
-| **B** | S3, S4 | S5, S6 | S1, S2 |
-| **C** | S5, S6 | S1, S2 | S3, S4 |
-
-Combining:
-
-```text
-6 condition orders × 3 stimulus sets = 18 assignment combinations
-```
-
-This makes **18 participants** particularly convenient: each participant can be assigned one unique order × stimulus-set combination.
-
-If fewer or more than 18 participants are recruited, cycle through the assignment table as evenly as practical and save each participant's exact assignment.
-
-Prefer deterministic assignment over opaque randomization.
-
-For example:
-
-```text
-Participant index 001 -> Order 1 / Set A
-Participant index 002 -> Order 1 / Set B
-Participant index 003 -> Order 1 / Set C
-Participant index 004 -> Order 2 / Set A
-...
-Participant index 018 -> Order 6 / Set C
-```
-
-A replication should preserve the assignment schedule used in the original study.
+The assignment operator `=` is being used where a comparison with `==` appears to be intended.
 
 ---
 
-# 14. Participant Population
+## B2 — Type/Value Mismatch
 
-Participants should have enough programming background to read small C/C-like programs.
+```c
+int level = "high";
+```
 
-A reasonable population for the current exploratory study is:
+**Question**
 
-- undergraduate CS/CSE students;
-- novice-to-intermediate programmers; or
-- comparable programmers with introductory C/C++ familiarity.
+> What is the primary issue in this code?
 
-Suggested background variables:
+**Correct concept**
 
-| Variable | Example representation |
+A string value is being assigned to an integer variable.
+
+---
+
+## B3 — Delimiter Mismatch
+
+```c
+int value = 7;
+
+if (value < 10 {
+    printf("Small");
+}
+```
+
+**Question**
+
+> What is the primary issue in this code?
+
+**Correct concept**
+
+The closing parenthesis for the `if` condition is missing.
+
+---
+
+## B4 — `for`-Loop Separators
+
+```c
+for (int j = 0, j < 8, j++) {
+    printf("%d\n", j);
+}
+```
+
+**Question**
+
+> What is the primary issue in this code?
+
+**Correct concept**
+
+The expressions in the `for` header should be separated by semicolons rather than commas.
+
+---
+
+# 18. Task-Matching Requirements
+
+The A/B pair for each category should be reviewed using the following rubric:
+
+| Property | Requirement |
 | --- | --- |
-| Programming experience | categorical bands |
-| C/C++ familiarity | self-rated |
-| Programming frequency | categorical |
-| Prior AI coding-assistant use | yes/no or frequency |
-| Student level/coursework | categorical |
+| Error concept | Same |
+| Number of intentional issues | One |
+| Approximate code length | Similar |
+| Lines of code | Similar |
+| Required programming knowledge | Same |
+| Prompt | Same |
+| Number of options | Same |
+| Distractor structure | Similar |
+| Expected difficulty | Similar |
 
-These variables are mainly used to describe the sample rather than create a large set of subgroup analyses.
+The task content should remain semantically neutral.
 
-With a sample of approximately 15–20, avoid fragmenting the data into many small experience subgroups.
+Avoid making one task set unusually playful or cat-themed because that would create an additional treatment cue.
+
+Dr. Meowra should be what makes the **study interface** playful.
 
 ---
 
-# 15. Sample Size and Power
+# 19. Answer Options
 
-The practical recruitment target is approximately **18 completed participants**, with **15–20** considered feasible.
+The final answer options should be frozen before data collection.
 
-This is a small exploratory study.
+The A/B versions of a matched category should use distractors of similar plausibility.
 
-The study should therefore be described as being designed to detect **large, consistent within-person UX effects**, not subtle effects.
-
-## Power Planning
-
-The planned inferential method is the **paired-samples t-test**.
-
-For paired designs, the planning effect size is commonly expressed as **Cohen's \(d_z\)**:
+For example, an assignment-versus-comparison item might use:
 
 ```text
-mean paired difference
-----------------------
-SD of paired differences
+A. The code assigns a value where a comparison appears to be intended.
+B. The integer variable has the wrong type.
+C. The condition requires a semicolon before the opening brace.
+D. There is no issue with the code.
 ```
 
-Approximate two-sided paired-t sample sizes for 80% power at `alpha = .05` are:
+The exact wording should be pilot-tested.
 
-| Assumed paired effect | Approximate completed N |
-| ---: | ---: |
-| dz = 0.50 | 34 |
-| dz = 0.60 | 24 |
-| dz = 0.70 | 19 |
-| dz = 0.80 | 15 |
-
-Therefore, **N ≈ 18 is not sufficient for reliable detection of a modest dz = 0.60 effect at ordinary alpha = .05**. It is closer to a study powered for an effect around `dz ≈ 0.70`.
-
-Because this study has two planned confirmatory comparisons, Holm correction is planned. Conservatively treating the smallest Holm threshold as approximately `alpha = .025` makes the power requirement stricter. Under that conservative planning assumption, approximately 18 participants corresponds more closely to a **large effect around dz ≈ 0.80**.
-
-The sample-size argument should therefore be:
-
-> This rapid exploratory study is designed to detect large within-participant UX effects. Smaller effects may appear as descriptive trends with wide uncertainty and should motivate a larger follow-up rather than strong causal claims.
-
-Do not choose or exaggerate the persona treatment solely to force statistical significance. The goal is to make the treatment **conceptually strong and clearly recognizable**, then measure the resulting effect honestly.
+Do not allow the distractors in one task set to be obviously weaker than the distractors in the other.
 
 ---
 
-# 16. Participant Flow
+# 20. Pilot Testing the Task Sets
 
-The intended participant flow is:
+The literature can justify the general use of common programming-error categories.
+
+It cannot prove that the exact Set A and Set B stimuli are equally difficult.
+
+Before formal data collection, pilot the study with several people.
+
+For task matching, examine:
+
+- accuracy on each A/B pair;
+- obvious confusion;
+- ambiguous answer choices;
+- unusually slow items;
+- comments indicating multiple plausible answers.
+
+The goal is not to run statistical significance tests on the pilot.
+
+The goal is to catch obvious mismatches.
+
+Example warning sign:
 
 ```text
-Consent / Study Instructions
+A3 accuracy: 100%
+B3 accuracy: 40%
+```
+
+If one member of a pair is clearly harder, revise it before freezing the experiment.
+
+Pilot participants should not be included in the final analysis unless the final protocol explicitly permits this and they experienced an identical frozen study.
+
+---
+
+# 21. Participant Flow
+
+A complete session should follow this structure:
+
+```text
+Neutral informed consent
         ↓
-Programming Background
+Brief neutral study overview
         ↓
-Condition-Neutral Unity Tutorial
+Programming-background questions
         ↓
-Practice Scenario
+Assignment selection
         ↓
 Condition Block 1
+    ├── condition-specific introduction
+    ├── condition-specific tutorial
     ├── Task 1
+    ├── transition/progress
     ├── Task 2
-    └── UEQ-S (8 items)
+    ├── transition/progress
+    ├── Task 3
+    ├── transition/progress
+    ├── Task 4
+    └── condition completion
+        ↓
+Neutral UEQ-S screen
         ↓
 Condition Block 2
+    ├── condition-specific introduction
+    ├── condition-specific tutorial
     ├── Task 1
+    ├── transition/progress
     ├── Task 2
-    └── UEQ-S (8 items)
+    ├── transition/progress
+    ├── Task 3
+    ├── transition/progress
+    ├── Task 4
+    └── condition completion
         ↓
-Condition Block 3
-    ├── Task 1
-    ├── Task 2
-    └── UEQ-S (8 items)
+Neutral UEQ-S screen
         ↓
-Agent Persona Instrument
-    ├── Credible (5 items)
-    └── Engaging (5 items)
+Neutral final preference question
         ↓
-Final Preferred Condition
+Neutral open-ended explanation
         ↓
-Open-Ended “Why?”
-        ↓
-Debrief / Finish
+Debrief / completion
 ```
-
-The **Dr. Meowra introduction is dynamically inserted immediately before whichever condition block is assigned to Meowra.**
-
-Estimated session duration should be established by pilot testing rather than assumed. Earlier planning estimates were approximately 12–18 minutes.
 
 ---
 
-# 17. Measurement Plan
+# 22. Why the Evaluation Screens Are Neutral
 
-The current questionnaire battery is intentionally compact.
+Dr. Meowra should disappear before participants evaluate the condition.
 
-Each participant completes:
+The UEQ-S screen should be identical after both conditions.
 
-| Measurement | Count |
-| --- | ---: |
-| UEQ-S after Raw | 8 responses |
-| UEQ-S after Neutral | 8 responses |
-| UEQ-S after Meowra | 8 responses |
-| API Credible subscale | 5 responses |
-| API Engaging subscale | 5 responses |
-| Final preferred condition | 1 response |
-| Open-ended explanation | 1 response |
+The final preference and open-ended-response screens should also be neutral.
 
-Total questionnaire-style scaled responses:
+This reduces the possibility that the character's continued social presence pressures the participant while they are evaluating her condition.
+
+The logic is:
 
 ```text
-24 UEQ-S + 10 API = 34 scaled responses
+experience treatment
+        ↓
+treatment ends
+        ↓
+neutral measurement screen
 ```
-
-plus:
-
-```text
-1 forced preference + 1 open-ended explanation
-```
-
-There is **no additional custom Likert battery** in the current protocol.
-
-The six task-answer selections are logged separately as task responses.
 
 ---
 
-# 18. UEQ-S
+# 23. UEQ-S
 
-The **User Experience Questionnaire — Short Version (UEQ-S)** is the main UX instrument.
+The **User Experience Questionnaire — Short Version (UEQ-S)** is the central quantitative UX measure.
 
-The same complete eight-item UEQ-S is administered after **each condition**.
+Schrepp, Hinderks, and Thomaschewski (2017) developed the eight-item UEQ-S for situations where a shorter UX questionnaire is useful.
 
-The English UEQ-S is:
+The instrument contains:
 
-## Pragmatic Quality
+- four Pragmatic Quality items; and
+- four Hedonic Quality items.
+
+All eight items are administered after **both** Neutral and Meowra.
+
+Each participant therefore provides:
+
+```text
+Neutral Pragmatic
+Neutral Hedonic
+Meowra Pragmatic
+Meowra Hedonic
+```
+
+---
+
+# 24. UEQ-S Pragmatic Quality
+
+The four Pragmatic items are:
 
 ```text
 obstructive      ○ ○ ○ ○ ○ ○ ○      supportive
@@ -695,7 +893,30 @@ inefficient      ○ ○ ○ ○ ○ ○ ○      efficient
 confusing        ○ ○ ○ ○ ○ ○ ○      clear
 ```
 
-## Hedonic Quality
+In this experiment, Pragmatic Quality is important because it addresses whether the playful interface creates a UX cost.
+
+The ideal pattern is not simply:
+
+```text
+Meowra is more exciting
+```
+
+The stronger methodological pattern is:
+
+```text
+Meowra Hedonic ↑
+Meowra Pragmatic maintained or improved
+```
+
+A substantial pragmatic decrease would indicate that the playful treatment made participation more interesting at the expense of clarity, efficiency, or ease.
+
+Pragmatic Quality is therefore a **tradeoff measure**.
+
+---
+
+# 25. UEQ-S Hedonic Quality
+
+The four Hedonic items are:
 
 ```text
 boring           ○ ○ ○ ○ ○ ○ ○      exciting
@@ -704,1085 +925,1028 @@ conventional     ○ ○ ○ ○ ○ ○ ○      inventive
 usual            ○ ○ ○ ○ ○ ○ ○      leading edge
 ```
 
-The UEQ-S uses seven positions.
+Hedonic Quality is the primary outcome.
 
-The standard scoring maps the response positions to:
+It quantifies whether the actual Meowra implementation creates a more stimulating and interesting experience than the Neutral interface.
+
+This matters because the intervention could fail even if the concept sounds appealing.
+
+A poor implementation might be:
+
+- distracting;
+- irritating;
+- visually cluttered;
+- childish;
+- repetitive; or
+- simply uninteresting.
+
+Therefore, Hedonic Quality serves as the primary quantitative test that the participant-centered treatment actually changed UX in the intended direction.
+
+---
+
+# 26. UEQ-S Scoring
+
+Responses are scored on the standard UEQ-S scale from:
 
 ```text
 -3  -2  -1   0   +1   +2   +3
 ```
 
-Because the UEQ-S short form is already arranged with the negative pole on the left and positive pole on the right, implementation should preserve that orientation exactly.
-
-## UEQ-S Scale Scores
-
-For each participant and each condition:
+For each participant and condition:
 
 ```text
 Pragmatic Quality = mean(items 1–4)
 Hedonic Quality   = mean(items 5–8)
-Overall UEQ-S     = mean(items 1–8)
 ```
 
-The Overall score may be reported descriptively, but it is not a primary hypothesis outcome.
+The overall eight-item average may be shown descriptively if useful, but it is not required for the primary analysis.
 
-## Primary UEQ-S Use
-
-H1 uses:
-
-```text
-Raw Pragmatic vs Neutral Pragmatic
-```
-
-H2 uses:
-
-```text
-Neutral Hedonic vs Meowra Hedonic
-```
-
-The full eight items are still collected in every condition.
-
-That means researchers can also inspect:
-
-- Raw Hedonic;
-- Neutral Hedonic;
-- Meowra Pragmatic; and
-- overall scores
-
-without turning each one into a new confirmatory hypothesis.
-
-## Why UEQ-S Fits This Experiment
-
-UEQ-S was designed for situations where a short UX measurement is needed, including experimental settings where participants evaluate multiple product variants in one session.
-
-That maps well to this study because one participant evaluates three forms of the same underlying compiler-feedback interaction.
+Use the official UEQ-S scoring guidance rather than inventing a new scoring method.
 
 ---
 
-# 19. Using the UEQ Analysis Tools
+# 27. Final Preference Question
 
-The official UEQ resources provide spreadsheets/tools for:
+After both conditions:
 
-- scoring;
-- means;
-- standard deviations;
-- confidence intervals;
-- data-quality checks; and
-- benchmark-oriented interpretation.
-
-Use those tools for the UEQ-S scoring and descriptive summaries when helpful.
-
-However, the study's main inferential comparisons are **paired** because the same participant evaluates all three conditions.
-
-Do **not** treat Raw, Neutral, and Meowra as three independent participant samples.
-
-If an official comparison spreadsheet uses an independent/two-sample test, that is not a replacement for the planned paired-samples analysis.
-
-The official UEQ tools and this study's paired t-tests serve different purposes:
-
-```text
-UEQ tool:
-score and summarize the instrument correctly
-
-paired t-test:
-test the planned within-person condition difference
-```
-
----
-
-# 20. Agent Persona Instrument
-
-After all three conditions, participants evaluate **Dr. Meowra specifically** using selected complete subscales from the **Agent Persona Instrument (API)**.
-
-The study uses:
-
-- **Credible** — 5 items
-- **Engaging** — 5 items
-
-Total:
-
-```text
-10 API responses
-```
-
-The API is a **persona-characterization measure**, not the primary treatment-effect measure.
-
-Conceptually:
-
-```text
-UEQ-S:
-Did the experience differ across conditions?
-
-API:
-Did participants actually perceive Dr. Meowra as
-a credible and engaging persona?
-```
-
-The API provides context for interpreting the persona treatment.
-
-For example:
-
-### Possible pattern A
-
-```text
-Meowra Hedonic > Neutral Hedonic
-API Engaging = high
-API Credible = high
-```
-
-Interpretation: the persona condition was experienced positively and the participant also perceived the intended persona qualities.
-
-### Possible pattern B
-
-```text
-Meowra Hedonic ≈ Neutral Hedonic
-API Engaging = high
-API Credible = high
-```
-
-Interpretation: participants recognized the persona, but the manipulation did not produce a clear UX improvement in this small sample.
-
-### Possible pattern C
-
-```text
-Meowra Hedonic ≈ Neutral Hedonic
-API Engaging = low
-```
-
-Interpretation: the persona manipulation itself may have been too weak or poorly received.
-
-## API Administration
-
-Use the **published wording and response anchors** from the original instrument.
-
-Do not rewrite the items merely to make them sound more natural in the app.
-
-Preserve the published **5-point Likert response format** unless a later protocol explicitly documents a modification.
-
-The exact API item wording should be sourced from the linked API paper and frozen in the study materials before data collection.
-
-The two selected subscales were chosen because they align well with the current static assistant:
-
-- Credible helps characterize competence/usefulness;
-- Engaging helps characterize the affective/social persona.
-
-The Human-like subscale is not planned because some items were designed for richer animated agents and are a poorer fit for a static text-and-image character.
-
-Facilitating Learning is also not part of the current battery because this experiment is not primarily testing learning outcomes.
-
----
-
-# 21. Final Preference and Open-Ended Response
-
-After the API, participants answer:
-
-> **If you could choose one of these feedback styles for your programming environment, which would you choose?**
+> **If you were invited to participate in another programming-language study of similar length and difficulty, which study format would you prefer?**
 
 Options:
 
 ```text
-Raw
 Neutral
 Dr. Meowra
 ```
 
-Then:
+This question connects UX to a concrete participant-centered choice.
 
-> **Why did you prefer that style?**
+It does **not** establish actual recruitment behavior.
 
-The preference result is descriptive.
+It measures stated preference for future participation.
 
-The open-ended response provides qualitative context that may explain why participants chose a condition.
+---
 
-Possible themes may include:
+# 28. Open-Ended Question
 
-- clarity;
-- professionalism;
-- warmth;
-- friendliness;
-- annoyance;
-- distraction;
-- trust;
-- novelty;
+Immediately after the preference choice:
+
+> **Why did you prefer that study format? Please describe anything about the presentation or interaction that influenced your choice.**
+
+This question is intentionally broad.
+
+Do not tell participants that the researchers expect Meowra to be more enjoyable.
+
+Potential themes may include:
+
+- engagement;
 - encouragement;
+- professionalism;
+- clarity;
+- distraction;
+- warmth;
+- novelty;
 - efficiency;
-- preference for concise output; or
-- preference for personality.
+- visual preference;
+- social presence;
+- annoyance; or
+- preference for minimalism.
 
-Do not invent a fixed codebook before seeing the responses unless preregistration requires one.
+These themes should not be treated as predetermined findings.
 
-A lightweight approach is to code recurring themes transparently after data collection and report representative quotations where permitted by consent/IRB.
-
----
-
-# 22. Task Responses and Response Time
-
-Each compiler scenario includes a lightweight multiple-choice response.
-
-This serves two purposes:
-
-1. it makes the participant actively interpret the diagnostic rather than passively look at it;
-2. it provides a basic sanity check that the feedback is not catastrophically harming comprehension.
-
-With only two tasks per condition, task accuracy is **not** intended to support a strong inferential claim about debugging performance or learning.
-
-Task selections can be reported descriptively if useful.
-
-Unity may also log response time automatically.
-
-Response time is exploratory telemetry, not a primary dependent variable.
-
-Do not add a formal time-based hypothesis unless the protocol is explicitly changed.
+They are examples of concepts that may emerge from participant responses.
 
 ---
 
-# 23. Primary Statistical Analysis
+# 29. Qualitative Analysis
 
-The inferential plan is intentionally small.
+The open-ended responses will receive a lightweight qualitative analysis appropriate to the small exploratory study.
 
-There are two planned paired comparisons.
+Suggested procedure:
 
-## Test 1 — H1
+1. read all responses without assigning formal themes;
+2. identify recurring reasons participants provide;
+3. create a small coding scheme;
+4. code each response using one or more applicable themes;
+5. report theme frequencies descriptively;
+6. include brief representative quotations where permitted.
+
+The qualitative data should help explain the quantitative results.
+
+Example:
 
 ```text
-Raw Pragmatic Quality
-        vs.
-Neutral Pragmatic Quality
+UEQ-S says:
+Meowra was more hedonic.
+
+Preference says:
+most participants chose Meowra.
+
+Open responses explain:
+participants valued encouragement and character presence.
 ```
 
-Use a **paired-samples t-test**.
-
-## Test 2 — H2
+Or, alternatively:
 
 ```text
-Neutral Hedonic Quality
-        vs.
-Dr. Meowra Hedonic Quality
+UEQ-S says:
+Meowra was more hedonic.
+
+Preference is mixed.
+
+Open responses explain:
+some participants enjoyed the character,
+while others considered it distracting or unprofessional.
 ```
 
-Use a **paired-samples t-test**.
-
-These tests are paired because every participant contributes both scores in each comparison.
+Both outcomes are scientifically useful.
 
 ---
 
-# 24. How the Paired t-Test Works in This Study
+# 30. Accuracy
 
-For H1, calculate for every participant:
+Every task has one objectively correct answer.
 
-```text
-Neutral Pragmatic - Raw Pragmatic
-```
-
-For H2:
+For each participant and condition:
 
 ```text
-Meowra Hedonic - Neutral Hedonic
+accuracy = number correct / 4
 ```
 
-The paired t-test tests whether the **mean within-person difference** is distinguishable from zero.
+Because only four questions are presented per condition, accuracy is a coarse measure.
 
-The key distributional assumption concerns the **paired difference scores**, not whether each condition's raw scores individually form perfect normal distributions.
+It should therefore be treated as secondary context rather than as a high-precision performance outcome.
 
-Before interpreting the t-tests:
+The study can report:
 
-- inspect the paired difference distributions;
-- look for severe skew;
-- inspect for extreme influential outliers;
-- use a histogram and/or Q-Q plot; and
-- document any exclusions using rules established before looking for significance.
+- mean number correct;
+- median number correct;
+- percentage correct; and
+- participant-level paired differences.
 
-Do not switch between t-tests and Wilcoxon after seeing which produces the smaller p-value.
-
-If the paired-difference assumptions are severely violated, document that issue and consult the statistical plan/advisor before using an alternative sensitivity analysis.
+Do not claim performance equivalence merely because a significance test fails to reject a difference.
 
 ---
 
-# 25. Multiple-Testing Control
+# 31. Response Time
 
-There are two planned confirmatory comparisons.
+Unity should automatically log response time for every programming question.
 
-The current plan is to use **Holm correction** across those two p-values.
+## Timing rule
 
-With two tests, Holm operates approximately as:
+Start timing only after the complete task screen is visible.
 
-1. sort the two p-values;
-2. compare the smaller to `0.05 / 2 = 0.025`;
-3. if it passes, compare the larger to `0.05`.
+Stop timing when the participant submits an answer.
 
-This controls the family-wise Type I error rate while preserving more power than simply treating many exploratory outcomes as independent confirmatory tests.
+```text
+task fully displayed
+        ↓
+timer starts
+        ↓
+participant reads/selects
+        ↓
+Submit
+        ↓
+timer stops
+```
 
-The API, final preference, task accuracy, and open-ended themes are not additional confirmatory hypothesis tests.
+Do **not** include Meowra's transition text or progress messages in task-response time.
+
+Otherwise the treatment would mechanically increase measured time simply because additional interface content exists.
+
+Optionally record total block duration separately.
+
+Primary task-response time should mean the same thing under both conditions.
 
 ---
 
-# 26. Effect Sizes and Confidence Intervals
+# 32. Participant Background
 
-Do not report only p-values.
+Keep participant-background questions short.
 
-For each paired t-test, report:
+Potential variables:
 
-- Raw/Neutral/Meowra scale means as appropriate;
-- standard deviations;
+- years of programming experience;
+- C/C++ familiarity;
+- programming frequency;
+- student level; and
+- relevant coursework.
+
+These variables describe the sample.
+
+With a small sample, they should not automatically become additional moderator analyses.
+
+---
+
+# 33. Participant Population
+
+Participants should have enough programming background to understand very small C/C-like examples.
+
+A reasonable target population is:
+
+- undergraduate CS/CSE students;
+- students who have completed introductory programming; or
+- programmers with comparable experience.
+
+Claims in the final paper must be scoped to the population actually recruited.
+
+---
+
+# 34. Sample Size
+
+The study is exploratory and constrained by the October 9 data-collection deadline.
+
+A practical target remains approximately **18–20 completed participants**.
+
+For the four crossover cells:
+
+- 20 participants allows 5 participants per assignment cell;
+- 18 participants can be distributed approximately 5/5/4/4.
+
+Do not stop recruitment early because the desired p-value is achieved.
+
+Recruit according to the planned practical target and deadline.
+
+---
+
+# 35. Power and Sensitivity
+
+The primary hypothesis uses a paired-samples t-test.
+
+For a two-sided paired t-test at:
+
+```text
+alpha = .05
+power = .80
+```
+
+approximate detectable standardized paired effects are:
+
+| Completed participants | Approximate detectable dz |
+| ---: | ---: |
+| 15 | 0.78 |
+| 18 | 0.70 |
+| 20 | 0.66 |
+| 24 | 0.60 |
+
+The redesigned treatment is intentionally stronger and more comprehensive than the earlier idea of modifying a few lines of compiler feedback. That may increase the observed effect, but the true effect is unknown.
+
+The correct planning claim is:
+
+> The study is designed primarily to detect large within-participant UX effects and should be interpreted as exploratory if effects are smaller or estimates are imprecise.
+
+---
+
+# 36. Primary Statistical Analysis
+
+## H1
+
+For each participant:
+
+```text
+D_i = Meowra Hedonic_i - Neutral Hedonic_i
+```
+
+The primary analysis is a **paired-samples t-test** of whether the mean paired difference is different from zero.
+
+Although H1 is directional, use a two-sided alpha of `.05` unless the analysis plan is explicitly changed before data collection.
+
+Report:
+
+- Neutral Hedonic mean and SD;
+- Meowra Hedonic mean and SD;
 - mean paired difference;
-- 95% confidence interval for the paired difference;
-- t statistic;
+- 95% confidence interval for the difference;
+- `t`;
 - degrees of freedom;
-- Holm-adjusted p-value; and
-- a paired standardized effect size such as **Cohen's dz**.
+- `p`;
+- paired effect size `Cohen's dz`.
 
-The effect size is particularly important because the sample is small.
-
-A non-significant p-value does not prove that the conditions are equivalent.
-
-A small study may observe an effect estimate in the expected direction with wide uncertainty.
-
-That should be reported as preliminary/exploratory evidence rather than proof.
+Because there is one primary confirmatory test, no multiple-comparison correction is required for the primary hypothesis.
 
 ---
 
-# 27. Interpretation Philosophy
+# 37. Paired t-Test Assumption
 
-This study should not be reduced to:
+The paired t-test concerns the distribution of the **within-participant difference scores**.
 
-```text
-p < .05 = success
-p >= .05 = failure
-```
+It does not require the Neutral and Meowra scores individually to be perfectly normally distributed.
 
-Interpret the full pattern.
+Before interpreting the test:
 
-For example:
+- inspect the paired-difference distribution;
+- inspect a Q-Q plot;
+- look for severe skew;
+- identify extreme influential outliers.
 
-### Strong positive pattern
+Do not switch statistical tests merely because another method produces a more favorable p-value.
 
-```text
-Neutral Pragmatic > Raw Pragmatic
-Meowra Hedonic > Neutral Hedonic
-large paired effects
-high API Credible/Engaging
-most participants prefer Meowra
-open-ended responses describe warmth/engagement
-```
-
-This would provide converging exploratory evidence that the persona direction deserves deeper study.
-
-### Mixed pattern
-
-```text
-Neutral Pragmatic > Raw
-Meowra Hedonic ≈ Neutral
-API Engaging high
-```
-
-This would suggest that better explanations matter, while the persona may not add a detectable hedonic benefit.
-
-### Suggestive but underpowered pattern
-
-```text
-Meowra Hedonic > Neutral descriptively
-paired effect is meaningful
-confidence interval is wide
-Holm-adjusted p > .05
-API and preference favor Meowra
-```
-
-The correct conclusion would be:
-
-> the small exploratory sample produced a promising directional pattern, but the study is insufficient to make a definitive population-level claim.
-
-That is still useful evidence for designing a larger follow-up.
+Any sensitivity analysis should be identified as such.
 
 ---
 
-# 28. Unity Application Design
+# 38. Secondary UX Analysis
 
-The study application is intentionally a simple page-style Unity interface.
+Pragmatic Quality is a secondary tradeoff outcome.
 
-Participants should mostly:
+For each participant:
 
 ```text
-read
-select
-click
-advance
+Pragmatic difference =
+Meowra Pragmatic - Neutral Pragmatic
 ```
 
-This is a research instrument, not a game.
+Report:
+
+- condition means;
+- standard deviations;
+- paired mean difference;
+- confidence interval; and
+- effect size.
+
+An exploratory paired t-test may be reported if desired, but it should remain clearly secondary to H1.
+
+The interpretation should focus on whether the playful treatment appears to preserve or alter the practical usability of the study interface.
+
+---
+
+# 39. Preference Analysis
+
+Report:
+
+```text
+number preferring Neutral
+number preferring Meowra
+percentage preferring each
+```
+
+An exact binomial test against a 50/50 null may be reported as a secondary exploratory analysis.
+
+The preference result should not replace the UEQ-S.
+
+The two outcomes answer different questions:
+
+```text
+UEQ-S:
+How did the experience change?
+
+Preference:
+Which format would the participant choose again?
+```
+
+---
+
+# 40. Performance Analysis
+
+Accuracy and response time are secondary indicators of possible task-performance cost.
+
+Report them descriptively.
+
+For accuracy:
+
+- mean correct out of 4;
+- percentage correct;
+- paired condition difference.
+
+For response time:
+
+- participant-level median or mean task response time per condition;
+- distribution;
+- paired condition difference.
+
+If exploratory significance tests are used, label them exploratory.
+
+Do not claim:
+
+> no statistically significant difference = identical performance
+
+Instead write something like:
+
+> No obvious task-performance cost was observed in this small exploratory sample.
+
+or:
+
+> Accuracy was descriptively similar across conditions, although the study was not designed as a formal equivalence test.
+
+---
+
+# 41. Exclusion Rules
+
+Exclusion rules should be frozen before formal analysis.
+
+Possible exclusions include:
+
+- participant withdraws consent;
+- incomplete study;
+- corrupted session file;
+- participant does not meet the minimum programming-background requirement;
+- technical failure prevents exposure to both conditions.
+
+Do not exclude participants because:
+
+- their preference is unexpected;
+- their UEQ-S ratings oppose the hypothesis;
+- their performance is low but valid;
+- removing them improves significance.
+
+Document all exclusions.
+
+---
+
+# 42. Data Logging
+
+At minimum, save:
+
+```text
+participant_id
+assignment_cell
+block_order
+task_set_by_condition
+
+programming_background
+
+condition
+task_id
+error_category
+selected_answer
+correct_answer
+is_correct
+task_response_time_ms
+
+neutral_ueqs_1 ... neutral_ueqs_8
+meowra_ueqs_1 ... meowra_ueqs_8
+
+neutral_pragmatic_score
+neutral_hedonic_score
+meowra_pragmatic_score
+meowra_hedonic_score
+
+final_preference
+open_response
+
+study_version
+unity_version
+session_start_utc
+session_end_utc
+```
+
+Calculated scores may be regenerated during analysis, so saving the **raw questionnaire responses** is essential.
+
+---
+
+# 43. Incremental Saving
+
+Save data after meaningful participant actions.
+
+Recommended:
+
+```text
+participant submits response
+        ↓
+session state updated
+        ↓
+data written to disk
+        ↓
+next screen displayed
+```
+
+Do not wait until the end of the entire experiment to save the only copy of the participant session.
+
+---
+
+# 44. Unity Implementation Principles
+
+The Unity application is a research instrument.
 
 Prioritize:
 
 - reliability;
-- identical presentation across conditions;
-- simple navigation;
 - reproducibility;
-- readable code;
-- incremental data saving; and
-- minimal experimental confounds.
+- readable layouts;
+- fixed study logic;
+- transparent assignment;
+- durable data logging; and
+- minimal technical dependencies.
 
-Avoid unnecessary:
+Avoid unnecessary systems such as:
 
-- animations;
-- complex transitions;
-- physics;
-- game systems;
-- external network dependencies;
-- live AI calls; or
-- decorative UI differences between conditions.
+- network services;
+- live LLM calls;
+- complex animation;
+- game mechanics;
+- scoring;
+- points;
+- rewards tied to correctness;
+- random content generation.
+
+The treatment is playful, but the software does not need to become a game.
 
 ---
 
-# 29. Suggested Unity Architecture
-
-A reasonable architecture is:
+# 45. Recommended Unity Architecture
 
 ```text
-PageManager
 ExperimentManager
+AssignmentManager
 ParticipantSession
-TrialManager
+TaskManager
+ConditionView
 SurveyManager
-DataLogger
 TimerManager
+DataLogger
 ```
-
-Suggested responsibilities:
-
-## PageManager
-
-Handles only page/panel visibility and navigation.
-
-It should not know why a page exists scientifically.
 
 ## ExperimentManager
 
-Controls experimental progression:
+Controls overall participant progression.
 
-- current block;
-- assigned condition order;
-- current scenario;
-- transitions between blocks;
-- Dr. Meowra introduction placement.
+## AssignmentManager
+
+Assigns one of the four crossover cells.
 
 ## ParticipantSession
 
-Stores:
+Stores all participant data and current state.
 
-- anonymous participant ID;
-- assignment;
-- responses;
-- scores/raw answers;
-- timestamps;
-- final preference;
-- open-ended response.
+## TaskManager
 
-## TrialManager
+Loads Set A/Set B programming questions.
 
-Loads and presents scenarios.
+## ConditionView
+
+Controls Neutral vs. Meowra presentation without changing the underlying task object.
 
 ## SurveyManager
 
-Collects:
-
-- UEQ-S responses;
-- API responses;
-- preference;
-- open-ended response.
-
-## DataLogger
-
-Writes durable local data.
+Presents UEQ-S, final preference, and open response on neutral measurement screens.
 
 ## TimerManager
 
-Records exploratory response time without tying timing to Unity frame rate.
+Measures only task interaction time.
+
+## DataLogger
+
+Writes durable JSON/CSV records.
 
 ---
 
-# 30. Data Logging
+# 46. Recommended Task Data Model
 
-The application should use an anonymous participant identifier such as:
+Each task should be data rather than hard-coded into a scene.
+
+Example conceptual structure:
 
 ```text
-P001
-P002
-P003
-...
+task_id
+task_set
+matched_pair_id
+error_category
+code
+prompt
+option_a
+option_b
+option_c
+option_d
+correct_option
 ```
 
-or a randomized non-identifying code if required by the approved research protocol.
+The **same task object** should be displayable inside either condition presentation.
 
-At minimum, log:
+Do not create a "Meowra version" of the programming answer content.
+
+That would reintroduce a confound.
+
+---
+
+# 47. Recommended Treatment Data Model
+
+Condition presentation can contain:
 
 ```text
-participant_id
-assignment_id
-condition_order
-stimulus_set
-scenario_id
-feedback_condition
-task_response
-task_correct
-task_response_time
-
-raw_ueqs_1 ... raw_ueqs_8
-neutral_ueqs_1 ... neutral_ueqs_8
-meowra_ueqs_1 ... meowra_ueqs_8
-
-api_credible_1 ... api_credible_5
-api_engaging_1 ... api_engaging_5
-
-final_preference
-open_response
+condition_id
+display_name
+avatar
+intro_text
+tutorial_text
+transition_after_q1
+transition_after_q2
+transition_after_q3
+completion_text
 ```
 
-It is also useful to save:
+Neutral and Meowra can therefore use different participant-facing framing while loading the same underlying task structure.
+
+---
+
+# 48. Demand Characteristics
+
+Participants may infer that Meowra is the experimental treatment.
+
+Mitigation:
+
+- recruitment materials should describe the experiment neutrally;
+- do not say the study is testing whether Meowra is "more fun";
+- do not tell participants which result is expected;
+- use neutral measurement screens;
+- counterbalance condition order.
+
+A reasonable study description is:
+
+> This study compares alternative interfaces for completing short programming-language research tasks.
+
+---
+
+# 49. Novelty
+
+Dr. Meowra is deliberately unusual.
+
+Novelty may contribute to Hedonic Quality, especially because the UEQ-S Hedonic scale includes concepts such as inventive and leading edge.
+
+This is not hidden.
+
+The study evaluates the **short-term experience of the complete intervention**.
+
+It cannot establish whether an advantage would persist after repeated or long-term exposure.
+
+That is a future-work question.
+
+---
+
+# 50. Composite-Treatment Limitation
+
+The Meowra condition includes multiple simultaneous differences:
+
+- avatar;
+- character identity;
+- social framing;
+- warmth;
+- encouragement;
+- playful language;
+- progress acknowledgement.
+
+Therefore:
+
+> **The causal unit is the participant-centered Meowra interface package.**
+
+A positive result does not establish which component caused the effect.
+
+That is appropriate for this first exploratory study.
+
+A future factorial experiment could isolate:
+
+- avatar vs. no avatar;
+- encouragement vs. no encouragement;
+- named host vs. anonymous host;
+- warm vs. neutral wording;
+- visual playfulness vs. social language.
+
+---
+
+# 51. Task-Set Equivalence Limitation
+
+Set A and Set B are designed to be comparable but cannot be assumed to be perfectly equivalent.
+
+Mitigation:
+
+- matched error categories;
+- similar code length;
+- identical question format;
+- similar distractor structure;
+- crossover assignment;
+- pilot testing.
+
+Because each task set appears under both conditions across participants, systematic task-set difficulty should not remain permanently attached to one treatment.
+
+---
+
+# 52. Learning and Carryover
+
+Participants complete one block before another.
+
+They may become more familiar with the question format during the second block.
+
+Mitigation:
+
+- half of assignment cells begin with Neutral;
+- half begin with Meowra;
+- both task sets appear first and second;
+- exact code questions are not repeated.
+
+Condition order should be retained in the dataset for descriptive inspection.
+
+---
+
+# 53. Population Validity
+
+If participants are primarily university CS students, the study should not claim that the results automatically generalize to:
+
+- professional developers;
+- expert PL researchers;
+- non-programmers;
+- older populations;
+- long-term workplace studies.
+
+State the sampled population clearly.
+
+---
+
+# 54. Ecological Validity
+
+Answering four multiple-choice programming questions in Unity is not equivalent to participating in every possible programming-language user study.
+
+The experiment deliberately prioritizes internal control.
+
+The appropriate claim is:
+
+> The study provides evidence that participant-facing presentation can influence the UX of this controlled PL study format.
+
+It does not prove that the same effect applies to every experiment type.
+
+---
+
+# 55. Pilot Checklist
+
+Before formal data collection, verify:
+
+- consent works;
+- assignment is balanced;
+- A/B task loading is correct;
+- Neutral and Meowra both contain four tasks;
+- Meowra appears only during the Meowra treatment block;
+- Meowra provides no technical hints;
+- Neutral contains equivalent functional information;
+- UEQ-S screens are neutral;
+- UEQ-S item orientation is correct;
+- all raw responses save correctly;
+- timers start when task content appears;
+- timers stop on Submit;
+- transition time is excluded from task time;
+- final preference works;
+- open response saves;
+- task distractors are unambiguous;
+- A/B paired tasks appear reasonably similar in difficulty;
+- no task contains multiple unintended programming issues.
+
+---
+
+# 56. Pre-Data-Collection Freeze
+
+Before the first formal participant:
+
+1. freeze the four Set A tasks;
+2. freeze the four Set B tasks;
+3. freeze all answer options;
+4. freeze the correct-answer key;
+5. freeze Neutral introduction/tutorial/transitions;
+6. freeze Meowra introduction/tutorial/transitions;
+7. freeze Dr. Meowra image assets;
+8. freeze UEQ-S wording and orientation;
+9. freeze final preference wording;
+10. freeze open-ended question wording;
+11. freeze assignment logic;
+12. freeze exclusion criteria;
+13. freeze analysis plan;
+14. verify data schema;
+15. pilot the build;
+16. fix technical problems;
+17. create a Git tag/release for the study version.
+
+Example:
 
 ```text
-app_version
-study_protocol_version
-unity_version
-study_start_timestamp
-study_completion_timestamp
+study-v2.0-participant-ux
 ```
 
-## Incremental Saving
+Do not silently change experimental content after formal collection begins.
 
-Do not keep the entire experiment only in memory until the final screen.
+---
 
-Save after meaningful participant actions.
+# 57. Planned Interpretation Patterns
 
-For example:
+## Pattern A — Desired Methodological Result
 
 ```text
-answer submitted
-    ↓
-update session
-    ↓
-write durable file
-    ↓
-advance page
+Meowra Hedonic > Neutral Hedonic
+Pragmatic similar or better
+accuracy similar
+response time similar
+participants prefer Meowra
 ```
 
-If the application crashes halfway through a participant session, already-completed data should remain recoverable.
+Interpretation:
 
-## File Format
-
-A practical approach is:
-
-- **JSON** for complete per-participant session records;
-- **CSV** for analysis-ready tables.
-
-Store files using `Application.persistentDataPath` or another approved local location.
-
-The final storage and retention process must follow the approved institutional research protocol.
+> The participant-centered interface improved subjective UX and was preferred without an obvious descriptive task-performance cost.
 
 ---
 
-# 31. Suggested Repository Structure
+## Pattern B — Fun but Costly
 
 ```text
-CatgirlCompilerResearch/
-├── AGENTS.md
-├── README.md
-├── DrMeowra.jpg
-├── Research_Design_Document.pdf
-├── Dr_Meowra_Statistics_and_Measures_Guide.pdf
-│
-├── study-materials/
-│   ├── stimuli/
-│   │   ├── scenarios.json
-│   │   └── stimulus_manifest.md
-│   ├── prompts/
-│   │   ├── neutral_prompt.md
-│   │   └── meowra_persona.md
-│   ├── measures/
-│   │   ├── UEQS_notes.md
-│   │   └── API_notes.md
-│   └── assignments/
-│       └── counterbalancing.csv
-│
-├── analysis/
-│   ├── README.md
-│   └── scripts/
-│
-└── UnityProject/
-    ├── Assets/
-    │   ├── Data/
-    │   ├── Fonts/
-    │   ├── Images/
-    │   ├── Prefabs/
-    │   ├── Scenes/
-    │   ├── Scripts/
-    │   │   ├── Data/
-    │   │   ├── Experiment/
-    │   │   ├── UI/
-    │   │   └── Utilities/
-    │   └── UI/
-    ├── Packages/
-    └── ProjectSettings/
+Meowra Hedonic > Neutral Hedonic
+Pragmatic lower
+accuracy lower and/or time substantially higher
 ```
 
-Not all directories need to exist immediately.
+Interpretation:
 
-The purpose of this structure is to separate:
+> The playful treatment improved experiential quality but introduced a usability or task-performance tradeoff.
+
+This would be important negative design evidence.
+
+---
+
+## Pattern C — Treatment Failure
 
 ```text
-research documentation
-study stimuli
-analysis
-participant-facing Unity implementation
+Meowra Hedonic ≈ Neutral Hedonic
+preference mixed
 ```
+
+Interpretation:
+
+> The particular Meowra implementation did not produce a meaningful UX improvement.
+
+This does not prove that participant-centered design is impossible.
+
+It means this implementation did not clearly succeed.
 
 ---
 
-# 32. Reproducing the Unity Environment
-
-The exact Unity Editor version used for data collection should be preserved in:
+## Pattern D — Positive UX but Mixed Preference
 
 ```text
-UnityProject/ProjectSettings/ProjectVersion.txt
+Meowra Hedonic > Neutral Hedonic
+preference approximately split
 ```
 
-A reproducing researcher should:
+Interpretation:
 
-1. clone the repository;
-2. inspect the tagged study version;
-3. install the Unity version listed in `ProjectVersion.txt`;
-4. open `UnityProject/`;
-5. verify all packages from `Packages/manifest.json`;
-6. open the experiment scene;
-7. run a test participant;
-8. confirm the assigned condition order;
-9. confirm the correct stimuli are shown;
-10. complete all surveys;
-11. inspect the resulting output file; and
-12. compare the output schema with the documented data dictionary.
+> Participants recognized the playful interface as more stimulating, but that experiential advantage did not universally translate into a preference for future participation.
+
+The open-ended responses become especially important here.
 
 ---
 
-# 33. Pre-Data-Collection Freeze
+# 58. Candidate Paper-Level Claim
 
-Before collecting publishable participant data, freeze the study.
+A proportionate final claim would be:
 
-Recommended freeze procedure:
-
-```text
-1. Finalize six scenarios.
-2. Finalize Raw diagnostics.
-3. Finalize Neutral explanations.
-4. Finalize Meowra explanations.
-5. Finalize Dr. Meowra introduction.
-6. Finalize UEQ-S implementation.
-7. Finalize exact API subscale wording.
-8. Finalize counterbalancing schedule.
-9. Finalize participant background items.
-10. Finalize data schema.
-11. Verify local saving.
-12. Run pilot sessions.
-13. Fix implementation bugs.
-14. Freeze the protocol.
-15. Create a Git tag / release for the exact study version.
-```
-
-Example tag:
-
-```text
-study-v1.0
-```
-
-Once real data collection begins, do not silently modify stimuli, questionnaire wording, condition behavior, or assignment logic.
-
-If a necessary change occurs, document it and version it.
+> **We present an exploratory within-subject study treating the participant-facing interface of a programming-language experiment as a methodological design variable. By comparing a conventional neutral study interface with a playful, character-mediated interface while holding the underlying programming task constant, we examine whether participant UX can be improved without an obvious cost to pragmatic usability or task performance.**
 
 ---
 
-# 34. Pilot Testing
+# 59. Candidate Contribution Statement
 
-Pilot with several people before formal data collection.
+Potential contributions:
 
-The pilot should verify:
+1. **Participant experience as methodology**  
+   We frame the participant-facing interface of a PL user study as an explicit methodological design variable.
 
-- instructions are understandable;
-- task text fits on screen;
-- code formatting is readable;
-- participant cannot advance without answering required items;
-- UEQ-S anchors are oriented correctly;
-- API uses the intended 5-point response format;
-- Meowra introduction appears only at the correct time;
-- counterbalancing works;
-- correct stimuli appear under each condition;
-- no condition leaks into another;
-- data is written after every important step;
-- final output contains every expected field;
-- response timing does not break when navigating;
-- session length is reasonable.
+2. **Controlled prototype comparison**  
+   We implement Neutral and playful character-mediated versions of the same short PL study task.
 
-Do not include pilot participants in the final analysis unless the protocol explicitly allows it and the finalized study they experienced is identical to the frozen experiment.
+3. **Mixed evidence about participant experience**  
+   We combine validated UX measurement, future-participation preference, open-ended explanation, and task-performance context.
+
+4. **Reproducible study infrastructure**  
+   The Unity implementation, matched task sets, crossover logic, and analysis plan can be preserved for replication and extension.
 
 ---
 
-# 35. Threats to Validity
+# 60. Candidate Titles
 
-## Persona Package Confound
+Working title:
 
-The study does not isolate avatar, tone, name, encouragement, or catgirl aesthetics individually.
+> **Designing for the Participant: Exploring Playful Interfaces in Programming Language User Studies**
 
-**Interpretation:** the causal unit is the persona package.
+Other possibilities:
 
-## Novelty
+> **Can User Studies Be More Fun? Exploring Participant-Centered Interfaces for Programming Language Research**
 
-A catgirl programming assistant is unusual.
+> **The User Study Is an Interface Too: Designing Participant Experience in Programming Language Research**
 
-The UEQ-S Hedonic scale includes dimensions such as inventive and leading-edge, so novelty may contribute directly to the measured effect.
+> **Dr. Meowra Runs a User Study: Exploring Playful Participant-Facing Design in Programming Language Research**
 
-**Interpretation:** this is part of the short-term UX response being explored, but long-term habituation remains unknown.
+The first is the safest academic title.
 
-## Demand Characteristics
-
-Participants may infer that Dr. Meowra is the “interesting” condition.
-
-**Mitigation:** neutral study instructions, counterbalancing, consistent UI, and avoiding language that tells participants which condition the researchers prefer.
-
-## Message Equivalence
-
-If Meowra provides better technical guidance than Neutral, the persona effect is confounded with information quality.
-
-**Mitigation:** same source information, same generation pipeline, expert review, approximate length matching, frozen outputs.
-
-## Order Effects
-
-Repeated exposure may create practice, fatigue, and contrast.
-
-**Mitigation:** six condition orders.
-
-## Scenario Difficulty
-
-Some errors are easier than others.
-
-**Mitigation:** three rotating stimulus sets.
-
-## Small Sample
-
-15–20 participants gives limited power for moderate/small effects.
-
-**Interpretation:** emphasize effect estimates, confidence intervals, descriptive patterns, and exploratory conclusions.
-
-## Ecological Validity
-
-A Unity multiple-choice task is not normal IDE debugging.
-
-**Interpretation:** this study isolates UX; real-world debugging is future work.
-
-## Population
-
-Student programmers may differ from experienced professionals.
-
-**Interpretation:** claims must match the sampled population.
+The last is the strongest poster/conference attention-grabber.
 
 ---
 
-# 36. Ethics and Human-Subjects Research
+# 61. Reproducibility Checklist
 
-This repository is not an IRB approval document.
+A future researcher should be able to recover:
 
-Before collecting data intended for publication:
-
-- obtain the appropriate institutional IRB/ethics determination;
-- use the approved consent language;
-- collect only approved participant information;
-- follow approved data-retention procedures;
-- avoid collecting unnecessary identifying information; and
-- ensure open-ended quotations are used only in ways permitted by the approved protocol.
-
-The Unity application should not collect names unless required by the approved protocol.
-
----
-
-# 37. Current Analysis Workflow
-
-After data collection:
-
-```text
-1. Validate participant/session files.
-2. Exclude only according to predetermined criteria.
-3. Score each UEQ-S administration.
-4. Compute Raw/Neutral/Meowra Pragmatic scores.
-5. Compute Raw/Neutral/Meowra Hedonic scores.
-6. Produce descriptive means, SDs, and 95% CIs.
-7. Create H1 paired differences:
-      Neutral Pragmatic - Raw Pragmatic.
-8. Create H2 paired differences:
-      Meowra Hedonic - Neutral Hedonic.
-9. Inspect paired-difference distributions/outliers.
-10. Run two paired-samples t-tests.
-11. Apply Holm correction across the two confirmatory p-values.
-12. Compute paired effect sizes (Cohen's dz).
-13. Summarize API Credible and Engaging descriptively.
-14. Report final preference counts/percentages.
-15. Code the open-ended “why” responses.
-16. Interpret the full pattern as exploratory evidence.
-```
-
-Do not run a large collection of unplanned significance tests simply because the data is available.
+- exact Unity version;
+- exact Git tag;
+- exact Dr. Meowra image;
+- exact Neutral wording;
+- exact Meowra wording;
+- exact Set A questions;
+- exact Set B questions;
+- exact answer options;
+- exact correct-answer key;
+- exact crossover assignment procedure;
+- exact participant-background questions;
+- exact UEQ-S items;
+- exact UEQ-S scoring;
+- exact preference question;
+- exact open-ended question;
+- exact timing definition;
+- exact data schema;
+- exact exclusion criteria;
+- exact analysis script;
+- exact study sample and recruitment description.
 
 ---
 
-# 38. Reporting Example
+# 62. References
 
-A final paper could report H2 approximately as:
+## Human-Factors Evidence and User-Study Methodology
 
-> Participants rated the Dr. Meowra condition more highly on UEQ-S Hedonic Quality than the Neutral condition. The paired mean difference was [value], 95% CI [lower, upper], `t(df) = [value]`, Holm-adjusted `p = [value]`, with paired effect size `dz = [value]`.
+Stefik, A., Hanenberg, S., McKenney, M., Andrews, A. A., Yellanki, S. K., & Siebert, S. (2014).  
+**What is the foundation of evidence of human factors decisions in language design? An empirical study on programming language workshops.**  
+*Proceedings of the 22nd International Conference on Program Comprehension (ICPC)*, 223–231.  
+https://doi.org/10.1145/2597008.2597154
 
-If the result is not significant:
+Buse, R. P. L., Sadowski, C., & Weimer, W. (2011).  
+**Benefits and barriers of user evaluation in software engineering research.**  
+*Proceedings of the 26th Annual ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications (OOPSLA)*, 643–656.  
+https://doi.org/10.1145/2048066.2048117
 
-> Hedonic ratings descriptively favored Dr. Meowra, but the paired comparison did not reach the prespecified significance threshold after correction. The estimated effect was [value] with a wide confidence interval, consistent with substantial uncertainty in this small exploratory sample.
+## Controlled Programming-Error Tasks
 
-Do not write that a non-significant result proves equivalence.
-
----
-
-# 39. Interpreting a Positive Persona Result
-
-If the persona package receives higher Hedonic Quality ratings, that result should be described narrowly.
-
-Appropriate:
-
-> Persona-based presentation produced a more positive hedonic UX in this exploratory sample.
-
-Too strong:
-
-> Catgirls make compiler errors better.
-
-Also too strong:
-
-> Friendly wording caused the effect.
-
-The experiment evaluates the **package**.
-
-The scientific value of a positive result is that it justifies more targeted follow-up studies capable of isolating individual social/visual features.
-
----
-
-# 40. Development Instructions for Coding Agents
-
-See [`AGENTS.md`](AGENTS.md).
-
-Coding agents should:
-
-- preserve experimental design;
-- avoid changing validated scale wording;
-- keep Neutral and Meowra technical content matched;
-- explain Unity/C# changes;
-- test data logging;
-- work incrementally;
-- avoid live AI integration;
-- avoid committing generated Unity folders; and
-- flag methodological decisions rather than silently making them.
-
----
-
-# 41. Measurement and Instrument Resources
-
-## UEQ / UEQ-S
-
-Practical overview:
-
-- [SurveyLab — User Experience Questionnaire (UEQ)](https://www.surveylab.com/blog/user-experience-questionnaire-ueq/)
-
-Official resources, questionnaires, handbooks, benchmarks, and analysis tools:
-
-- [UEQ Online](https://www.ueq-online.org/)
-
-Primary UEQ-S publication:
-
-> Schrepp, M., Hinderks, A., & Thomaschewski, J. (2017).  
-> *Design and Evaluation of a Short Version of the User Experience Questionnaire (UEQ-S).*  
-> International Journal of Interactive Multimedia and Artificial Intelligence, 4(6), 103–108.  
-> https://doi.org/10.9781/ijimai.2017.09.001
-
-## Agent Persona Instrument
-
-Instrument/paper resource:
-
-- [Ryu & Baylor — Agent Persona Instrument](https://www.researchgate.net/publication/237627605_The_API_Agent_Persona_Instrument_for_Assessing_Pedagogical_Agent_Persona)
-
-Related psychometric publication:
-
-> Ryu, J., & Baylor, A. L. (2005).  
-> *The Psychometric Structure of Pedagogical Agent Persona.*  
-> Technology, Instruction, Cognition & Learning, 2(4), 291–315.
-
-Use the published API wording and anchors when implementing the Credible and Engaging subscales.
-
----
-
-# 42. Background Literature
-
-The following literature motivates the study and/or informs its design.
-
-### Compiler Diagnostics and Human Factors
-
-Barik, T., Ford, D., Murphy-Hill, E., & Parnin, C. (2018).  
-*How Should Compilers Explain Problems to Developers?*  
-Proceedings of ESEC/FSE.  
-https://doi.org/10.1145/3236024.3236040
-
-Barik, T., Smith, J., Lubick, K., Holmes, E., Feng, J., Murphy-Hill, E., & Parnin, C. (2017).  
-*Do Developers Read Compiler Error Messages?*  
-ICSE.  
-https://doi.org/10.1109/ICSE.2017.59
-
-Becker, B. A. (2016).  
-*An Effective Approach to Enhancing Compiler Error Messages.*  
-SIGCSE.  
-https://doi.org/10.1145/2839509.2844584
-
-Becker, B. A., et al. (2019).  
-*Compiler Error Messages Considered Unhelpful: The Landscape of Text-Based Programming Error Message Research.*  
-ITiCSE Working Group Reports.  
-https://doi.org/10.1145/3344429.3372508
-
-Denny, P., Luxton-Reilly, A., & Carpenter, D. (2014).  
-*Enhancing Syntax Error Messages Appears Ineffectual.*  
-ITiCSE.  
-https://doi.org/10.1145/2591708.2591748
+Hristova, M., Misra, A., Rutter, M., & Mercuri, R. (2003).  
+**Identifying and correcting Java programming errors for introductory computer science students.**  
+*Proceedings of the 34th SIGCSE Technical Symposium on Computer Science Education*, 153–156.  
+https://doi.org/10.1145/611892.611956
 
 Denny, P., Prather, J., & Becker, B. A. (2020).  
-*Error Message Readability and Novice Debugging Performance.*  
-ITiCSE.  
+**Error message readability and novice debugging performance.**  
+*Proceedings of the 2020 ACM Conference on Innovation and Technology in Computer Science Education (ITiCSE)*, 480–486.  
 https://doi.org/10.1145/3341525.3387384
 
-Dong, T., & Khandwala, K. (2019).  
-*The Impact of “Cosmetic” Changes on the Usability of Error Messages.*  
-CHI Extended Abstracts.  
-https://doi.org/10.1145/3290607.3312978
+## UEQ-S
 
-Traver, V. J. (2010).  
-*On Compiler Error Messages: What They Say and What They Mean.*  
-Advances in Human-Computer Interaction.  
-https://doi.org/10.1155/2010/602570
+Schrepp, M., Hinderks, A., & Thomaschewski, J. (2017).  
+**Design and evaluation of a short version of the User Experience Questionnaire (UEQ-S).**  
+*International Journal of Interactive Multimedia and Artificial Intelligence, 4*(6), 103–108.  
+https://doi.org/10.9781/ijimai.2017.09.001
 
-### LLM and Conversational Compiler Feedback
+Practical UEQ overview:
 
-Taylor, A., Vassar, A., Renzella, J., & Pearce, H. (2024).  
-*DCC --help: Transforming the Role of the Compiler by Generating Context-Aware Error Explanations with Large Language Models.*  
-SIGCSE.  
-https://doi.org/10.1145/3626252.3630822
+https://www.surveylab.com/blog/user-experience-questionnaire-ueq/
 
-Santos, E. A., & Becker, B. A. (2024).  
-*Not the Silver Bullet: LLM-Enhanced Programming Error Messages Are Ineffective in Practice.*  
-UKICER.  
-https://doi.org/10.1145/3689535.3689554
+Official UEQ resources:
 
-Renzella, J., Vassar, A., Lee Solano, L., & Taylor, A. (2025).  
-*Compiler-Integrated, Conversational AI for Debugging CS1 Programs.*  
-SIGCSE.  
-https://doi.org/10.1145/3641554.3701827
-
-### Social Agents, Persona, and Anthropomorphism
-
-Nass, C., Steuer, J., & Tauber, E. R. (1994).  
-*Computers Are Social Actors.*  
-CHI.  
-https://doi.org/10.1145/191666.191703
-
-Lester, J. C., Converse, S. A., Kahler, S. E., Barlow, S. T., Stone, B. A., & Bhogal, R. S. (1997).  
-*The Persona Effect: Affective Impact of Animated Pedagogical Agents.*  
-CHI.  
-https://doi.org/10.1145/258549.258797
-
-Moreno, R., Mayer, R. E., Spires, H. A., & Lester, J. C. (2001).  
-*The Case for Social Agency in Computer-Based Teaching: Do Students Learn More Deeply When They Interact with Animated Pedagogical Agents?*  
-Cognition and Instruction, 19(2), 177–213.  
-https://doi.org/10.1207/S1532690XCI1902_02
-
-Moundridou, M., & Virvou, M. (2002).  
-*Evaluating the Persona Effect of an Interface Agent in a Tutoring System.*  
-Journal of Computer Assisted Learning, 18(3), 253–261.  
-https://doi.org/10.1046/j.0266-4909.2001.00237.x
-
-Wang, N., Johnson, W. L., Mayer, R. E., Rizzo, P., Shaw, E., & Collins, H. (2008).  
-*The Politeness Effect: Pedagogical Agents and Learning Outcomes.*  
-International Journal of Human-Computer Studies, 66(2), 98–112.  
-https://doi.org/10.1016/j.ijhcs.2007.09.003
-
-Cohn, M., et al. (2024).  
-*Believing Anthropomorphism: Examining the Role of Anthropomorphic Cues on Trust in Large Language Models.*  
-CHI Extended Abstracts.  
-https://doi.org/10.1145/3613905.3650818
-
-### Catgirl / Kemonomimi Visual Context
-
-Shijo, R., Sakurai, S., Hirota, K., & Nojima, T. (2021).  
-*Consideration of Emotional Expression Interface Based on Emotional Expression Ability of Animal.*  
-The Transactions of Human Interface Society, 23(4), 419–430.  
-https://doi.org/10.11184/his.23.4_419
+https://www.ueq-online.org/
 
 ---
 
-# 43. Reproducibility Checklist
+# 63. Current Frozen Decisions
 
-A researcher attempting to reproduce the experiment should be able to identify:
+As of this research-design version, the following decisions are considered settled unless explicitly revised before formal data collection:
 
-- the exact Unity version;
-- the exact study Git tag;
-- the six exact source-code scenarios;
-- the compiler and compiler version used for Raw diagnostics;
-- the exact Raw diagnostics;
-- the exact frozen Neutral explanations;
-- the exact frozen Meowra explanations;
-- the prompts/model/version used to generate them;
-- the Dr. Meowra avatar;
-- the persona introduction;
-- the condition-order assignment schedule;
-- the stimulus-set assignment schedule;
-- all participant background questions;
-- all eight UEQ-S items;
-- the exact selected API subscales;
-- the final preference question;
-- the open-ended question;
-- the data schema;
-- the exclusion rules;
-- the power-analysis assumptions;
-- the analysis script; and
-- the final statistical-reporting procedure.
-
-If any of those items are unavailable, reproducibility is incomplete.
-
-The repository should therefore preserve them before publication.
+- two study conditions: Neutral and Dr. Meowra;
+- within-subject crossover design;
+- two matched four-question task sets;
+- four crossover assignment cells;
+- four task categories;
+- multiple-choice rather than code editing;
+- Neutral informed consent for everyone;
+- Meowra acts as study host, not programming tutor;
+- avatar visible throughout Meowra treatment screens;
+- no hints;
+- no correctness feedback;
+- all eight UEQ-S items after each condition;
+- Hedonic Quality is the primary UX outcome;
+- Pragmatic Quality is a secondary tradeoff outcome;
+- accuracy and response time are secondary;
+- task timing excludes transition/encouragement screens;
+- final preference asks which format participants would prefer for another similar study;
+- one open-ended explanation follows preference;
+- no Agent Persona Instrument;
+- primary inferential test is a paired-samples t-test;
+- the main claim concerns participant UX, not compiler diagnostics or AI personification.
 
 ---
 
-# 44. Project Goal
+# 64. Immediate Next Steps
 
-The project is not trying to establish a universal conclusion from a small one-month study.
+The design is sufficiently specified to begin implementation.
 
-Its contribution is narrower:
+Before formal data collection:
 
-> **Explore whether social/persona-based presentation is a meaningful UX dimension for AI-assisted compiler feedback, using a controlled PL+HCI experiment that separates improved explanatory content from the additional persona treatment.**
-
-A strong result would justify larger and more targeted research.
-
-A weak or null result would still provide useful evidence about whether persona-based compiler feedback deserves further investment.
-
-Either outcome is informative if the study is run transparently and the claims remain proportional to the evidence.
-
-### Editing participant consent
-
-Select `UnityProject/Assets/Data/StudyDefinition.asset` in Unity's Project window.
-Enter your participant information, risks, and other consent details in the multiline
-**Consent Text** box in the Inspector, outside Play mode, and save the asset.
-The existing Welcome page now presents this text in a scrollable box before the
-instructions. Participants click **Accept**; no checkbox or typed response is needed.
-An empty consent field blocks a real session; Preview Layout displays a placeholder.
-
-`ConsentView` presents the text, `ExperimentManager` handles progression, and
-`ParticipantSession` stores acceptance, its UTC timestamp, and the exact displayed
-wording. These fields are saved immediately in `session.json` before advancing.
-Preview acceptance stays in the existing separate preview output folder.
-
-To check the page, enter Play mode, choose Preview Layout, read/scroll the consent
-text, then click Accept and confirm that instructions appear. Test a long passage
-to check scrolling. `Tools > Experiment > Run Smoke Check` also checks consent and
-saved session snapshots using synthetic content without changing study assets.
+```text
+1. Finalize all eight multiple-choice distractor sets.
+2. Finalize Neutral study-host text.
+3. Finalize Dr. Meowra study-host text.
+4. Implement the two conditions in Unity.
+5. Implement four-cell crossover assignment.
+6. Implement UEQ-S.
+7. Implement timing and accuracy logging.
+8. Implement preference + open response.
+9. Pilot the complete study.
+10. Correct task mismatches or UI problems.
+11. Freeze and tag the study build.
+12. Begin formal data collection.
+```

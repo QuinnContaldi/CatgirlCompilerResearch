@@ -1,220 +1,65 @@
-# Add your questions without changing C#
+# Author the two-condition study
 
-The project contains **six authored scenario assets**, each with a comprehension
-question, three incorrect choices, one correct choice, and an explicit answer key.
-Code and condition-specific feedback are stored as plain text in each scenario asset.
-The keys for Scenario01 through Scenario06 are **B, D, A, C, A, B**.
-Review the wording and difficulty before freezing the stimuli for data collection.
+The sole scientific protocol is [Research_Design.md](../Research_Design.md).
 
-A *ScriptableObject asset* is a saved form in Unity's Project window. It holds
-content independently of the Canvas. A *prefab* is a reusable saved UI object.
-The TrialPanel prefab reads whichever scenario the experiment manager assigns,
-so you do not need six copies of the Canvas or separate pages for each condition.
+## Edit sources
 
-## 1. Prepare plain text
-
-Paste C source into **Code Text** and diagnostics/explanations into the three
-feedback fields. Keep indentation, leading blank lines and diagnostic caret lines.
-Do not add color tags: `StudyTextFormatter` supplies syntax coloring automatically.
-The same code text is used in every condition. TextMeshPro renders the colored
-characters using the bundled Liberation Mono font; no live compiler or AI runs.
-
-## 2. Fill the six scenario assets
-
-Select `Assets/Data/Scenarios/Scenario01.asset` through `Scenario06.asset`.
-Each Inspector has these fields:
-
-| Field | What you provide |
+| Content | Authoritative editable source |
 | --- | --- |
-| Scenario ID | A unique stable ID; defaults to `scenario-01` through `scenario-06`. |
-| Code Text | Paste the C source, preserving indentation and line breaks. |
-| Question | Your comprehension prompt. |
-| Answer A, B, C, D | The four answer texts in fixed order. |
-| Correct Answer | Explicitly select A, B, C or D. It starts as **Unassigned**. |
-| Raw Feedback | The raw compiler diagnostic for this scenario. |
-| Neutral Feedback | Your neutral explanation. |
-| Meowra Feedback | Your matched persona explanation. |
+| Neutral introduction, tutorial, progress and completion | [Neutral_Host.md](../study-content/Neutral_Host.md) |
+| Meowra introduction, tutorial, progress, task banners and completion | [Meowra_Host.md](../study-content/Meowra_Host.md) |
+| Shared instructions, prompts and completion | [Study_Text.md](../study-content/Study_Text.md) |
+| Neutral consent | [Consent_Text.md](../Consent_Text.md), under `Screen text` |
+| Four Set A questions | `../Stimuli/SetA/A1.json` through `A4.json` |
+| Four Set B questions | `../Stimuli/SetB/B1.json` through `B4.json` |
+| Original portrait | `../Pictures/DrMeowra.jpg` |
 
-The Inspector reports the first missing field. Fill all three feedback texts for
-**each** scenario because the stimulus sets rotate scenarios between conditions.
-Keep Neutral and Meowra technically matched as required by the design document.
-Text is displayed literally, so code-like `<...>` fragments are not treated as
-rich-text formatting.
+Condition Markdown files contain one editable JSON block. Preserve field names,
+JSON quoting and array order. Progress arrays have three entries; Meowra task
+banners have four entries and follow question position under either task set.
+Tutorials convey the same functional information. Meowra may encourage participation,
+but cannot give programming hints, answer assistance or correctness feedback.
 
-You can create replacement assets through **Assets → Create → Meowra → Scenario**.
-Then assign them in the study definition. Merely creating a new asset does not
-add it to the session automatically.
+Task JSON uses `scenarioId` (task ID), `taskSet`, `matchedPairId`, `errorCategory`,
+`codeText`, `question`, `answerA`–`answerD`, and `correctAnswer` (0=A through 3=D).
+Keys are researcher data and never displayed to participants. Do not duplicate
+questions for each condition. Current content remains a draft requiring pilot review.
 
-**Edit the scenario asset**, rather than the trial panel's text in the scene.
-TrialView replaces panel contents with the assigned scenario when a trial begins.
-The original image references remain hidden archival fields; they are never
-used as fallbacks, and missing text blocks a scored session.
+## Import and inspect
 
-## 3. Configure the study asset
+1. Exit Play mode and edit the source files.
+2. Choose **Tools → Experiment → Import Study Content**.
+3. Inspect the imported `Assets/Data/StudyDefinition.asset` and eight task assets.
+4. Use Preview layout in `Assets/Scenes/Experiment.unity` to review presentation.
+5. Run **Tools → Experiment → Run Smoke Check** after changes.
 
-Open `Assets/Data/StudyDefinition.asset`:
+Import validates all content before modifying assets, preserves existing GUIDs,
+and resets `Content Reviewed` when content changes. **Check Study Content** checks
+source/runtime equality without writing. Play mode and build checks reject stale
+copies. Do not edit imported text directly in the Inspector; edit its source and
+import again. Portrait assignment, study version and the content-review flag remain
+researcher-managed fields in StudyDefinition. The Unity portrait is an imported
+copy of the original artwork; image changes require replacing/reimporting that copy.
 
-- Keep exactly six distinct scenarios in the **Scenarios** list.
-- Slots 1–2 form pair 1; slots 3–4 pair 2; slots 5–6 pair 3. The Inspector numbers
-  array elements from 0, so Element 0 is human-readable slot 1.
-- Fill **Meowra Introduction** with your reviewed text. The text is deliberately blank.
-- **Meowra Portrait** already references the imported Dr. Meowra sprite and can be replaced.
+For command-line import, with Unity closed:
 
-The scene's root `ExperimentManager` references this study asset. You can drag a
-replacement Study Definition onto that component if you create a separate version.
-
-## 4. Pick the researcher-menu assignment
-
-Press Play in `Assets/Scenes/Experiment.unity`.
-
-| Order | Block sequence |
-| --- | --- |
-| 1 | Raw → Neutral → Meowra |
-| 2 | Raw → Meowra → Neutral |
-| 3 | Neutral → Raw → Meowra |
-| 4 | Neutral → Meowra → Raw |
-| 5 | Meowra → Raw → Neutral |
-| 6 | Meowra → Neutral → Raw |
-
-Choose the stimulus set independently:
-
-| Set | Raw scenarios | Neutral scenarios | Meowra scenarios |
-| --- | --- | --- | --- |
-| 1 | Slots 1–2 | Slots 3–4 | Slots 5–6 |
-| 2 | Slots 3–4 | Slots 5–6 | Slots 1–2 |
-| 3 | Slots 5–6 | Slots 1–2 | Slots 3–4 |
-
-Each session uses all six scenarios **once**, with two per condition. The order
-controls when conditions appear; the set controls which scenarios receive each
-condition. The mapping is deterministic and retained in Session. It does not
-randomize or automatically assign participants. Review your chosen pair grouping
-before data collection; the code implements the protocol's rotation requirement
-without choosing your question content or difficulty matching for you.
-
-**Preview layout** works with the blank templates and uses visible bracketed
-placeholders. Its banner identifies the session as unscored. Select A–D and
-Submit to walk through all six slots. **Start scored session** becomes available
-when all six assets and the Meowra introduction/portrait validate. This checks
-trial content, not completion of the full research protocol.
-
-## 5. Selection and scoring
-
-- No answer is preselected. Submit stays disabled until a choice is selected.
-- Only one answer can be selected. Clicking it again clears the selection and
-  disables Submit.
-- Submit records the answer once, advances, and clears the next trial's selection.
-- Submitted trials have no Back button, preventing accidental re-answering.
-- Correct = 1, incorrect = 0. No correctness messages or scores appear in the
-  participant-facing UI.
-- Preview sessions never contribute scored responses, even if assets have keys.
-
-While still in Play mode, select the root **ExperimentManager**, then expand
-**Session** in its Inspector. You can inspect the order/set, planned scenario IDs
-and conditions, responses, Correct Count and Scored Count. Returning to the menu
-retains those results; starting the next session replaces them.
-
-**Responses now save after every submission**, plus at session creation and final-measures completion.
-Select ExperimentManager in Play mode and copy **Session Directory** to find the files:
-
-```text
-Application.persistentDataPath/StudySessions/
-  Participants/<anonymous ID>/session.json + trials.csv
-  Previews/<anonymous ID>/session.json + trials.csv
+```bash
+./Tools/open-unity.sh -batchmode -nographics \
+  -executeMethod ImportStudyContent.RunBatch -logFile /tmp/meowra-content-import.log
 ```
 
-Each new run receives a randomly generated anonymous ID. Preview files are separate
-and unscored. JSON stores the complete current session, including the planned
-scenario/condition assignment, schema version, start time in UTC, responses, and
-timing definition. JSON condition values are enum numbers (Raw = 0, Neutral = 1,
-Meowra = 2); CSV uses readable names and includes the condition order.
+The consent still has institutional/contact/privacy placeholders. `Content Reviewed`
+is currently enabled at the researcher's request to allow complete scored runs.
+This software setting does not complete the consent placeholders or establish a
+content freeze. Set the study version when finalizing the collection content. See the dated [content review](../docs/Content_Review.md).
 
-The stopwatch starts immediately after the trial view is populated and stops on
-Submit, before file writing. `responseTimeSeconds` includes reading, answer changes,
-and time away from the app. It does not pause with Unity's game clock; there is no
-participant-facing timer. This is exploratory total scenario response time, not
-isolated comprehension speed or time per questionnaire item. UI rendering has
-frame-level onset uncertainty; this is not a laboratory stimulus-onset timer.
+## Verify the flow
 
-JSON is the authoritative snapshot; CSV is an analysis-friendly trial export.
-Each file is flushed to a temporary file before replacement; `.bak` holds its
-previous snapshot. The two files are not one transaction: if writing CSV fails,
-JSON may be newer until Retry succeeds. Saving failures block progression, retain
-the response in memory, and show a Retry saving button. Keep the app open, fix disk
-space/permissions, then retry. The Console warning includes the failing path.
+Use each of assignment cells 1–4. Check neutral consent, overview and background;
+both introduction/tutorial/four-task blocks with separate progress pages; neutral
+UEQ-S after each block; preference, optional reason and completion. Meowra appears
+only within her condition. Confirm no hints or correctness feedback, no repeated
+task set, and no transition time inside task response time.
 
-Closing the app partway through preserves submitted responses, but there is no
-resume-session UI yet. An unanswered trial is not saved as a response. `completed`
-currently means **the trial section** is complete, not the entire research protocol.
-This remains an authoring/testing skeleton until the other protocol pages are built.
-
-## 6. Edit the UI template
-
-Double-click `Assets/Prefabs/TrialPanel.prefab` to edit its layout in Prefab mode:
-
-```text
-TrialPanel
-  Progress
-  TrialScroll
-    Viewport
-      Content
-        CodeHeading
-        CodeTextPanel
-          Text (TextMeshPro)
-        FeedbackHeader
-          Heading
-          MeowraPortrait
-        FeedbackTextPanel
-          Text (TextMeshPro)
-        QuestionPrompt
-        Answers
-          AnswerA / AnswerB / AnswerC / AnswerD
-  SubmitButton
-```
-
-The Inspector's TrialView component has serialized references to these controls.
-Keep those references connected if you rename or rearrange objects. Both text
-panels use the same 24-unit font size and dark background. Layout groups measure
-the text and expand each panel; the existing page scrolls vertically. Long lines
-wrap without shrinking the font. Test the longest content at the study resolution.
-
-All conditions share this prefab, typography, spacing and answer controls. The
-Meowra portrait is only shown in her condition. Space for the feedback heading
-is reserved consistently so the other content does not jump between conditions.
-
-The surrounding pages live under `Canvas/Pages` in the scene. Welcome,
-Instructions and Evaluation are explicitly marked placeholders for later work.
-The Meowra introduction is inserted immediately before her block, regardless of
-whether she is first, second or third. No questionnaire items, consent text,
-practice scenarios or statistical analysis have been added. Timing and local saving are handled by the scripts.
-
-## Check your work
-
-1. Preview orders 1 and 5 to see Meowra last and first.
-2. Check that each code snippet, explanation and all four answers are readable; scroll
-   to the final answer and verify Submit stays available outside the scroll area.
-3. After authoring all six assets, run a scored walkthrough with known correct
-   and incorrect selections and inspect Session in Play mode.
-4. Run **Tools → Experiment → Run Smoke Check** to exercise all 18 assignments
-   automatically with temporary synthetic data. This does not assess the scientific
-   quality of your authored content.
-
-5. Start a preview, wait a few seconds on a scenario, then submit. Inspect Session
-   → Responses → Response Time Seconds and open Session Directory. Confirm the JSON
-   has one response and the CSV has one data row. Stop Play mode mid-session and
-   reopen the files: that response must remain, with `completed` false.
-
-Next development step: review the questionnaire wording and response ranges, then
-implement the condition evaluation page using this same saving infrastructure.
-
-
-### End-of-study pages
-
-After all three UEQ-S evaluations, participants complete the ten supplied API
-items (5-point agreement scale), choose Raw / Neutral / Dr. Meowra on a separate
-forced-choice page, and see “Why did you prefer that style?” on a separate
-multiline response page. Prose can be submitted blank. All pages save on
-submission. See [Final measures](README.md#final-measures) for files, runtime
-Inspector locations, response flags and exact test steps. The generated panels
-are available under Canvas/Pages during Play mode. API wording is frozen in
-Assets/Scripts/Data/FinalResponses.cs; changes should be reviewed as instrument
-changes, not layout adjustments.
+Historical compiler-feedback assets and Agent Persona Instrument code are stored
+outside Unity under `../docs/archive/`. They do not compile or load in this study.

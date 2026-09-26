@@ -12,33 +12,134 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c1c9e7d653802d17a2ac1687849a654, type: 3}
   m_Name: StudyDefinition
   m_EditorClassIdentifier: Assembly-CSharp::Meowra.Data.StudyDefinition
-  consentText: "CONSENT TO PARTICIPATE IN RESEARCH\nCompiler Feedback Study\n\nPlease read this information before deciding whether to participate. You may ask the researcher questions before you begin.\n\nKEY INFORMATION\nYou are invited to take part in research about how people experience different styles of programming-error feedback. Participation is voluntary and is expected to take approximately 12\u201318 minutes, depending on your reading speed. We expect little risk, mainly temporary frustration or tiredness. There is no expected direct benefit to you and no payment for participating. Your responses may contribute to scientific understanding of programming support tools. You may choose not to participate or stop at any time without penalty or loss of benefits to which you are otherwise entitled.\n\nWHAT YOU WILL DO\nYou will read brief instructions, review six short programming-error scenarios presented with different feedback styles, and select an answer for each scenario. After each pair of scenarios, you will answer a short questionnaire about the feedback. You will also answer questions about your experience with the assistant, choose a preferred feedback style, and have an opportunity to explain your preference in your own words. The feedback is prepared in advance; the study does not send your responses to a live AI service.\n\nRISKS AND DISCOMFORTS\nThe activities are expected to involve risks similar to ordinary computer-based reading and problem solving. You may experience mild frustration, boredom, fatigue, or eye strain. There is also a possible risk of loss of privacy if research records are accessed without authorization. You may pause or stop if you feel uncomfortable. Tell the researcher if you have a concern or experience a problem.\n\nBENEFITS AND PAYMENT\nYou should not expect a personal benefit, payment, or other reward. The possible benefit is contributing to research on how programming feedback is presented and experienced.\n\nYOUR CHOICE\nTaking part is your choice. You may decline by selecting the return-to-setup button instead of Accept. You may stop later by telling the researcher or closing the study. Some questions require an answer to advance; if you do not want to answer, you may stop rather than continue. You do not have to give a reason. Responses already submitted are saved as you go.\n\nINFORMATION RECORDED AND PRIVACY\nThe app assigns a random participant ID and does not ask for your name. It records the assigned feedback and task order, your selected answers, whether each answer is correct, time spent on each programming question, questionnaire ratings, your preferred feedback style, and any written explanation you provide. It also records your consent decision and its time. Please do not include your name or other identifying details in written responses.\n\nRecords are saved locally on the study computer. The app does not automatically upload them. A random ID reduces identification risk but does not guarantee complete anonymity, especially if you include identifying information in a written response.\n\n[RESEARCHER TO COMPLETE: Who may access the records, how they will be protected, how long they will be retained, and whether individual-level data or quotations will be shared or used in future research.]\n\n[RESEARCHER TO COMPLETE: Whether already-submitted responses will be retained if you stop, and how and until when you can request their removal. Because the app does not collect your name, locating a record later may require its participant ID.]\n\nQUESTIONS AND CONTACTS\nFor questions about the study, or to report a study-related problem or harm, contact:\n[RESEARCHER NAME, INSTITUTION, AND EMAIL OR PHONE]\n\nFor questions about your rights as a research participant, or concerns you prefer to discuss with someone independent of the study team, contact:\n[INSTITUTIONAL IRB / RESEARCH ETHICS OFFICE AND EMAIL OR PHONE]\n\nYOUR CONSENT\nBy selecting Accept, you indicate that you have read this information, have had an opportunity to ask questions, and voluntarily agree to participate. Selecting Accept does not waive any of your legal rights. If you do not wish to participate, do not select Accept."
   scenarios:
-  - {fileID: 11400000, guid: fb147655216905c0aa17dbd70a8cf0d8, type: 2}
-  - {fileID: 11400000, guid: 1dabf3774b744a905b27d8f1b16abccd, type: 2}
-  - {fileID: 11400000, guid: 09760c72e9f170497ba17df4b454daa0, type: 2}
-  - {fileID: 11400000, guid: e905733b49820dbe3ae15c8e43cd011e, type: 2}
-  - {fileID: 11400000, guid: 1d5ff35aba6d2c888b774d303882c0e3, type: 2}
-  - {fileID: 11400000, guid: b6af74c816ccd62f5aa0748d7d92a7ad, type: 2}
+  - {fileID: 11400000, guid: 2512ef3353dc40b6bc8dcdcd4af51813, type: 2}
+  - {fileID: 11400000, guid: fe335878e8a240cb84e141f1316b71b0, type: 2}
+  - {fileID: 11400000, guid: 02600224236246ddb351e34334eac1ce, type: 2}
+  - {fileID: 11400000, guid: db553e0aa6f14700bf241d85cbe84c8a, type: 2}
+  - {fileID: 11400000, guid: db32ff293c8247dcb660b08c2ebc33a0, type: 2}
+  - {fileID: 11400000, guid: 5ef89b5f44214d58981f4007433f488d, type: 2}
+  - {fileID: 11400000, guid: 0cbe9719b7784299b95d4b06278d259d, type: 2}
+  - {fileID: 11400000, guid: 7b2dd76b73874afe8185b133dcc87111, type: 2}
+  consentText: 'CONSENT TO PARTICIPATE IN RESEARCH
+
+    Programming-Language Study
+
+
+    Please read this information before deciding whether to participate. You may ask the researcher questions before you begin.
+
+
+    KEY INFORMATION
+
+    You are invited to take part in research about how people experience different interfaces for a programming-language study. Participation is voluntary. [RESEARCHER TO COMPLETE: Expected duration, confirmed in the two-condition pilot.] We expect little risk, mainly temporary frustration or tiredness. There is no expected direct benefit to you. [RESEARCHER TO COMPLETE: Payment, course credit, other compensation, or no compensation, consistent with recruitment materials.] Your responses may contribute to understanding how people experience programming-language studies. You may choose not to participate or stop at any time without penalty or loss of benefits to which you are otherwise entitled.
+
+
+    WHAT YOU WILL DO
+
+    You will read a brief overview and may describe your programming background. You will then complete two sections of four short programming questions, selecting one answer per question. The sections use different interface presentations. After each section, you will answer eight rating items about the study interface. At the end, you will choose which format you would prefer for a future similar study and may explain your choice in your own words. The app does not provide hints or tell you whether your answers are correct. The study content is prepared in advance; the study does not send your responses to a live AI service.
+
+
+    RISKS AND DISCOMFORTS
+
+    The activities are expected to involve risks similar to ordinary computer-based reading and problem solving. You may experience mild frustration, boredom, fatigue, or eye strain. There is also a possible risk of loss of privacy if research records are accessed without authorization. You may pause or stop if you feel uncomfortable. Tell the researcher if you have a concern or experience a problem.
+
+
+    BENEFITS AND PAYMENT
+
+    You should not expect a direct personal benefit. [RESEARCHER TO COMPLETE: Confirm compensation arrangements, including any course-credit alternative if applicable.] The possible benefit is contributing to research on how programming-language studies are presented and experienced.
+
+
+    YOUR CHOICE
+
+    Taking part is your choice. You may decline by selecting the return-to-setup button instead of Accept. You may stop later by telling the researcher or closing the study. Programming-background information and the final written explanation are optional. Programming questions, interface ratings, and the preference choice require an answer to advance; if you do not want to answer, you may stop rather than continue. You do not have to give a reason. Responses already submitted are saved as you go.
+
+
+    INFORMATION RECORDED AND PRIVACY
+
+    The app assigns a random participant ID and does not ask for your name. It records any programming-background information you provide, the assigned interface and task order, your selected answers, whether each answer is correct, time spent on each programming question, questionnaire ratings, your preferred study format, and any written explanation you provide. It also records your consent decision and its time. Please do not include your name or other identifying details in written responses.
+
+
+    Records are saved locally on the study computer. The app does not automatically upload them. A random ID reduces identification risk but does not guarantee complete anonymity, especially if you include identifying information in a written response.
+
+
+    [RESEARCHER TO COMPLETE: Who may access the records, how they will be protected, how long they will be retained, and whether individual-level data or quotations will be shared or used in future research.]
+
+
+    [RESEARCHER TO COMPLETE: Whether already-submitted responses will be retained if you stop, and how and until when you can request their removal. Because the app does not collect your name, locating a record later may require its participant ID.]
+
+
+    QUESTIONS AND CONTACTS
+
+    For questions about the study, or to report a study-related problem or harm, contact:
+
+    [RESEARCHER NAME, INSTITUTION, AND EMAIL OR PHONE]
+
+
+    For questions about your rights as a research participant, or concerns you prefer to discuss with someone independent of the study team, contact:
+
+    [INSTITUTIONAL IRB / RESEARCH ETHICS OFFICE AND EMAIL OR PHONE]
+
+
+    YOUR CONSENT
+
+    By selecting Accept, you indicate that you have read this information, have had an opportunity to ask questions, and voluntarily agree to participate. Selecting Accept does not waive any of your legal rights. If you do not wish to participate, do not select Accept.'
   meowraPortrait: {fileID: 21300000, guid: 32f6bc7430c81fdc7913e9cb77c6fdd6, type: 3}
-  meowraIntroduction: "Alright, now it's my turn to help you with the errors, nya! I'll explain what each error means and offer a hint to help you work through it. Take your time—we'll tackle this together."
-  consentQuote: "Nya! This page explains what taking part involves and the risks associated with the experiment. Please read it before deciding whether to participate."
-  hostIntroduction: "Hi, I'm Dr. Meowra, your catgirl assistant! I'm here to guide you through this coding assignment, nya. Don't worry about getting everything right—we'll take it one step at a time. I'll stay with you throughout the study, and in my feedback block I'll help explain the coding errors. Paws ready?"
-  hostQuote: "Paws ready! The researcher can choose the session settings here."
-  surveyQuote: "That's the first pair of tasks finished. How did that feedback style feel to use?"
-  completionQuote: "Meowtastic effort! Thank you for taking part, purrr!"
-  answerEncouragements:
-  - "One question at a time, nya. Take the time you need!"
-  - "I'm here with you, nya. Give this question your best try!"
-  - "Keep going at your own pace. You've got this, meow!"
-  - "Paws up for sticking with it! Take a moment to think."
-  - "No rush, nya. Give yourself time to work through this question."
-  - "One last coding question, nya. Keep giving it your best!"
-  hostIntroductionQuote: "A little hello before we begin, nya. Let me introduce myself!"
-  instructionsQuote: "Let me show you what to do. We'll take it one question at a time, nya!"
-  blockIntroductionQuote: "My explanation block is coming up, meow. Here's what to expect."
-  secondEvaluationQuote: "Two blocks down, nya. Please rate the style you just experienced."
-  thirdEvaluationQuote: "You've tried all three styles. These ratings are for the most recent block."
-  personaMeasuresQuote: "This page asks about your experience with me. Candid answers are welcome, nya."
-  preferenceQuote: "Looking back at the three styles, which would you choose to use?"
-  openResponseQuote: "I'd like to hear your reasons in your own words. Share whatever stood out to you."
+  contentReviewed: 1
+  studyVersion: two-condition-draft-v2
+  overview: You will complete two sections of four programming questions. After each section, you will rate the study interface. At the end, you will choose a preferred format and may explain your choice. No correctness feedback is provided.
+  neutralIntroduction: You will complete four short programming questions in this section.
+  meowraBlockIntroduction: Hi, I'm Dr. Meowra. I'll be your host for four short programming questions. We'll take them one at a time, nya.
+  neutralTutorial: For each question, read the code and select the answer that best identifies the issue. Press Submit to continue. You can change your selection before submitting. Submitted answers cannot be changed. No hints or correctness feedback will be shown.
+  meowraTutorial: For each question, take a look at the code and choose the answer that best identifies the issue. Press Submit and we'll keep going together. You can change your choice before submitting; submitted answers cannot be changed. I won't provide hints or correctness feedback, nya.
+  neutralCompletion: You have completed this section. Continue to rate the study interface.
+  meowraCompletion: Thank you for completing this section with me, nya. Continue to rate the study interface.
+  neutralTransitions:
+  - Question 1 of 4 submitted. Continue to question 2.
+  - Question 2 of 4 submitted. Continue to question 3.
+  - Question 3 of 4 submitted. Continue to question 4.
+  meowraTransitions:
+  - One question finished, nya. Let's continue to question 2 of 4.
+  - Two questions finished. Keep going at your own pace with question 3 of 4!
+  - Three questions finished, nya. Let's continue to question 4 of 4.
+  meowraIntroductionDialogue: Welcome, nya! I'm happy to keep you company for this section.
+  meowraTutorialDialogue: Let's get settled in. Take a moment to read how this section works.
+  meowraTaskDialogue:
+  - Let's begin with our first question, nya. Take your time.
+  - Here we are at question two. Keep going at your own pace!
+  - Welcome to question three, nya. I'm here to keep you company.
+  - One last question in this section. Thank you for sticking with me!
+  meowraCompletionDialogue: That's our section wrapped up, nya. Thank you for your time and effort!
+  backgroundPrompt: 'Briefly describe your programming experience: years, C/C++ familiarity, programming frequency, student level and relevant coursework. You may leave this blank.'
+  preferencePrompt: If you were invited to participate in another programming-language study of similar length and difficulty, which study format would you prefer?
+  reasonPrompt: Why did you prefer that study format? Please describe anything about the presentation or interaction that influenced your choice.
+  overviewHeading: Study overview
+  introductionHeading: Section introduction
+  tutorialHeading: How to participate
+  completionHeading: Section complete
+  progressHeading: Progress
+  taskHeading: Programming questions
+  studyHeading: Programming-language study
+  submitLabel: Submit and continue
+  preferenceHeading: Preferred study format
+  optionalPlaceholder: Type your response here (optional).
+  previewCompletion: Layout preview complete. Preview answers are not scored.
+  studyCompletion: Study complete. Thank you! Please notify the researcher.
+  ueqsInstructions: 'Please rate the study interface from the four tasks you just completed.
+
+    Select one position between each pair of words.'
+  consentHeading: Consent to participate
+  acceptLabel: Accept
+  scrollHint: Scroll to read all information.
+  neutralName: Neutral
+  meowraName: Dr. Meowra
+  ueqsHeading: UEQ-S
+  pragmaticHeading: Pragmatic Quality
+  hedonicHeading: Hedonic Quality
+  taskSubmitLabel: Submit
+  taskProgressFormat: Question {0} of {1}
+  saveErrorMessage: 'Unable to save. Please notify the researcher.
+
+    Your response is held in memory. Keep this app open.
+
+    Retry after restoring access to the save folder.'
+  retryLabel: Retry saving

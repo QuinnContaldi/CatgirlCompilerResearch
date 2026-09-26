@@ -2,30 +2,25 @@ using UnityEngine;
 
 namespace Meowra.Data
 {
-    public enum FeedbackCondition { Raw, Neutral, Meowra }
+    // Numeric IDs retained for compatibility with historical exports; Raw is never scheduled.
+    public enum FeedbackCondition { Raw = 0, Neutral = 1, Meowra = 2 }
     public enum AnswerChoice { Unassigned = -1, A = 0, B = 1, C = 2, D = 3 }
 
     [CreateAssetMenu(menuName = "Meowra/Scenario", fileName = "Scenario")]
     public sealed class ScenarioData : ScriptableObject
     {
         public string scenarioId;
+        public string taskSet;
+        public string matchedPairId;
+        public string errorCategory;
         [TextArea(6, 24)] public string codeText;
 
-        // Retained only as references to the original stimuli; participant UI uses text.
-        [HideInInspector] public Sprite codeImage;
-        [HideInInspector] public Sprite rawFeedbackImage;
-        [HideInInspector] public Sprite neutralFeedbackImage;
-        [HideInInspector] public Sprite meowraFeedbackImage;
         [TextArea(2, 6)] public string question;
         [TextArea(2, 6)] public string answerA;
         [TextArea(2, 6)] public string answerB;
         [TextArea(2, 6)] public string answerC;
         [TextArea(2, 6)] public string answerD;
         public AnswerChoice correctAnswer = AnswerChoice.Unassigned;
-        [TextArea(4, 12)] public string rawFeedback;
-        [TextArea(4, 12)] public string neutralFeedback;
-        [TextArea(4, 12)] public string meowraFeedback;
-
         public string GetAnswer(AnswerChoice choice)
         {
             switch (choice)
@@ -38,28 +33,6 @@ namespace Meowra.Data
             }
         }
 
-        public Sprite GetFeedbackImage(FeedbackCondition condition)
-        {
-            switch (condition)
-            {
-                case FeedbackCondition.Raw: return rawFeedbackImage;
-                case FeedbackCondition.Neutral: return neutralFeedbackImage;
-                case FeedbackCondition.Meowra: return meowraFeedbackImage;
-                default: throw new System.ArgumentOutOfRangeException(nameof(condition));
-            }
-        }
-
-        public string GetFeedback(FeedbackCondition condition)
-        {
-            switch (condition)
-            {
-                case FeedbackCondition.Raw: return rawFeedback;
-                case FeedbackCondition.Neutral: return neutralFeedback;
-                case FeedbackCondition.Meowra: return meowraFeedback;
-                default: throw new System.ArgumentOutOfRangeException(nameof(condition));
-            }
-        }
-
         // A missing key must never silently become answer A.
         public string GetValidationError()
         {
@@ -69,8 +42,8 @@ namespace Meowra.Data
             for (int i = 0; i < 4; i++)
                 if (string.IsNullOrWhiteSpace(GetAnswer((AnswerChoice)i))) return $"Enter answer {(AnswerChoice)i}.";
             if ((int)correctAnswer < 0 || (int)correctAnswer > 3) return "Select the Correct Answer.";
-            foreach (FeedbackCondition condition in System.Enum.GetValues(typeof(FeedbackCondition)))
-                if (string.IsNullOrWhiteSpace(GetFeedback(condition))) return $"Enter {condition} Feedback.";
+            if (taskSet != "A" && taskSet != "B") return "Choose task set A or B.";
+            if (string.IsNullOrWhiteSpace(errorCategory)) return "Enter the error category.";
             return null;
         }
     }

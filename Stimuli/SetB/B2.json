@@ -1,0 +1,13 @@
+{
+  "scenarioId": "B2",
+  "taskSet": "B",
+  "errorCategory": "type-value-mismatch",
+  "codeText": "int level = \"high\";",
+  "question": "What is the primary issue in this code?",
+  "answerA": "The variable is used before it is declared.",
+  "answerB": "A string value is being assigned to an integer variable.",
+  "answerC": "The declaration is missing a statement-ending semicolon.",
+  "answerD": "There is no issue with the code.",
+  "correctAnswer": 1,
+  "matchedPairId": "pair-2"
+}

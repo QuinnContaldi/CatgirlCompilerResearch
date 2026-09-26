@@ -28,7 +28,7 @@ namespace Meowra.Data
 
         public UeqsResponse(int block, FeedbackCondition feedbackCondition, int[] answers)
         {
-            if (block < 1 || block > 3) throw new ArgumentOutOfRangeException(nameof(block));
+            if (block < 1 || block > 2) throw new ArgumentOutOfRangeException(nameof(block));
             if (answers == null || answers.Length != UeqsItems.Count) throw new ArgumentException("All eight UEQ-S items are required.");
             foreach (int answer in answers)
                 if (answer < 1 || answer > 7) throw new ArgumentOutOfRangeException(nameof(answers));

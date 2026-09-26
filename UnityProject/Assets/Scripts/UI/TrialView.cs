@@ -17,6 +17,8 @@ namespace Meowra.UI
         [SerializeField] private Text[] answerLabels;
         [SerializeField] private Button submitButton;
         [SerializeField] private ScrollRect scroll;
+        [SerializeField] private Color answerBackground = new Color(.9f, .93f, .97f);
+        [SerializeField] private Color selectedAnswerBackground = new Color(.72f, .84f, .94f);
         public event Action<AnswerChoice> AnswerSelected;
         public event Action SubmitRequested;
 
@@ -27,6 +29,7 @@ namespace Meowra.UI
                 int index = i;
                 answers[i].onValueChanged.AddListener(selected =>
                 {
+                    UpdateAnswerAppearance(index);
                     if (selected) AnswerSelected?.Invoke((AnswerChoice)index);
                     else if (!answers[index].group.AnyTogglesOn())
                         AnswerSelected?.Invoke(AnswerChoice.Unassigned);
@@ -35,22 +38,26 @@ namespace Meowra.UI
             submitButton.onClick.AddListener(() => SubmitRequested?.Invoke());
         }
 
-        public void Show(ScenarioData scenario, FeedbackCondition condition, Sprite persona, int number, int total)
+        public void Show(ScenarioData scenario, FeedbackCondition condition, StudyDefinition study, int number, int total)
         {
-            progress.text = $"Question {number} of {total}";
-            codeText.text = StudyTextFormatter.Code(ContentOrPlaceholder(scenario.codeText, "[Code snippet]"));
-            explanation.text = StudyTextFormatter.Feedback(ContentOrPlaceholder(scenario.GetFeedback(condition), "[Explanation]"));
-            question.text = ContentOrPlaceholder(scenario.question, "[Question prompt]");
-            portrait.sprite = persona;
-            // The shared host displays the portrait consistently across all conditions.
+            submitButton.GetComponentInChildren<Text>().text = study.taskSubmitLabel;
+            progress.text = string.Format(study.taskProgressFormat, number, total);
+            codeText.text = StudyTextFormatter.Code(scenario.codeText);
+            // This protocol tests interface framing, without technical feedback or hints.
+            explanation.transform.parent.gameObject.SetActive(false);
+            portrait.transform.parent.gameObject.SetActive(false);
+            question.text = scenario.question;
+            portrait.sprite = study.meowraPortrait;
+            // The shared host controls portrait visibility within the Meowra block.
             portrait.gameObject.SetActive(false);
             var group = answers[0].group;
             group.allowSwitchOff = true;
             for (int i = 0; i < answers.Length; i++)
             {
                 answers[i].SetIsOnWithoutNotify(false);
+                UpdateAnswerAppearance(i);
                 answers[i].interactable = true;
-                answerLabels[i].text = $"{(AnswerChoice)i}. {ContentOrPlaceholder(scenario.GetAnswer((AnswerChoice)i), "[Answer text]")}";
+                answerLabels[i].text = $"{(AnswerChoice)i}. {scenario.GetAnswer((AnswerChoice)i)}";
             }
             submitButton.interactable = false;
             Canvas.ForceUpdateCanvases();
@@ -59,15 +66,19 @@ namespace Meowra.UI
 
         public void AllowSubmit(bool allowed) => submitButton.interactable = allowed;
 
+        private void UpdateAnswerAppearance(int index)
+        {
+            // Retain the toggle marker as well as color to make selection identifiable.
+            answers[index].targetGraphic.color = answers[index].isOn
+                ? selectedAnswerBackground
+                : answerBackground;
+        }
+
         public void Lock()
         {
             submitButton.interactable = false;
             foreach (var answer in answers) answer.interactable = false;
         }
 
-        private static string ContentOrPlaceholder(string content, string placeholder)
-        {
-            return string.IsNullOrWhiteSpace(content) ? placeholder : content;
-        }
     }
 }

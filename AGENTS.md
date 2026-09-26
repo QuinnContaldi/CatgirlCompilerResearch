@@ -1,490 +1,333 @@
-# AGENTS.md — Dr. Meowra Compiler Feedback Study
+# AGENTS.md
 
 ## Purpose
 
-This repository contains a Unity HCI research experiment comparing three compiler-feedback conditions:
+Rewrite the existing Unity project to implement the **new participant-experience experiment**.
 
-1. **Raw** — conventional compiler output.
-2. **Neutral** — concise, technically accurate, human-centered explanation.
-3. **Meowra** — technically matched to Neutral, but delivered through the Dr. Meowra persona.
+The old Raw/Neutral/Meowra compiler-feedback experiment is obsolete.
 
-Act as:
+The canonical research protocol is:
 
-* an implementation agent that writes, modifies, tests, and organizes Unity/C# code;
-* a teaching partner that briefly explains important design and Unity/C# concepts.
+- `Research_Design.md`
 
-Prefer simple, maintainable solutions.
+Read `Research_Design.md` before making any experimental-design decision.
 
----
-
-## Research Design
-
-The study is within-subject: every participant experiences all three conditions.
-
-Important comparisons:
-
-* Raw vs. Neutral → effect of improved explanation.
-* Neutral vs. Meowra → effect of persona/social framing.
-
-Do not alter the experimental design unless explicitly instructed.
-
-### Feedback Matching
-
-Neutral and Meowra must remain approximately matched in:
-
-* technical facts;
-* guidance;
-* resolution hints;
-* length;
-* answer leakage.
-
-Meowra may differ only through:
-
-* social framing;
-* encouragement;
-* character identity;
-* avatar;
-* conversational wording.
-
-Do not give Meowra more technically useful information than Neutral.
+This file contains the implementation constraints Codex must preserve while rewriting the Unity project.
 
 ---
 
-## Dr. Meowra
+## Study Design
 
-Dr. Meowra is a friendly anthropomorphic catgirl programming assistant.
+This is a **within-subject crossover study** with two conditions:
 
-She should be:
+1. **Neutral**
+2. **Dr. Meowra**
 
-* technically competent;
-* kind;
-* supportive;
-* encouraging;
-* nonjudgmental;
-* mildly playful;
-* recognizable as a persistent character.
+Every participant completes both conditions.
 
-She may occasionally use words such as `nya`, `meow`, or `purr`, but avoid excessive catgirl language.
+There are two matched programming task sets:
 
-Personality must never interfere with technical accuracy.
+- Set A: 4 questions
+- Set B: 4 questions
+
+Use exactly these crossover assignments:
+
+| Assignment | Block 1 | Block 2 |
+| --- | --- | --- |
+| 1 | Neutral + Set A | Meowra + Set B |
+| 2 | Meowra + Set A | Neutral + Set B |
+| 3 | Neutral + Set B | Meowra + Set A |
+| 4 | Meowra + Set B | Neutral + Set A |
+
+A participant must never receive the same task set twice.
 
 ---
 
-## Experiment Flow
-
-Approximate order:
+## Required Participant Flow
 
 ```text
-Welcome / Consent
-Background Questions
-Neutral Tutorial
-Practice
-Condition Block
-Condition Evaluation
-Condition Block
-Condition Evaluation
-Condition Block
-Condition Evaluation
-Meowra Persona Measures
-Final Preference
-Open Response
-Debrief
+Neutral informed consent
+-> background questions
+-> crossover assignment
+-> Block 1 introduction
+-> Block 1 tutorial
+-> Task 1
+-> transition/progress
+-> Task 2
+-> transition/progress
+-> Task 3
+-> transition/progress
+-> Task 4
+-> block completion
+-> neutral UEQ-S
+-> Block 2 introduction
+-> Block 2 tutorial
+-> Task 1
+-> transition/progress
+-> Task 2
+-> transition/progress
+-> Task 3
+-> transition/progress
+-> Task 4
+-> block completion
+-> neutral UEQ-S
+-> final preference
+-> open-ended "why"
+-> completion
 ```
-
-Condition order must be counterbalanced.
-
-Valid sequences:
-
-```text
-Raw -> Neutral -> Meowra
-Raw -> Meowra -> Neutral
-Neutral -> Raw -> Meowra
-Neutral -> Meowra -> Raw
-Meowra -> Raw -> Neutral
-Meowra -> Neutral -> Raw
-```
-
-Allow the researcher to select counterbalancing sequence 1–6.
-
-The Dr. Meowra introduction must appear immediately before the participant's Meowra block.
-
-The general tutorial must remain condition-neutral.
 
 ---
 
-## Experimental Stimuli
+## Frozen Condition Rules
 
-The baseline study contains six compiler-error scenarios.
+| Component | Neutral | Dr. Meowra |
+| --- | --- | --- |
+| Actual informed consent | Neutral for everyone | Neutral for everyone |
+| Condition introduction | Administrative | Character-mediated |
+| Tutorial information | Same | Same |
+| Tutorial presentation | Neutral | Meowra |
+| Avatar | No | Yes |
+| Tasks | Matched A/B | Matched A/B |
+| Task structure | Identical | Identical |
+| Hints | None | None |
+| Correctness feedback | None | None |
+| Progress | Neutral | Encouraging |
+| Transitions | Administrative | Playful/supportive |
+| UEQ-S screen | Neutral | Neutral |
+| UEQ-S | All 8 items | All 8 items |
+| Accuracy | Logged | Logged |
+| Response time | Logged | Logged |
 
-Each scenario should contain:
+Dr. Meowra is the **study host**, not a programming tutor.
 
-```text
-scenario ID
-code snippet
-error category
-raw feedback
-neutral feedback
-Meowra feedback
-question
-answer choices
-correct answer
-```
+She may:
+- greet the participant;
+- explain the section;
+- present the tutorial conversationally;
+- acknowledge progress;
+- encourage the participant to continue;
+- appear visually throughout the Meowra block.
 
-Do not hard-code stimuli into UI scripts.
+She must not:
+- explain how to solve a programming task;
+- provide hints;
+- reveal correctness;
+- praise a specific answer as correct;
+- change the underlying task content.
 
-Prefer structured data such as:
+---
 
-* serializable C# classes;
-* ScriptableObjects;
-* JSON.
+## Measures
+
+After **each condition**, collect all 8 UEQ-S items.
+
+Primary outcome:
+- UEQ-S Hedonic Quality
+
+Secondary outcomes:
+- UEQ-S Pragmatic Quality
+- task accuracy
+- task response time
+
+After both conditions:
+
+1. Ask:
+   - `If you were invited to participate in another programming-language study of similar length and difficulty, which study format would you prefer?`
+   - Options: `Neutral`, `Dr. Meowra`
+
+2. Ask:
+   - `Why did you prefer that study format? Please describe anything about the presentation or interaction that influenced your choice.`
+
+The Agent Persona Instrument is no longer used.
+
+---
+
+## Timing
+
+For each programming task:
+
+1. fully display the task;
+2. start the timer;
+3. participant reads/selects an answer;
+4. participant presses Submit;
+5. stop the timer.
+
+Do not include:
+- Meowra transition text;
+- progress messages;
+- tutorial time;
+- UEQ-S time
+
+inside task response time.
 
 ---
 
 ## Architecture
 
-Keep responsibilities separated.
+Do **not** build separate duplicated Neutral and Meowra task scenes.
 
-Suggested components:
+Separate these concerns:
 
 ```text
-ExperimentManager
-ParticipantSession
-PageManager
-TrialManager
-SurveyManager
-DataLogger
-TimerManager
+task content
+assignment logic
+condition presentation
+survey logic
+session state
+timing
+data logging
 ```
 
-### Responsibilities
+Preferred structure:
 
-**ExperimentManager**
+- `ExperimentManager`
+  - controls study progression
+- `AssignmentManager`
+  - assigns one of the four crossover cells
+- `ParticipantSession`
+  - stores participant/session state
+- `TaskManager`
+  - loads Set A / Set B task data
+- `ConditionView`
+  - renders Neutral vs. Meowra framing
+- `SurveyManager`
+  - handles UEQ-S, preference, open response
+- `TimerManager`
+  - records task response time
+- `DataLogger`
+  - saves session data incrementally
 
-* experiment progression;
-* condition sequence;
-* stimulus assignment.
-
-**ParticipantSession**
-
-* anonymous participant ID;
-* assigned sequence;
-* responses.
-
-**PageManager**
-
-* UI/page visibility and navigation only.
-
-**TrialManager**
-
-* load scenarios;
-* select feedback condition;
-* record answers and correctness;
-* control response timing.
-
-**SurveyManager**
-
-* UEQ-S;
-* targeted ratings;
-* persona measures;
-* final preference.
-
-**DataLogger**
-
-* save session data;
-* write JSON/CSV;
-* save incrementally.
-
-Avoid giant manager classes and unnecessary architecture.
-
----
-
-## Data Collection
-
-Record at minimum:
+The condition renderer should receive:
 
 ```text
-participant ID
-condition order
-stimulus assignment
-scenario ID
 condition
-selected answer
-correctness
-response time
-UEQ-S responses
-targeted ratings
-persona responses
-final preference
-open-ended response
+task_set
+task_index
 ```
 
-Do not collect participant names.
-
-Save incrementally.
-
-Prefer:
-
-* JSON for full session records;
-* CSV for analysis.
-
-Use Unity-supported persistent storage such as:
-
-```csharp
-Application.persistentDataPath
-```
-
-For timing, prefer:
-
-```csharp
-System.Diagnostics.Stopwatch
-```
-
-Timing must not depend on frame rate.
+and render the same task data under the correct presentation layer.
 
 ---
 
-## UI
+## Task Data
 
-This is a research application, not a game.
+Task content should be data-driven rather than hard-coded into scene logic.
 
-Participants should primarily:
+Each task should contain fields such as:
 
 ```text
-read
-select
-click
-advance
+task_id
+task_set
+matched_pair_id
+error_category
+code
+prompt
+option_a
+option_b
+option_c
+option_d
+correct_option
 ```
 
-Prioritize:
-
-1. experimental consistency;
-2. clarity;
-3. reproducibility;
-4. reliable data collection;
-5. maintainability.
-
-Avoid unnecessary:
-
-* animations;
-* transitions;
-* game systems;
-* networking;
-* cloud dependencies;
-* visual effects.
-
-Keep typography, spacing, controls, and code presentation comparable across conditions.
-
-Meowra-specific differences may include:
-
-* avatar;
-* name;
-* dialogue framing;
-* persona wording.
-
-Do not make Meowra easier to read or visually superior to Neutral.
+The same task object must be usable under either Neutral or Meowra presentation.
 
 ---
 
-## No Live AI During Participant Sessions
+## Data Logging
 
-Do not call a live language model during the experiment.
-
-Neutral and Meowra responses must be generated, reviewed, and frozen before data collection.
-
-This avoids:
-
-* stochastic outputs;
-* model drift;
-* latency;
-* service failure;
-* uncontrolled technical differences.
-
----
-
-## Coding Style
-
-Write straightforward C#.
-
-Prefer:
-
-* clear names;
-* small methods;
-* explicit state;
-* serialized references;
-* enums for experimental categories;
-* comments explaining why.
-
-Example:
-
-```csharp
-public enum FeedbackCondition
-{
-    Raw,
-    Neutral,
-    Meowra
-}
-```
-
-Avoid:
-
-* giant classes;
-* magic strings;
-* unnecessary singletons;
-* global mutable state;
-* reflection-heavy systems;
-* premature optimization.
-
----
-
-## Repository Structure
-
-Research documents remain at the repository root.
-
-Unity project:
+At minimum save:
 
 ```text
-UnityProject/
+participant_id
+assignment_cell
+condition_order
+task_set_by_condition
+
+condition
+task_id
+selected_answer
+correct_answer
+is_correct
+task_response_time_ms
+
+neutral_ueqs_1 ... neutral_ueqs_8
+meowra_ueqs_1 ... meowra_ueqs_8
+
+final_preference
+open_response
+
+study_version
+unity_version
+session_start_utc
+session_end_utc
 ```
 
-Typical structure:
+Save incrementally after meaningful participant actions.
 
-```text
-Assets/
-├── Scenes/
-├── Scripts/
-│   ├── Experiment/
-│   ├── UI/
-│   ├── Data/
-│   └── Utilities/
-├── Prefabs/
-├── UI/
-├── Images/
-└── Data/
-```
-
-Do not create another Git repository inside `UnityProject/`.
-
-Ignore normal Unity-generated directories such as:
-
-```text
-Library/
-Temp/
-Obj/
-Logs/
-Build/
-Builds/
-UserSettings/
-```
-
-Version control:
-
-```text
-Assets/
-Packages/
-ProjectSettings/
-```
-
-Do not commit or push unless explicitly instructed.
+Do not wait until the end of the experiment to write the only copy of the session.
 
 ---
 
-## Development Strategy
+## Rewrite Strategy
 
-Implement incrementally:
+Before changing code:
 
-```text
-1. Unity setup
-2. Page navigation
-3. Participant/session state
-4. Experiment progression
-5. Scenario data model
-6. Scenario presentation
-7. Counterbalancing
-8. Data logging
-9. Questionnaire UI
-10. UEQ-S
-11. Meowra introduction
-12. Final preference/open response
-13. Validation
-14. Build/export
-```
+1. inspect the existing Unity project;
+2. identify reusable systems;
+3. identify obsolete systems from the old experiment;
+4. produce a short rewrite plan;
+5. then implement incrementally.
 
-Complete and test one layer before adding major new behavior.
+Reuse working infrastructure where sensible:
+- navigation;
+- session state;
+- data logging;
+- timers;
+- reusable UI controls.
 
----
+Remove/refactor obsolete:
+- Raw compiler-feedback condition;
+- Neutral AI explanation condition;
+- old three-condition assignment logic;
+- Agent Persona Instrument;
+- old compiler-feedback generation/display logic.
 
-## Testing
+Do not:
+- create a nested Git repository;
+- add live AI/LLM calls;
+- add game mechanics;
+- add points or correctness rewards;
+- change validated UEQ-S wording;
+- invent new experimental measures;
+- silently alter the protocol.
 
-When practical, verify:
-
-* Unity opens;
-* scripts compile;
-* navigation works;
-* only intended pages are visible;
-* condition assignments are valid;
-* stimuli map to the correct conditions;
-* Meowra introduction appears at the correct point;
-* responses save correctly;
-* generated JSON/CSV contains expected data.
-
-Do not claim something works without testing it when testing is possible.
+If implementation requirements conflict with `Research_Design.md`, stop and flag the conflict rather than improvising a new study design.
 
 ---
 
-## Research Integrity
+## Immediate Goal
 
-Do not silently modify:
+Rewrite the current Unity project so it implements the new two-condition crossover experiment faithfully.
 
-* conditions;
-* stimuli;
-* questionnaires;
-* validated wording;
-* rating scales;
-* counterbalancing;
-* condition assignment;
-* participant flow;
-* primary outcomes;
-* exclusion rules.
+First deliver:
+1. an inventory of reusable vs obsolete code;
+2. the proposed new scene/state flow;
+3. the proposed data model;
+4. the implementation order.
 
-Do not asymmetrically change Neutral and Meowra technical content.
+Then begin the rewrite.
 
-If an implementation decision could affect experimental validity, flag it before changing the design.
 
----
+## Content authoring and legacy archive
 
-## When Implementing
+`Research_Design.md` is the sole scientific protocol. Do not create another protocol.
+Edit condition text in `study-content/Neutral_Host.md` and `Meowra_Host.md`, shared
+participant copy in `study-content/Study_Text.md`, consent in `Consent_Text.md`, and
+tasks/keys in `Stimuli/SetA` and `Stimuli/SetB`. Use Unity's **Tools → Experiment →
+Import Study Content** to regenerate runtime assets. Do not put dialogue defaults
+in scripts or edit imported text independently. Preserve validated survey wording.
 
-Before coding:
-
-1. inspect relevant files;
-2. identify the smallest reasonable change;
-3. preserve working behavior.
-
-After meaningful work, briefly report:
-
-### Changed
-
-Files added or modified.
-
-### What it does
-
-Plain-language behavior.
-
-### How it works
-
-Important Unity/C# concepts.
-
-### How to test
-
-Exact testing steps.
-
-### Research-design impact
-
-State whether the experimental design changed.
-
-### Next step
-
-Recommend one small logical next task.
-
-Do not automatically implement unrelated future work.
+`docs/archive/` contains obsolete compiler-feedback and persona-instrument material;
+its historical instructions do not apply to the current experiment. `docs/Content_Review.md`
+is a dated review snapshot, not a protocol or content source. Preserve existing
+Unity GUIDs and historical condition IDs when maintaining runtime compatibility.

@@ -20,41 +20,35 @@ namespace Meowra.Experiment
 
     public static class Counterbalancing
     {
-        public static FeedbackCondition[] GetOrder(int orderNumber)
+        public const int TasksPerBlock = 4;
+        public const int CellCount = 4;
+
+        public static FeedbackCondition[] GetOrder(int cell)
         {
-            switch (orderNumber)
-            {
-                case 1: return new[] { FeedbackCondition.Raw, FeedbackCondition.Neutral, FeedbackCondition.Meowra };
-                case 2: return new[] { FeedbackCondition.Raw, FeedbackCondition.Meowra, FeedbackCondition.Neutral };
-                case 3: return new[] { FeedbackCondition.Neutral, FeedbackCondition.Raw, FeedbackCondition.Meowra };
-                case 4: return new[] { FeedbackCondition.Neutral, FeedbackCondition.Meowra, FeedbackCondition.Raw };
-                case 5: return new[] { FeedbackCondition.Meowra, FeedbackCondition.Raw, FeedbackCondition.Neutral };
-                case 6: return new[] { FeedbackCondition.Meowra, FeedbackCondition.Neutral, FeedbackCondition.Raw };
-                default: throw new ArgumentOutOfRangeException(nameof(orderNumber));
-            }
+            if (cell < 1 || cell > CellCount) throw new ArgumentOutOfRangeException(nameof(cell));
+            return cell % 2 == 1
+                ? new[] { FeedbackCondition.Neutral, FeedbackCondition.Meowra }
+                : new[] { FeedbackCondition.Meowra, FeedbackCondition.Neutral };
         }
 
-        public static string GetOrderLabel(int orderNumber)
+        public static string GetOrderLabel(int cell)
         {
-            var order = GetOrder(orderNumber);
-            return $"{orderNumber}: {order[0]} > {order[1]} > {order[2]}";
+            var order = GetOrder(cell);
+            return $"{cell}: {order[0]} + Set {(cell <= 2 ? "A" : "B")} > {order[1]} + Set {(cell <= 2 ? "B" : "A")}";
         }
 
-        public static List<TrialAssignment> BuildSchedule(StudyDefinition study, int orderNumber, int stimulusSet)
+        public static List<TrialAssignment> BuildSchedule(StudyDefinition study, int cell)
         {
             if (study == null) throw new ArgumentNullException(nameof(study));
             string error = study.GetValidationError(true);
             if (error != null) throw new ArgumentException(error, nameof(study));
-            if (stimulusSet < 1 || stimulusSet > 3) throw new ArgumentOutOfRangeException(nameof(stimulusSet));
-            var order = GetOrder(orderNumber);
-            var schedule = new List<TrialAssignment>(6);
-            for (int block = 0; block < order.Length; block++)
+            var order = GetOrder(cell);
+            var schedule = new List<TrialAssignment>(8);
+            for (int block = 0; block < 2; block++)
             {
-                // Rotation is independent of block order: each pair appears in each
-                // condition across the three sets, once per participant session.
-                int pair = ((int)order[block] + stimulusSet - 1) % 3;
-                for (int offset = 0; offset < 2; offset++)
-                    schedule.Add(new TrialAssignment(study.scenarios[pair * 2 + offset], order[block], block));
+                int set = (cell <= 2 ? block : 1 - block);
+                for (int offset = 0; offset < TasksPerBlock; offset++)
+                    schedule.Add(new TrialAssignment(study.scenarios[set * TasksPerBlock + offset], order[block], block));
             }
             return schedule;
         }

@@ -87,7 +87,7 @@ public static class NavigationSmokeCheck
             if (checks == null) checks = ExperimentSmokeCheck.Run();
             if (checks.MoveNext()) return;
             Require(!SessionState.GetBool(ErrorKey, false), "Unity reported a runtime error.");
-            Finish(true, "Navigation, authoring validation, all 18 assignments, trial presentation and scoring passed.");
+            Finish(true, "Navigation, authoring validation, all four crossover cells in preview and scored modes, trial presentation and scoring passed.");
         }
         catch (Exception error)
         {

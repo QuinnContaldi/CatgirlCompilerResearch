@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 617ff3bb43bfadd10950d83f0f31a239, type: 3}
+  m_Name: B1
+  m_EditorClassIdentifier: Assembly-CSharp::Meowra.Data.ScenarioData
+  scenarioId: B1
+  taskSet: B
+  matchedPairId: pair-1
+  errorCategory: assignment-comparison
+  codeText: "int attempts = 2;\n\nif (attempts = 3) {\n    printf(\"Done\");\n}"
+  question: What is the primary issue in this code?
+  answerA: The code assigns a value where a comparison appears to be intended.
+  answerB: The variable is used before it is declared.
+  answerC: The if statement is missing its opening parenthesis.
+  answerD: There is no issue with the code.
+  correctAnswer: 0

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 617ff3bb43bfadd10950d83f0f31a239, type: 3}
+  m_Name: B4
+  m_EditorClassIdentifier: Assembly-CSharp::Meowra.Data.ScenarioData
+  scenarioId: B4
+  taskSet: B
+  matchedPairId: pair-4
+  errorCategory: for-loop-separators
+  codeText: "for (int j = 0, j < 8, j++) {\n    printf(\"%d\\n\", j);\n}"
+  question: What is the primary issue in this code?
+  answerA: The loop variable is used before it is declared.
+  answerB: The loop header is missing its update expression.
+  answerC: The loop body is missing its closing brace.
+  answerD: The for header uses commas where semicolons are required.
+  correctAnswer: 3

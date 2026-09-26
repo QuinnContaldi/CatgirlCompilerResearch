@@ -1,125 +1,78 @@
 # Unity application guide
 
-Start with the [repository README](../README.md) for opening the app and accessing
-CSV results. Use [AUTHORING.md](AUTHORING.md) to edit study content without C#.
+Open `Assets/Scenes/Experiment.unity` in Unity **6000.6.1f1**. On this workstation,
+use `./Tools/open-unity.sh`. See [AUTHORING.md](AUTHORING.md) for editable sources and their Unity import.
 
-## Project and current flow
+## Current flow
 
-Editor: **Unity 6000.6.1f1** (`7efac9f6c10e`). The app uses Unity uGUI, Input
-System, TextMeshPro and URP. Open `Assets/Scenes/Experiment.unity`.
+Setup (four-cell assignment) → neutral consent → overview → optional background
+→ introduction/tutorial → four tasks with separate progress screens → completion
+→ neutral UEQ-S → second block → neutral UEQ-S → preference → reason → completion.
 
-```text
-Researcher setup → Consent → Meowra host introduction → Instructions
-  → 3 condition blocks (2 scenarios, then 8 UEQ-S items per block)
-  → 10 persona items → Preference → Written explanation → Completion
-```
+Meowra is present only in her treatment block. Raw feedback, compiler explanations,
+and the persona questionnaire are no longer part of the active study. Eight task assets are imported from `Stimuli/SetA` and `Stimuli/SetB`. Historical
+scenarios and persona-instrument definitions are archived outside Unity Assets. Scored sessions are enabled via `StudyDefinition.contentReviewed`. Consent
+placeholders remain unresolved; see [running sessions](../docs/Running_Sessions.md).
 
-The Meowra feedback introduction appears immediately before her block in every
-order. The researcher selects one of six condition sequences and one of three
-independent task rotations. All six authored scenarios appear once per session.
-The persistent Meowra host and persona instructions are intentional changes from
-the original neutral-tutorial plan. Background questions, a separate practice
-scenario, and other targeted ratings in the research plan remain unimplemented.
+The researcher chooses the cell before consent; assignment is applied to treatment
+presentation after the neutral opening pages. Background currently uses one optional
+free-text field for the five suggested variables, pending wording review.
 
-**Preview layout** records unscored responses in a separate folder. **Start
-session** validates required content and scores answers against the scenario key.
-A nonempty consent draft passes technical validation; it does not establish
-institutional approval. Complete the placeholders in [Consent_Text.md](../Consent_Text.md).
+## Architecture
 
-## Where to edit
+- `Counterbalancing`: four fixed crossover cells, two blocks, four tasks per block.
+- `StudyDefinition` / `ScenarioData`: imported treatment text and task assets.
+- `ImportStudyContent`: validates/imports Markdown and JSON sources; checks synchronization before Play/build.
+- `ExperimentManager`: state progression and save-before-advance behavior.
+- `PageManager`: one visible page at a time.
+- `StudyShellView`: fixed shared page geometry and condition-specific host visibility.
+- `TrialManager` / `TrialView`: answer selection, scoring, task display and Stopwatch.
+- `UeqsView` / `FinalMeasuresView`: neutral questionnaires and background/prose input.
+- `ParticipantSession` / `DataLogger`: session records and incremental JSON/CSV.
 
-| Content | Location in Unity |
-| --- | --- |
-| Six scenarios, feedback and answer keys | `Assets/Data/Scenarios/Scenario01.asset` through `Scenario06.asset` |
-| Consent, portrait and host messages | `Assets/Data/StudyDefinition.asset` |
-| Instructions | Scene: `Canvas/Pages/InstructionsPage/Body`, Text component |
-| Question layout and Continue button | `Assets/Prefabs/TrialPanel.prefab` |
-| Validated UEQ-S item definitions | `Assets/Scripts/Data/UeqsResponse.cs` |
-| Persona and final-measure definitions | `Assets/Scripts/Data/FinalResponses.cs` |
+The timer starts after the task view populates and layout updates, and stops at
+Submit. Transition, evaluation and save times are excluded. Time away from the app
+is included; onset still has frame-level uncertainty. No correctness is displayed.
 
-Edit outside Play mode and save. Keep questionnaire wording, response ranges,
-answer keys and treatment information aligned with the reviewed study protocol.
-See [Study_Text.md](../Study_Text.md) for known source/feedback inconsistencies.
-Original C examples and screenshots are grouped under [Stimuli/](../Stimuli/).
+## Data
 
-## How the code fits together
+Schema 6 identifies the two-condition protocol. JSON includes assignment cell,
+study/Unity versions, consent text/time, optional background, planned task sets,
+responses, final measures and session start/end times. Numeric condition IDs remain
+Neutral = 1, Meowra = 2; Raw = 0 remains reserved for historical records only.
 
-| Component | Responsibility |
-| --- | --- |
-| `StudyDefinition`, `ScenarioData` | Reusable study content stored as ScriptableObject assets. |
-| `Counterbalancing` | Constructs the selected condition/task schedule. |
-| `ExperimentManager` | Controls study stages and creates each participant session. |
-| `ParticipantSession` | Holds the frozen assignment, consent, responses and scores. |
-| `PageManager` | Displays one page at a time. |
-| `TrialManager` | Measures question time and accepts one submission. |
-| `TrialView`, `StudyShellView`, `ConsentView` | Present the trial, host/setup and consent UI. |
-| `UeqsView`, `FinalMeasuresView` | Present questionnaires and final responses. |
-| `DataLogger` | Saves JSON and CSV snapshots after submissions. |
-| `StudyResults` | Finds saved session folders and opens them. |
-| `StudyResultsMenu` | Provides Editor menu shortcuts, even outside Play mode. |
+`assignment.csv` has eight planned rows; `trials.csv` has up to eight responses
+including category, set, key, scoring flag and seconds/milliseconds. `ueqs.csv` has
+16 raw response rows at completion; scores can be regenerated as positions minus
+4 and averaged within each group of four. `preference.csv` records the preferred
+study format and optional prose. No new `api.csv` is produced.
 
-A ScriptableObject is a saved content asset; a prefab is a reusable UI object.
-The scene's TrialPage uses the TrialPanel prefab. `Awake()` connects trial UI
-events, and `ExperimentManager.Start()` initializes the menu and other views.
-The manager decides what comes next; PageManager only changes page visibility.
+Storage remains `Application.persistentDataPath/StudySessions/Participants/<ID>/`
+and `Previews/<ID>/`. Existing records and Company/Product names are preserved.
+Do not combine historical three-condition records with the new protocol blindly.
+JSON is authoritative; each file uses a flushed temporary replacement and `.bak`.
+Save failures block advancement and offer Retry. Interrupted sessions cannot resume.
 
-## Data persistence
+## Validation
 
-Use the researcher menu's **Open saved data** / **Latest live CSVs**, or the same
-commands under **Tools → Experiment**. `ExperimentManager → Session Directory`
-and the Console expose the path if needed. Results are stored under
-`Application.persistentDataPath/StudySessions/Participants/<anonymous-ID>/`;
-previews use `Previews/` instead.
-
-Each submission updates `session.json`, `assignment.csv`, `trials.csv`,
-`ueqs.csv`, `api.csv`, and `preference.csv`. The logger flushes a temporary file,
-then replaces the old snapshot, retaining a `.bak`. JSON is authoritative if
-an export write fails; the app waits for Retry before advancing.
-
-- Question time uses `Stopwatch`, from display until submission, in seconds.
-  It includes time away from the app; saving/questionnaire time is excluded.
-- Trial rows contain the selected A–D answer, scoring flag and correctness.
-- UEQ-S rows retain original positions 1–7: eight per block, 24 per completed study.
-- Assignment rows record all six planned tasks, including unanswered ones.
-- These three CSVs include counterbalance number, readable condition sequence,
-  rotation number, full scenario order, participant ID, and preview flag.
-- `session_completed` becomes true after the entire study is submitted. It
-  replaces the older misleading `trial_section_completed` column name.
-
-Earlier participants' files are preserved between sessions and across app exits.
-Unsubmitted responses are not saved; interrupted sessions cannot yet resume.
-Copy results to approved backup storage; do not commit participant data to Git.
-
-## Verify changes
-
-Exit Play mode and choose **Tools → Experiment → Run Smoke Check**. To run from
-the repository root, close the Editor first:
+Close Unity, then run from the repository root:
 
 ```bash
 ./Tools/open-unity.sh -batchmode -nographics \
   -executeMethod NavigationSmokeCheck.Run \
-  -logFile /tmp/meowra-experiment-check.log
+  -logFile /tmp/meowra-crossover-check.log
 ```
 
-Do not add `-quit`. Success is exit code 0 and `NAVIGATION_CHECK_OK` in the log.
-Checks cover the saved scene, preview/live button pointer hits, validation, all
-18 assignments, scoring, questionnaire resets, timing independent of game time,
-partial JSON/CSV snapshots, save retries, and preservation of previous sessions.
-The checks also run the authored scenarios with temporary synthetic consent.
-Test data are isolated in `MeowraLoggingCheck-*` / `MeowraPersistenceCheck-*`
-temporary folders. Test code lives in `Assets/Editor` and does not ship in a player.
+Success is exit code 0 and `NAVIGATION_CHECK_OK`; do not add `-quit`.
+The scene check runs all four cells in preview and scored modes, with synthetic
+consent and a temporary content-review override. It checks host visibility, task
+assignment, answer resets/scoring, untimed transitions, both evaluations, preference,
+incremental exports, save failure/retry, and preservation of earlier records.
+Tests write only to isolated temporary session folders.
 
-For a manual check, run a preview, inspect the instructions and scrolling, submit
-responses, finish a session, return to setup and open the results. Start another
-session and confirm the earlier folder still exists. Desktop file-manager
-launching itself is a manual check; the automated run does not open GUI windows.
-
-## Version control
-
-Keep `Assets/` with `.meta` files, `Packages/` with its lockfile, and
-`ProjectSettings/`. `.meta` files store the GUIDs that keep scene/prefab references
-connected. Never discard them when moving assets. Caches, builds, crash reports,
-local settings and participant exports are ignored by the root `.gitignore`.
+For manual layout review, walk through cells 1 and 2 in Preview and inspect the
+longest questions and text at the intended study resolution. Test success does not
+establish content validity or readiness for data collection.
 
 ## Local Linux compatibility workaround
 

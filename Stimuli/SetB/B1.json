@@ -1,0 +1,13 @@
+{
+  "scenarioId": "B1",
+  "taskSet": "B",
+  "errorCategory": "assignment-comparison",
+  "codeText": "int attempts = 2;\n\nif (attempts = 3) {\n    printf(\"Done\");\n}",
+  "question": "What is the primary issue in this code?",
+  "answerA": "The code assigns a value where a comparison appears to be intended.",
+  "answerB": "The variable is used before it is declared.",
+  "answerC": "The if statement is missing its opening parenthesis.",
+  "answerD": "There is no issue with the code.",
+  "correctAnswer": 0,
+  "matchedPairId": "pair-1"
+}

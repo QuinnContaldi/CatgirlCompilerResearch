@@ -1,0 +1,13 @@
+{
+  "scenarioId": "A3",
+  "taskSet": "A",
+  "errorCategory": "delimiter-mismatch",
+  "codeText": "int total = 3;\n\nif (total > 2 {\n    printf(\"Large\");\n}",
+  "question": "What is the primary issue in this code?",
+  "answerA": "The condition is missing its comparison operator.",
+  "answerB": "The if block is missing its closing brace.",
+  "answerC": "The closing parenthesis of the if condition is missing.",
+  "answerD": "There is no issue with the code.",
+  "correctAnswer": 2,
+  "matchedPairId": "pair-3"
+}

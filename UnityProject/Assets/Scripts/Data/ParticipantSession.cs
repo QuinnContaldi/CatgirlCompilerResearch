@@ -17,6 +17,11 @@ namespace Meowra.Data
         [SerializeField] private double responseTimeSeconds;
 
         [SerializeField] private string encouragement;
+        [SerializeField] private string taskSet;
+        [SerializeField] private string errorCategory;
+        public string TaskSet => taskSet;
+        public string ErrorCategory => errorCategory;
+        public AnswerChoice CorrectAnswer => correctAnswer;
         public string Encouragement => encouragement;
         public void SetEncouragement(string message) => encouragement = message;
 
@@ -35,6 +40,8 @@ namespace Meowra.Data
                 throw new ArgumentOutOfRangeException(nameof(elapsedSeconds));
             responseTimeSeconds = elapsedSeconds;
             scenarioId = scenario.scenarioId;
+            taskSet = scenario.taskSet;
+            errorCategory = scenario.errorCategory;
             condition = feedbackCondition;
             selectedAnswer = answer;
             correctAnswer = preview ? AnswerChoice.Unassigned : scenario.correctAnswer;
@@ -47,8 +54,8 @@ namespace Meowra.Data
     [Serializable]
     public sealed class ParticipantSession
     {
-        [SerializeField] private int schemaVersion = 5;
-        [SerializeField] private string personaProtocol = "persistent-host-v2; post-consent introduction; correctness-independent on-question encouragement; large form portrait";
+        [SerializeField] private int schemaVersion = 6;
+        [SerializeField] private string personaProtocol = "two-condition-v1; Meowra only during treatment; no technical feedback; neutral evaluations; untimed transitions";
         [SerializeField] private bool consentAccepted;
         [SerializeField] private string consentAcceptedUtc;
         [SerializeField] private string consentText;
@@ -59,23 +66,35 @@ namespace Meowra.Data
         [SerializeField] private string startedUtc;
         [SerializeField] private string timingDefinition = "Scenario displayed to Submit; includes time away from app; seconds.";
         [SerializeField] private int orderNumber;
-        [SerializeField] private int stimulusSet;
+        [SerializeField] private int assignmentCell;
+        [SerializeField] private string studyVersion;
+        [SerializeField] private string unityVersion = Application.unityVersion;
+        [SerializeField] private string endedUtc;
+        [SerializeField] private string programmingBackground;
+        [SerializeField] private bool backgroundSubmitted;
+        [SerializeField] private List<string> plannedTaskSets = new List<string>();
+        public IReadOnlyList<string> PlannedTaskSets => plannedTaskSets;
+        public int AssignmentCell => assignmentCell;
+        public void SetStudyVersion(string version) => studyVersion = version;
+        public bool RecordBackground(string background)
+        {
+            if (!consentAccepted || backgroundSubmitted || completed) return false;
+            programmingBackground = background ?? "";
+            backgroundSubmitted = true;
+            return true;
+        }
         [SerializeField] private bool preview;
         [SerializeField] private bool completed;
         [SerializeField] private List<string> plannedScenarioIds = new List<string>();
         [SerializeField] private List<FeedbackCondition> plannedConditions = new List<FeedbackCondition>();
         [SerializeField] private List<TrialResponse> responses = new List<TrialResponse>();
         [SerializeField] private List<UeqsResponse> ueqsResponses = new List<UeqsResponse>();
-        [SerializeField] private ApiResponse apiResponse;
-        [SerializeField] private bool apiSubmitted;
         [SerializeField] private FeedbackCondition preferredCondition;
         [SerializeField] private bool preferenceSubmitted;
         [SerializeField] private string preferenceSubmittedUtc;
         [SerializeField] private string preferenceReason;
         [SerializeField] private bool reasonSubmitted;
         [SerializeField] private string reasonSubmittedUtc;
-        public ApiResponse ApiResponse => apiResponse;
-        public bool ApiSubmitted => apiSubmitted;
         public FeedbackCondition PreferredCondition => preferredCondition;
         public bool PreferenceSubmitted => preferenceSubmitted;
         public string PreferenceReason => preferenceReason;
@@ -86,7 +105,6 @@ namespace Meowra.Data
 
         public string ParticipantId => participantId;
         public int OrderNumber => orderNumber;
-        public int StimulusSet => stimulusSet;
         public bool IsPreview => preview;
         public bool Completed => completed;
         public int CorrectCount => correctCount;
@@ -95,16 +113,17 @@ namespace Meowra.Data
         public IReadOnlyList<string> PlannedScenarioIds => plannedScenarioIds;
         public IReadOnlyList<FeedbackCondition> PlannedConditions => plannedConditions;
 
-        public ParticipantSession(int order, int set, bool isPreview, IReadOnlyList<TrialAssignment> schedule)
+        public ParticipantSession(int order, bool isPreview, IReadOnlyList<TrialAssignment> schedule)
         {
             participantId = Guid.NewGuid().ToString("N");
             startedUtc = DateTime.UtcNow.ToString("O");
             orderNumber = order;
-            stimulusSet = set;
+            assignmentCell = order;
             preview = isPreview;
             foreach (var trial in schedule)
             {
                 plannedScenarioIds.Add(trial.Scenario.scenarioId);
+                plannedTaskSets.Add(trial.Scenario.taskSet);
                 plannedConditions.Add(trial.Condition);
             }
         }
@@ -121,7 +140,7 @@ namespace Meowra.Data
         public bool Record(TrialResponse response)
         {
             int index = responses.Count;
-            if (response == null || completed || index >= plannedScenarioIds.Count || index / 2 != ueqsResponses.Count ||
+            if (response == null || completed || index >= plannedScenarioIds.Count || index / 4 != ueqsResponses.Count ||
                 response.ScenarioId != plannedScenarioIds[index] || response.Condition != plannedConditions[index])
                 return false;
             responses.Add(response);
@@ -133,24 +152,16 @@ namespace Meowra.Data
         public bool Record(UeqsResponse response)
         {
             int block = ueqsResponses.Count + 1;
-            if (response == null || completed || block > 3 || responses.Count != block * 2 ||
-                response.BlockNumber != block || response.Condition != plannedConditions[block * 2 - 1])
+            if (response == null || completed || block > 2 || responses.Count != block * 4 ||
+                response.BlockNumber != block || response.Condition != plannedConditions[block * 4 - 1])
                 return false;
             ueqsResponses.Add(response);
             return true;
         }
 
-        public bool Record(ApiResponse response)
-        {
-            if (response == null || completed || apiSubmitted || ueqsResponses.Count != 3) return false;
-            apiResponse = response;
-            apiSubmitted = true;
-            return true;
-        }
-
         public bool RecordPreference(FeedbackCondition condition)
         {
-            if (completed || !apiSubmitted || preferenceSubmitted || !Enum.IsDefined(typeof(FeedbackCondition), condition)) return false;
+            if (completed || ueqsResponses.Count != 2 || preferenceSubmitted || (condition != FeedbackCondition.Neutral && condition != FeedbackCondition.Meowra)) return false;
             preferredCondition = condition;
             preferenceSubmitted = true;
             preferenceSubmittedUtc = DateTime.UtcNow.ToString("O");
@@ -168,9 +179,10 @@ namespace Meowra.Data
 
         public void Complete()
         {
-            if (responses.Count != plannedScenarioIds.Count || ueqsResponses.Count != 3 || !apiSubmitted || !preferenceSubmitted || !reasonSubmitted)
+            if (responses.Count != plannedScenarioIds.Count || ueqsResponses.Count != 2 || !preferenceSubmitted || !reasonSubmitted)
                 throw new InvalidOperationException("Cannot complete a session with unsubmitted trials, evaluations, or final measures.");
             completed = true;
+            endedUtc = DateTime.UtcNow.ToString("O");
         }
     }
 }

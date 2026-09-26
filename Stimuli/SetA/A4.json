@@ -1,0 +1,13 @@
+{
+  "scenarioId": "A4",
+  "taskSet": "A",
+  "errorCategory": "for-loop-separators",
+  "codeText": "for (int i = 0, i < 5, i++) {\n    printf(\"%d\\n\", i);\n}",
+  "question": "What is the primary issue in this code?",
+  "answerA": "The loop variable is used before it is declared.",
+  "answerB": "The loop header is missing its update expression.",
+  "answerC": "The loop body is missing its closing brace.",
+  "answerD": "The for header uses commas where semicolons are required.",
+  "correctAnswer": 3,
+  "matchedPairId": "pair-4"
+}

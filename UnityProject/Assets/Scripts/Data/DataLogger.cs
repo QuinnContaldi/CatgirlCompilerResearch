@@ -28,7 +28,6 @@ namespace Meowra.Data
             WriteSnapshot(Path.Combine(directory, "assignment.csv"), BuildAssignmentCsv(session));
             WriteSnapshot(Path.Combine(directory, "trials.csv"), BuildCsv(session));
             WriteSnapshot(Path.Combine(directory, "ueqs.csv"), BuildUeqsCsv(session));
-            WriteSnapshot(Path.Combine(directory, "api.csv"), BuildApiCsv(session));
             WriteSnapshot(Path.Combine(directory, "preference.csv"), BuildPreferenceCsv(session));
         }
 
@@ -53,7 +52,7 @@ namespace Meowra.Data
         private static string ConditionOrder(ParticipantSession session)
         {
             var order = new StringBuilder();
-            for (int i = 0; i < session.PlannedConditions.Count; i += 2)
+            for (int i = 0; i < session.PlannedConditions.Count; i += 4)
             {
                 if (i > 0) order.Append(" > ");
                 order.Append(session.PlannedConditions[i]);
@@ -65,26 +64,15 @@ namespace Meowra.Data
 
         private static string BuildAssignmentCsv(ParticipantSession session)
         {
-            var csv = new StringBuilder("participant_id,order_number,condition_order,stimulus_set,task_order,preview,session_completed,trial_number,block_number,trial_in_block,scenario_id,condition,submitted\n");
+            var csv = new StringBuilder("participant_id,assignment_cell,condition_order,initial_task_set,task_order,preview,session_completed,trial_number,block_number,trial_in_block,scenario_id,condition,task_set,submitted\n");
             for (int i = 0; i < session.PlannedScenarioIds.Count; i++)
                 csv.Append(session.ParticipantId).Append(',').Append(session.OrderNumber).Append(',')
-                    .Append(Quote(ConditionOrder(session))).Append(',').Append(session.StimulusSet).Append(',')
+                    .Append(Quote(ConditionOrder(session))).Append(',').Append((session.PlannedTaskSets.Count > 0 ? session.PlannedTaskSets[0] : "")).Append(',')
                     .Append(Quote(TaskOrder(session))).Append(',').Append(session.IsPreview ? "true" : "false").Append(',')
                     .Append(session.Completed ? "true" : "false").Append(',').Append(i + 1).Append(',')
-                    .Append(i / 2 + 1).Append(',').Append(i % 2 + 1).Append(',')
-                    .Append(Quote(session.PlannedScenarioIds[i])).Append(',').Append(session.PlannedConditions[i]).Append(',')
+                    .Append(i / 4 + 1).Append(',').Append(i % 4 + 1).Append(',')
+                    .Append(Quote(session.PlannedScenarioIds[i])).Append(',').Append(session.PlannedConditions[i]).Append(',').Append(session.PlannedTaskSets[i]).Append(',')
                     .Append(i < session.Responses.Count ? "true" : "false").Append('\n');
-            return csv.ToString();
-        }
-
-        private static string BuildApiCsv(ParticipantSession session)
-        {
-            var csv = new StringBuilder("participant_id,item_number,dimension,item,rating_1_to_5\n");
-            if (session.ApiSubmitted)
-                for (int item = 0; item < ApiItems.Count; item++)
-                    csv.Append(session.ParticipantId).Append(',').Append(item + 1).Append(',')
-                        .Append(ApiItems.Dimension(item)).Append(',').Append(Quote(ApiItems.Wording(item))).Append(',')
-                        .Append(session.ApiResponse.Ratings[item]).Append('\n');
             return csv.ToString();
         }
 
@@ -100,13 +88,13 @@ namespace Meowra.Data
 
         private static string BuildUeqsCsv(ParticipantSession session)
         {
-            var csv = new StringBuilder("participant_id,order_number,stimulus_set,preview,condition_order,task_order,block_number,condition,item_number,dimension,left_anchor,right_anchor,position_1_to_7\n");
+            var csv = new StringBuilder("participant_id,assignment_cell,initial_task_set,preview,condition_order,task_order,block_number,condition,item_number,dimension,left_anchor,right_anchor,position_1_to_7\n");
             foreach (var response in session.UeqsResponses)
                 for (int item = 0; item < UeqsItems.Count; item++)
                 {
                     // These fields are generated IDs, enums, numbers, and fixed comma-free anchors.
                     csv.Append(session.ParticipantId).Append(',').Append(session.OrderNumber).Append(',')
-                        .Append(session.StimulusSet).Append(',').Append(session.IsPreview ? "true" : "false").Append(',')
+                        .Append((session.PlannedTaskSets.Count > 0 ? session.PlannedTaskSets[0] : "")).Append(',').Append(session.IsPreview ? "true" : "false").Append(',')
                         .Append(Quote(ConditionOrder(session))).Append(',').Append(Quote(TaskOrder(session))).Append(',')
                         .Append(response.BlockNumber).Append(',').Append(response.Condition).Append(',')
                         .Append(item + 1).Append(',').Append(item < 4 ? "Pragmatic" : "Hedonic").Append(',')
@@ -118,20 +106,22 @@ namespace Meowra.Data
 
         private static string BuildCsv(ParticipantSession session)
         {
-            var csv = new StringBuilder("participant_id,order_number,condition_order,stimulus_set,preview,session_completed,trial_number,scenario_id,condition,selected_answer,scored,correct,task_order,block_number,trial_in_block,response_time_seconds\n");
+            var csv = new StringBuilder("participant_id,assignment_cell,condition_order,initial_task_set,preview,session_completed,trial_number,scenario_id,condition,selected_answer,scored,correct,task_order,block_number,trial_in_block,response_time_seconds,task_set,error_category,correct_answer,task_response_time_ms\n");
             string order = ConditionOrder(session);
             for (int i = 0; i < session.Responses.Count; i++)
             {
                 var response = session.Responses[i];
                 string[] row = {
                     session.ParticipantId, session.OrderNumber.ToString(CultureInfo.InvariantCulture), order,
-                    session.StimulusSet.ToString(CultureInfo.InvariantCulture), session.IsPreview ? "true" : "false",
+                    session.PlannedTaskSets[0], session.IsPreview ? "true" : "false",
                     session.Completed ? "true" : "false", (i + 1).ToString(CultureInfo.InvariantCulture),
                     response.ScenarioId, response.Condition.ToString(), response.SelectedAnswer.ToString(),
                     response.Scored ? "true" : "false", response.Scored ? (response.Correct ? "true" : "false") : "",
-                    TaskOrder(session), (i / 2 + 1).ToString(CultureInfo.InvariantCulture),
-                    (i % 2 + 1).ToString(CultureInfo.InvariantCulture),
-                    response.ResponseTimeSeconds.ToString("R", CultureInfo.InvariantCulture)
+                    TaskOrder(session), (i / 4 + 1).ToString(CultureInfo.InvariantCulture),
+                    (i % 4 + 1).ToString(CultureInfo.InvariantCulture),
+                    response.ResponseTimeSeconds.ToString("R", CultureInfo.InvariantCulture),
+                    response.TaskSet, response.ErrorCategory, response.CorrectAnswer.ToString(),
+                    (response.ResponseTimeSeconds * 1000).ToString("R", CultureInfo.InvariantCulture)
                 };
                 for (int column = 0; column < row.Length; column++)
                 {

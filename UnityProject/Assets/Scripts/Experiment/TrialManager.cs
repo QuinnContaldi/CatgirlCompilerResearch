@@ -28,14 +28,14 @@ namespace Meowra.Experiment
             view.SubmitRequested -= Submit;
         }
 
-        public void Begin(TrialAssignment trial, bool isPreview, Sprite portrait, int number, int total)
+        public void Begin(TrialAssignment trial, bool isPreview, StudyDefinition study, int number, int total)
         {
             timer.Reset();
             current = trial;
             preview = isPreview;
             selected = AnswerChoice.Unassigned;
             submitted = false;
-            view.Show(trial.Scenario, trial.Condition, portrait, number, total);
+            view.Show(trial.Scenario, trial.Condition, study, number, total);
             timer.Start();
         }
 

@@ -1,3 +1,6 @@
+> LEGACY: superseded experiment. See [the current protocol](../../Research_Design.md).
+> Historical descriptions and paths below are preserved for provenance only.
+
 # Code and feedback as text
 
 The six scenario assets now store `codeText`, `rawFeedback`, `neutralFeedback`

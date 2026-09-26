@@ -1,3 +1,6 @@
+> LEGACY: superseded experiment. See [the current protocol](../../Research_Design.md).
+> Historical descriptions and paths below are preserved for provenance only.
+
 # Original study pictures (archive)
 
 **The participant display now uses highlighted text.** See [Study_Text.md](Study_Text.md)

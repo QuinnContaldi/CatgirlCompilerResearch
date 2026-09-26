@@ -1,30 +1,26 @@
-# Dr. Meowra Compiler Feedback Study
+# Would You Rather Participate in a User Study With a Catgirl? Exploring Participant Preference and Experience in Programming Language User Studies
 
-A Unity research application comparing three compiler-error feedback styles:
-**Raw**, **Neutral**, and **Dr. Meowra**. Each participant completes six scenarios,
-experiences all three conditions, and answers questionnaires. Feedback is authored
-in advance; no live AI or compiler runs during participant sessions.
+A Unity research application comparing **Neutral** and **Dr. Meowra** interfaces
+for the same programming-language task. Every participant completes two matched
+sets of four questions, rates each interface with UEQ-S, and states a preference
+for a future similar study. No live AI or compiler runs during participation.
 
 ## Start here
 
-1. Open `UnityProject/` in **Unity 6000.6.1f1** through Unity Hub. On this Linux
-   workstation, run `./Tools/open-unity.sh` from the repository root instead.
-2. Open `Assets/Scenes/Experiment.unity` and press **Play**.
-3. Choose counterbalance order **1–6** and task rotation (**stimulus set**) **1–3**.
-4. Choose **Preview layout** for an unscored walkthrough or **Start session** for
-   a scored session. The setup screen explains any missing required content.
-5. Participants accept consent, read the introduction/instructions, select answers,
-   and click **Continue**. Responses save before the next page appears.
+1. Open `UnityProject/` in Unity **6000.6.1f1**, or use `./Tools/open-unity.sh` here.
+2. Open `Assets/Scenes/Experiment.unity` and press Play.
+3. Choose assignment cell **1–4** and select **Preview layout**.
+4. Follow neutral consent, overview and background, then both condition blocks.
 
-**Before participant collection:** the consent text is a draft with contact and
-policy placeholders. Finalize it through your institution's process. Review the
-known stimulus inconsistencies in [Study_Text.md](Study_Text.md). Background
-questions, a separate practice task, and additional targeted ratings described
-in the research plan are not currently implemented.
+This implements the revised [research design](Research_Design.md). Meowra appears
+only within her block; evaluation and consent screens are neutral. There is no
+compiler-feedback manipulation or persona questionnaire in the active protocol.
 
-Dr. Meowra currently hosts the study throughout, including the instructions.
-This differs from the original neutral-tutorial plan. Her feedback-block
-introduction still appears immediately before her assigned block.
+**Scored sessions are enabled:** select assignment cell **1–4**, then **Start scored
+session** to run the complete study and save scored results. Use **Latest live CSVs**
+after completion to open the exports. See [running sessions](docs/Running_Sessions.md).
+Consent still contains researcher placeholders; enabling the software does not
+resolve them or establish a scientific content freeze.
 
 ## Open your CSV results
 
@@ -42,9 +38,8 @@ Open a CSV in LibreOffice Calc or Excel; use UTF-8, comma-separated fields, and
 | --- | --- |
 | `trials.csv` | Selected answer, correctness, time in seconds, condition and task order. |
 | `ueqs.csv` | Eight responses per condition block, with original 1–7 positions. |
-| `assignment.csv` | All six planned tasks, counterbalance, rotation and submission status. |
-| `api.csv` | Ten Dr. Meowra persona ratings on their 1–5 scale. |
-| `preference.csv` | Preferred feedback style and written explanation. |
+| `assignment.csv` | All eight planned tasks, assignment cell, set and submission status. |
+| `preference.csv` | Preferred study format and written explanation. |
 | `session.json` | Complete session record, including consent wording and timestamp. |
 
 Each participant receives a unique folder. Submitted responses survive stopping
@@ -68,31 +63,35 @@ and Product Name unchanged to retain the same storage location.
 
 ```text
 CatgirlCompilerResearch/
-├── README.md                     # Setup, results access and repository guide
-├── AGENTS.md                     # Implementation and research constraints
-├── Research_Design.md            # Preserved detailed research plan
-├── Research_Design_Document.pdf   # Research reference
-├── Consent_Text.md               # Consent draft and remaining institutional details
-├── Meowra_Host.md                 # Persona/host protocol notes
-├── Study_Text.md                  # Current text stimuli and review notes
-├── Study_Pictures.md              # Earlier screenshot implementation archive
-├── DrMeowra.jpg                   # Original character artwork
+├── AGENTS.md                 # Implementation constraints
+├── README.md                 # Repository and running guide
+├── Research_Design.md        # Sole scientific protocol
+├── Consent_Text.md           # Editable neutral consent source
+├── docs/
+│   ├── Content_Review.md     # Dated review; not a protocol or content source
+│   └── archive/              # Obsolete documents, stimuli and Unity assets
 ├── Stimuli/
-│   ├── README.md
-│   ├── SourceCode/                # Six C examples and diagnostic helper
-│   └── ReferenceImages/           # Original code/feedback screenshots
-├── Tools/open-unity.sh            # Local Unity launcher
+│   ├── SetA/                 # Four task JSON definitions, including keys
+│   └── SetB/                 # Four matched task JSON definitions, including keys
+├── Pictures/                 # Original Dr. Meowra artwork
+├── study-content/
+│   ├── Neutral_Host.md       # Neutral condition copy
+│   ├── Meowra_Host.md        # Host-only Meowra copy
+│   └── Study_Text.md         # Shared participant copy
+├── Tools/
 └── UnityProject/
-    ├── README.md                 # App architecture and validation
-    ├── AUTHORING.md              # Editing scenarios and questionnaires
-    ├── Assets/                   # Scenes, scripts, assets, images and fonts
-    ├── Packages/                 # Dependencies and lockfile
-    └── ProjectSettings/          # Shared Unity settings
 ```
 
-Original material in `Stimuli/` is retained for reference. Participant-facing
-content lives in `UnityProject/Assets/Data/`. Unity assets stay in their existing
-locations with their `.meta` files, preserving scene and prefab references.
+[Research_Design.md](Research_Design.md) is the only scientific protocol.
+Archived material is historical and must not guide the current experiment.
+Edit the content sources above, then run **Tools → Experiment → Import Study
+Content** in Unity. Runtime assets are imported copies, not independent authoring
+sources. Play mode and builds check synchronization. Importing changed content
+resets Content Reviewed. See [authoring](UnityProject/AUTHORING.md).
+
+Task Data + Condition Presentation + Crossover Assignment = Rendered Study Block.
+Both conditions use the same task objects and shared scene; task content is never
+copied into condition-specific files.
 
 ## Editing and testing
 
