@@ -9,5 +9,5 @@ assets. Do not edit those generated copies independently. Each task is usable in
 either condition; condition presentation lives in `study-content/`.
 
 These are draft stimuli. The dated [review](../docs/Content_Review.md) records
-remaining pilot considerations. Original six-task/compiler-feedback materials are
-in [the archive](../docs/archive/compiler-feedback/README.md).
+remaining pilot considerations. The obsolete six-task/compiler-feedback materials
+have been removed; earlier versions remain in Git history.

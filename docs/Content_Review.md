@@ -1,7 +1,9 @@
 # Content review — two-condition draft v2
 
 Reviewed 2026-09-26 against [Research_Design.md](../Research_Design.md). This is a desk review, not a
-pilot, content freeze, or institutional approval. Scored sessions remain disabled.
+pilot, content freeze, or institutional approval. Scored sessions were disabled at
+the time of this review. They have since been enabled for complete scored runs;
+see [current session instructions](Running_Sessions.md).
 
 This is a dated review snapshot. Repeated task/host wording below is evidence of
 that review, not an editable content source. Current sources are in `Stimuli/`
@@ -130,4 +132,4 @@ that all five variables were answered when the field is nonempty.
    word counts or successful software tests.
 4. Watch for key-position learning, answer recall, and scrolling difficulties.
 5. Measure full-session duration and finalize consent details, then review/freeze
-   the version explicitly before enabling scored participant collection.
+   the version explicitly before formal participant collection.

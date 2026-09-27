@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Rewrite the existing Unity project to implement the **new participant-experience experiment**.
+Maintain the Unity implementation of the **two-condition participant-experience experiment**.
 
 The old Raw/Neutral/Meowra compiler-feedback experiment is obsolete.
 
@@ -12,7 +12,7 @@ The canonical research protocol is:
 
 Read `Research_Design.md` before making any experimental-design decision.
 
-This file contains the implementation constraints Codex must preserve while rewriting the Unity project.
+This file contains the implementation constraints Codex must preserve while maintaining the Unity project.
 
 ---
 
@@ -268,9 +268,9 @@ Do not wait until the end of the experiment to write the only copy of the sessio
 
 ---
 
-## Rewrite Strategy
+## Implementation Maintenance
 
-Before changing code:
+The two-condition rewrite is implemented. For any further substantial rewrite:
 
 1. inspect the existing Unity project;
 2. identify reusable systems;
@@ -305,20 +305,14 @@ If implementation requirements conflict with `Research_Design.md`, stop and flag
 
 ---
 
-## Immediate Goal
+## Current Goal
 
-Rewrite the current Unity project so it implements the new two-condition crossover experiment faithfully.
+Keep the implemented two-condition crossover flow faithful to `Research_Design.md`.
+Use the existing navigation smoke check to validate changes. Remaining collection
+preparation includes consent completion, pilot review, and an explicit content/build
+freeze; see `docs/Running_Sessions.md` and protocol sections 55–56.
 
-First deliver:
-1. an inventory of reusable vs obsolete code;
-2. the proposed new scene/state flow;
-3. the proposed data model;
-4. the implementation order.
-
-Then begin the rewrite.
-
-
-## Content authoring and legacy archive
+## Content authoring and historical material
 
 `Research_Design.md` is the sole scientific protocol. Do not create another protocol.
 Edit condition text in `study-content/Neutral_Host.md` and `Meowra_Host.md`, shared
@@ -327,7 +321,7 @@ tasks/keys in `Stimuli/SetA` and `Stimuli/SetB`. Use Unity's **Tools → Experim
 Import Study Content** to regenerate runtime assets. Do not put dialogue defaults
 in scripts or edit imported text independently. Preserve validated survey wording.
 
-`docs/archive/` contains obsolete compiler-feedback and persona-instrument material;
-its historical instructions do not apply to the current experiment. `docs/Content_Review.md`
+Obsolete compiler-feedback and persona-instrument material has been removed from
+the working tree. Historical versions in Git are not current instructions. `docs/Content_Review.md`
 is a dated review snapshot, not a protocol or content source. Preserve existing
 Unity GUIDs and historical condition IDs when maintaining runtime compatibility.

@@ -61,5 +61,5 @@ UEQ-S after each block; preference, optional reason and completion. Meowra appea
 only within her condition. Confirm no hints or correctness feedback, no repeated
 task set, and no transition time inside task response time.
 
-Historical compiler-feedback assets and Agent Persona Instrument code are stored
-outside Unity under `../docs/archive/`. They do not compile or load in this study.
+Historical compiler-feedback assets and Agent Persona Instrument code have been
+removed. Earlier versions remain in Git history; they are not current content sources.

@@ -4,7 +4,8 @@
 
 **Working research-design document — September 2026**
 
-**Planned implementation:** Unity  
+**Implementation:** Unity prototype; pilot and content freeze pending
+
 **Design:** Two-condition within-subject crossover study  
 **Primary UX instrument:** UEQ-S  
 **Primary comparison:** Dr. Meowra vs. Neutral on UEQ-S Hedonic Quality  
@@ -18,7 +19,7 @@
 
 # 1. Study in One Page
 
-Programming-language research increasingly recognizes the importance of empirical evidence about programmers. However, human-subject studies remain comparatively uncommon in programming-language research, and user evaluations are difficult and costly to conduct. Stefik et al. (2014) documented the limited empirical basis used for human-factors decisions in programming-language research; in the comparison that motivates this project, programming-language user studies were the least represented group among the research categories shown. Related work in software engineering has also documented practical barriers to user evaluation, including participant recruitment and researcher time.
+Programming-language research benefits from studying how people use languages and programming tools. Chasins et al. (2021) position collaboration between programming languages (PL) and human–computer interaction (HCI) as a substantive research opportunity, while Myers et al. (2016) explain how human-centered methods can improve programming tools. Stefik et al. (2014) examined the human-factors evidence reported in programming-language workshops. Their findings motivate attention to evidence quality within that scope; they do not establish a current ranking of all PL research against other fields. Buse et al. (2011) also document practical barriers to user evaluation in software-engineering research, including recruitment and researcher time.
 
 This project asks a different methodological question from a conventional PL user study:
 
@@ -70,7 +71,7 @@ Programming-language design includes many decisions that directly affect human p
 
 Stefik et al. (2014) systematically examined empirical evidence used for human-factors decisions in programming-language research. Their analysis was motivated by the broader concern that human-facing language-design claims often lack the kind of empirical evidence expected in other human-centered disciplines.
 
-The practical difficulty of running user evaluations is also well documented outside PL. Buse, Sadowski, and Weimer (2011) surveyed software-engineering researchers about barriers to user evaluation. Most respondents agreed that user evaluation was difficult; recruitment and time commitment were among the most commonly identified barriers.
+The practical difficulty of running user evaluations is also well documented outside PL. Buse et al. (2011) surveyed software-engineering researchers about barriers to user evaluation. Most respondents agreed that user evaluation was difficult; recruitment and time commitment were among the most commonly identified barriers.
 
 These observations create a methodological tension:
 
@@ -89,6 +90,14 @@ Research methodology usually focuses on scientific validity from the researcher'
 > **Can we design the research interface so that participation itself is a better user experience while still preserving the study task?**
 
 The present experiment is intentionally narrow. It does not attempt to prove that playful interfaces solve recruitment, retention, fatigue, motivation, or any other broad problem. It first tests the more fundamental premise that the participant-facing study environment can be redesigned in a way that measurably changes UX without obviously compromising the underlying task.
+
+## 3.1 Positioning in PL and HCI
+
+Chasins et al. (2021) provide the broad PL–HCI framing: studying interaction with programming systems extends beyond superficial interface styling. Myers et al. (2016) establish programmers as users whose needs can be investigated with human-centered methods. Coblenz et al. (2018) extend this argument to language design, combining user-oriented inquiry with theoretical and performance evaluation. PLIERS adapts user-centered methods to the learning demands, iteration costs, and performance variability of programming-language design (Coblenz et al., 2021).
+
+Stefik and Hanenberg (2014) argue for evidence about the human consequences of language design. Their later methodological critique emphasizes standards for empirical claims (Stefik & Hanenberg, 2017). The Dagstuhl seminar report documents discussion across PL, HCI, software engineering, education, and data science about programmer evidence and evaluation methods (Stefik et al., 2018). These works motivate careful treatment definition, counterbalancing, measurement, and reporting; they do not directly validate this experiment or predict a Meowra benefit.
+
+Vasilescu (2014) provides supplementary human-factors context through research on open-source communities and knowledge sharing. It is not a foundational source for experimental PL methodology. The present study applies the broader human-centered perspective to the experience of participating in a PL study, rather than to language usability itself.
 
 ---
 
@@ -489,7 +498,7 @@ The task should therefore be:
 - low in irrelevant complexity; and
 - similar in difficulty across matched pairs.
 
-Denny, Prather, and Becker (2020) provide useful methodological precedent for using predetermined debugging material so that participants encounter the same errors rather than generating different errors through open-ended code writing.
+Denny et al. (2020) provide useful methodological precedent for using predetermined debugging material so that participants encounter the same errors rather than generating different errors through open-ended code writing.
 
 Hristova et al. (2003) provide a published list of common novice programming errors. The present task categories draw on that style of common-error taxonomy while adapting examples to short C/C-like snippets.
 
@@ -862,7 +871,7 @@ neutral measurement screen
 
 The **User Experience Questionnaire — Short Version (UEQ-S)** is the central quantitative UX measure.
 
-Schrepp, Hinderks, and Thomaschewski (2017) developed the eight-item UEQ-S for situations where a shorter UX questionnaire is useful.
+Schrepp et al. (2017) developed the eight-item UEQ-S for situations where a shorter UX questionnaire is useful.
 
 The instrument contains:
 
@@ -1861,44 +1870,33 @@ A future researcher should be able to recover:
 
 # 62. References
 
-## Human-Factors Evidence and User-Study Methodology
+Buse, R. P. L., Sadowski, C., & Weimer, W. (2011). Benefits and barriers of user evaluation in software engineering research. In *Proceedings of the 2011 ACM international conference on object oriented programming systems languages and applications* (pp. 643–656). Association for Computing Machinery. https://doi.org/10.1145/2048066.2048117
 
-Stefik, A., Hanenberg, S., McKenney, M., Andrews, A. A., Yellanki, S. K., & Siebert, S. (2014).  
-**What is the foundation of evidence of human factors decisions in language design? An empirical study on programming language workshops.**  
-*Proceedings of the 22nd International Conference on Program Comprehension (ICPC)*, 223–231.  
-https://doi.org/10.1145/2597008.2597154
+Chasins, S. E., Glassman, E. L., & Sunshine, J. (2021). PL and HCI: Better together. *Communications of the ACM, 64*(8), 98–106. https://doi.org/10.1145/3469279
 
-Buse, R. P. L., Sadowski, C., & Weimer, W. (2011).  
-**Benefits and barriers of user evaluation in software engineering research.**  
-*Proceedings of the 26th Annual ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications (OOPSLA)*, 643–656.  
-https://doi.org/10.1145/2048066.2048117
+Coblenz, M., Aldrich, J., Myers, B. A., & Sunshine, J. (2018). Interdisciplinary programming language design. In *Proceedings of the 2018 ACM SIGPLAN international symposium on new ideas, new paradigms, and reflections on programming and software* (pp. 133–146). Association for Computing Machinery. https://doi.org/10.1145/3276954.3276965
 
-## Controlled Programming-Error Tasks
+Coblenz, M., Kambhatla, G., Koronkevich, P., Wise, J. L., Barnaby, C., Sunshine, J., Aldrich, J., & Myers, B. A. (2021). PLIERS: A process that integrates user-centered methods into programming language design. *ACM Transactions on Computer-Human Interaction, 28*(4), Article 28. https://doi.org/10.1145/3452379
 
-Hristova, M., Misra, A., Rutter, M., & Mercuri, R. (2003).  
-**Identifying and correcting Java programming errors for introductory computer science students.**  
-*Proceedings of the 34th SIGCSE Technical Symposium on Computer Science Education*, 153–156.  
-https://doi.org/10.1145/611892.611956
+Denny, P., Prather, J., & Becker, B. A. (2020). Error message readability and novice debugging performance. In *Proceedings of the 2020 ACM conference on innovation and technology in computer science education* (pp. 480–486). Association for Computing Machinery. https://doi.org/10.1145/3341525.3387384
 
-Denny, P., Prather, J., & Becker, B. A. (2020).  
-**Error message readability and novice debugging performance.**  
-*Proceedings of the 2020 ACM Conference on Innovation and Technology in Computer Science Education (ITiCSE)*, 480–486.  
-https://doi.org/10.1145/3341525.3387384
+Hristova, M., Misra, A., Rutter, M., & Mercuri, R. (2003). Identifying and correcting Java programming errors for introductory computer science students. In *Proceedings of the 34th SIGCSE technical symposium on computer science education* (pp. 153–156). Association for Computing Machinery. https://doi.org/10.1145/611892.611956
 
-## UEQ-S
+Myers, B. A., Ko, A. J., LaToza, T. D., & Yoon, Y. (2016). Programmers are users too: Human-centered methods for improving programming tools. *Computer, 49*(7), 44–52. https://doi.org/10.1109/MC.2016.200
 
-Schrepp, M., Hinderks, A., & Thomaschewski, J. (2017).  
-**Design and evaluation of a short version of the User Experience Questionnaire (UEQ-S).**  
-*International Journal of Interactive Multimedia and Artificial Intelligence, 4*(6), 103–108.  
-https://doi.org/10.9781/ijimai.2017.09.001
+Schrepp, M., Hinderks, A., & Thomaschewski, J. (2017). Design and evaluation of a short version of the User Experience Questionnaire (UEQ-S). *International Journal of Interactive Multimedia and Artificial Intelligence, 4*(6), 103–108. https://doi.org/10.9781/ijimai.2017.09.001
 
-Practical UEQ overview:
+Stefik, A., & Hanenberg, S. (2014). The programming language wars: Questions and responsibilities for the programming language community. In *Proceedings of the 2014 ACM international symposium on new ideas, new paradigms, and reflections on programming & software* (pp. 283–299). Association for Computing Machinery. https://doi.org/10.1145/2661136.2661156
 
-https://www.surveylab.com/blog/user-experience-questionnaire-ueq/
+Stefik, A., & Hanenberg, S. (2017). Methodological irregularities in programming-language research. *Computer, 50*(8), 60–63. https://doi.org/10.1109/MC.2017.3001257
 
-Official UEQ resources:
+Stefik, A., Hanenberg, S., McKenney, M., Andrews, A., Yellanki, S. K., & Siebert, S. (2014). What is the foundation of evidence of human factors decisions in language design? An empirical study on programming language workshops. In *Proceedings of the 22nd international conference on program comprehension* (pp. 223–231). Association for Computing Machinery. https://doi.org/10.1145/2597008.2597154
 
-https://www.ueq-online.org/
+Stefik, A., Sharif, B., Myers, B. A., & Hanenberg, S. (Eds.). (2018). Evidence about programmers for programming language design (Dagstuhl Seminar 18061). *Dagstuhl Reports, 8*(2), 1–25. https://doi.org/10.4230/DagRep.8.2.1
+
+Vasilescu, B. (2014). Software developers are humans, too! In *Proceedings of the companion publication of the 17th ACM conference on computer supported cooperative work & social computing* (pp. 97–100). Association for Computing Machinery. https://doi.org/10.1145/2556420.2556833
+
+Official instrument files and scoring tools: [User Experience Questionnaire resources](https://www.ueq-online.org/).
 
 ---
 
@@ -1930,23 +1928,36 @@ As of this research-design version, the following decisions are considered settl
 
 ---
 
-# 64. Immediate Next Steps
+# 64. Implementation Status and Next Steps
 
-The design is sufficiently specified to begin implementation.
+As of September 27, 2026, the Unity prototype implements both conditions, all four
+crossover cells, eight task assets, both UEQ-S administrations, task timing and
+accuracy logging, final preference, open response, and incremental JSON/CSV saving.
+The existing scene smoke check passes all four cells in preview and scored modes.
+This verifies software behavior, not task equivalence or collection readiness.
+
+The researcher preselects the assignment cell on setup before consent; condition
+presentation begins after neutral consent, overview, and background. This differs
+from the assignment-selection position shown in section 21 and must be resolved
+explicitly before the protocol/build freeze. No participant-facing assignment
+selection screen is implemented. Allocation across participants remains manual.
 
 Before formal data collection:
 
-```text
-1. Finalize all eight multiple-choice distractor sets.
-2. Finalize Neutral study-host text.
-3. Finalize Dr. Meowra study-host text.
-4. Implement the two conditions in Unity.
-5. Implement four-cell crossover assignment.
-6. Implement UEQ-S.
-7. Implement timing and accuracy logging.
-8. Implement preference + open response.
-9. Pilot the complete study.
-10. Correct task mismatches or UI problems.
-11. Freeze and tag the study build.
-12. Begin formal data collection.
-```
+1. Complete the consent placeholders and required institutional review.
+2. Pilot all eight questions and both presentations; review distractor plausibility,
+   A/B difficulty, answer-position learning, readability, and full-session duration.
+3. Finalize background wording; the current implementation uses one optional
+   free-text response for the five suggested variables in section 32.
+4. Resolve the assignment-timing discrepancy above and any pilot problems.
+5. Freeze content, eligibility/exclusions, and analysis decisions under section 56.
+   Prepare the reproducible analysis script listed in section 61; it is not yet
+   included in this repository.
+6. Validate the intended participant build and resolution, then tag the frozen version.
+7. Begin formal data collection with the planned allocation across all four cells.
+
+Current content sources and operating instructions are documented in
+[AUTHORING.md](UnityProject/AUTHORING.md) and
+[Running_Sessions.md](docs/Running_Sessions.md). Scored mode is enabled, but consent
+placeholders and the draft version label remain. Interrupted-session resumption is
+not implemented and is not required by this protocol; submitted records persist.

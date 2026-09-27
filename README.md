@@ -22,6 +22,14 @@ after completion to open the exports. See [running sessions](docs/Running_Sessio
 Consent still contains researcher placeholders; enabling the software does not
 resolve them or establish a scientific content freeze.
 
+## Remaining work before collection
+
+The core application is implemented. Complete consent details, pilot and freeze the
+content/build, and prepare the analysis script. Assignment is currently selected on
+researcher setup before consent, while protocol section 21 lists it after background;
+resolve that discrepancy explicitly before freezing the study. See
+[implementation status and next steps](Research_Design.md#64-implementation-status-and-next-steps).
+
 ## Open your CSV results
 
 On the researcher setup screen, click:
@@ -69,7 +77,7 @@ CatgirlCompilerResearch/
 ├── Consent_Text.md           # Editable neutral consent source
 ├── docs/
 │   ├── Content_Review.md     # Dated review; not a protocol or content source
-│   └── archive/              # Obsolete documents, stimuli and Unity assets
+│   └── Running_Sessions.md   # Scored sessions and saved results
 ├── Stimuli/
 │   ├── SetA/                 # Four task JSON definitions, including keys
 │   └── SetB/                 # Four matched task JSON definitions, including keys
@@ -83,7 +91,7 @@ CatgirlCompilerResearch/
 ```
 
 [Research_Design.md](Research_Design.md) is the only scientific protocol.
-Archived material is historical and must not guide the current experiment.
+Legacy compiler-feedback material has been removed; earlier versions remain in Git history.
 Edit the content sources above, then run **Tools → Experiment → Import Study
 Content** in Unity. Runtime assets are imported copies, not independent authoring
 sources. Play mode and builds check synchronization. Importing changed content

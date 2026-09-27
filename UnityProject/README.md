@@ -10,8 +10,8 @@ Setup (four-cell assignment) → neutral consent → overview → optional backg
 → neutral UEQ-S → second block → neutral UEQ-S → preference → reason → completion.
 
 Meowra is present only in her treatment block. Raw feedback, compiler explanations,
-and the persona questionnaire are no longer part of the active study. Eight task assets are imported from `Stimuli/SetA` and `Stimuli/SetB`. Historical
-scenarios and persona-instrument definitions are archived outside Unity Assets. Scored sessions are enabled via `StudyDefinition.contentReviewed`. Consent
+and the persona questionnaire are no longer part of the active study. Eight task assets are imported from `Stimuli/SetA` and `Stimuli/SetB`. Legacy
+scenarios and persona-instrument definitions have been removed from the repository. Scored sessions are enabled via `StudyDefinition.contentReviewed`. Consent
 placeholders remain unresolved; see [running sessions](../docs/Running_Sessions.md).
 
 The researcher chooses the cell before consent; assignment is applied to treatment

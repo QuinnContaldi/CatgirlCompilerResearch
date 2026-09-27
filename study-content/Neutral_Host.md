@@ -1,8 +1,9 @@
 # Neutral condition presentation
 
 Editable participant copy; scientific authority: [Research_Design.md](../Research_Design.md).
-Tutorials must convey equivalent information. Host messages may encourage participation,
-but must never provide programming hints, answer assistance, or correctness feedback.
+Tutorials must convey equivalent information. Neutral messages remain factual and
+administrative, without social encouragement, programming hints, answer assistance,
+or correctness feedback.
 Messages are selected by stage/question position, never by answer or task set.
 
 Edit the JSON block, then use **Tools → Experiment → Import Study Content**.
