@@ -17,6 +17,8 @@ The sole scientific protocol is [Research_Design.md](../Research_Design.md).
 Condition Markdown files contain one editable JSON block. Preserve field names,
 JSON quoting and array order. Progress arrays have three entries; Meowra task
 banners have four entries and follow question position under either task set.
+`meowraTransitions` supplies the progress body; `meowraTransitionDialogue` supplies
+three distinct host banner lines for those same pages. Do not repeat the body in the banner.
 Tutorials convey the same functional information. Meowra may encourage participation,
 but cannot give programming hints, answer assistance or correctness feedback.
 
@@ -48,10 +50,12 @@ For command-line import, with Unity closed:
   -executeMethod ImportStudyContent.RunBatch -logFile /tmp/meowra-content-import.log
 ```
 
-The consent still has institutional/contact/privacy placeholders. `Content Reviewed`
-is currently enabled at the researcher's request to allow complete scored runs.
+The consent still has institutional/contact/privacy placeholders. The 2026-09-29
+Meowra dialogue import reset `Content Reviewed`; scored sessions are currently
+disabled pending review of the revised copy.
 This software setting does not complete the consent placeholders or establish a
-content freeze. Set the study version when finalizing the collection content. See the dated [content review](../docs/Content_Review.md).
+content freeze. Set the study version when finalizing the collection content. See [running sessions](../docs/Running_Sessions.md) and the
+[pilot considerations](../Stimuli/README.md).
 
 ## Verify the flow
 
@@ -63,3 +67,17 @@ task set, and no transition time inside task response time.
 
 Historical compiler-feedback assets and Agent Persona Instrument code have been
 removed. Earlier versions remain in Git history; they are not current content sources.
+
+## Meowra dialogue maintenance
+
+Follow the personality and voice guide in [AGENTS.md](../AGENTS.md), within the
+constraints of [Research_Design.md](../Research_Design.md). Use fixed, distinct
+lines for the existing content slots. Keep all tutorial controls and restrictions
+aligned with Neutral. Encouragement concerns participation only; omit hints,
+answer judgements and condition-specific advice about task pace.
+
+The 2026-09-29 revision refreshed the existing Meowra copy and separated progress
+banner dialogue from body text. Source/runtime import validation and the navigation
+smoke check passed all four assignments in preview and scored modes. The smoke
+check verifies the dedicated progress banner is displayed without repeating the
+body. Review the revised text and layout before re-enabling `Content Reviewed`.

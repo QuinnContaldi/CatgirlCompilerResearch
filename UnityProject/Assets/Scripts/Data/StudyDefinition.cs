@@ -32,6 +32,8 @@ namespace Meowra.Data
         [TextArea(2, 4)] public string meowraTutorialDialogue;
         [Tooltip("Four messages, in question order, shared by Set A and Set B. Encouragement only: no hints or correctness feedback.")]
         [TextArea(2, 4)] public string[] meowraTaskDialogue;
+        [Tooltip("Three host banner messages, distinct from the progress body text.")]
+        [TextArea(2, 4)] public string[] meowraTransitionDialogue;
         [TextArea(2, 4)] public string meowraCompletionDialogue;
 
 
@@ -91,10 +93,15 @@ namespace Meowra.Data
                 System.Array.Exists(neutralTransitions, string.IsNullOrWhiteSpace) || System.Array.Exists(meowraTransitions, string.IsNullOrWhiteSpace)) return "Enter three transitions per condition.";
             if (meowraTaskDialogue == null || meowraTaskDialogue.Length != 4 ||
                 System.Array.Exists(meowraTaskDialogue, string.IsNullOrWhiteSpace)) return "Enter four blue-box question messages for Dr. Meowra.";
+            if (meowraTransitionDialogue == null || meowraTransitionDialogue.Length != 3 ||
+                System.Array.Exists(meowraTransitionDialogue, string.IsNullOrWhiteSpace)) return "Enter three blue-box progress messages for Dr. Meowra.";
+            for (int i = 0; i < 3; i++)
+                if (string.Equals(meowraTransitions[i].Trim(), meowraTransitionDialogue[i].Trim(), System.StringComparison.OrdinalIgnoreCase))
+                    return "Use distinct host banner and body text on Meowra progress screens.";
             var dialogue = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
             var bannerMessages = new List<string> { meowraIntroductionDialogue, meowraTutorialDialogue, meowraCompletionDialogue };
             bannerMessages.AddRange(meowraTaskDialogue);
-            bannerMessages.AddRange(meowraTransitions);
+            bannerMessages.AddRange(meowraTransitionDialogue);
             foreach (string message in bannerMessages)
             {
                 if (string.IsNullOrWhiteSpace(message)) return "Complete Dr. Meowra's blue-box dialogue.";

@@ -104,6 +104,13 @@ public static class ExperimentSmokeCheck
                 else if (manager.Stage == ExperimentStage.Transition || manager.Stage == ExperimentStage.BlockCompletion)
                 {
                     AssertHost(schedule[trials - 1].Condition == FeedbackCondition.Meowra);
+                    if (manager.Stage == ExperimentStage.Transition && schedule[trials - 1].Condition == FeedbackCondition.Meowra)
+                    {
+                        int position = (trials - 1) % 4;
+                        string banner = GameObject.Find("Canvas/MeowraHost/Dialogue").GetComponent<Text>().text;
+                        Require(banner == fixture.meowraName + "\n" + fixture.meowraTransitionDialogue[position], "Progress must use its dedicated host banner.");
+                        Require(!banner.Contains(fixture.meowraTransitions[position]), "Progress must not repeat its body in the host banner.");
+                    }
                     if (manager.Stage == ExperimentStage.Transition) transitions++; else completions++;
                     double elapsed = manager.Session.Responses.Last().ResponseTimeSeconds;
                     var wait = System.Diagnostics.Stopwatch.StartNew();

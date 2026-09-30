@@ -277,7 +277,7 @@ namespace Meowra.Experiment
                     case ExperimentStage.Introduction: dialogue = study.meowraIntroductionDialogue; break;
                     case ExperimentStage.Instructions: dialogue = study.meowraTutorialDialogue; break;
                     case ExperimentStage.Trial: dialogue = study.meowraTaskDialogue[trialIndex % 4]; break;
-                    case ExperimentStage.Transition: dialogue = study.meowraTransitions[index % 4]; break;
+                    case ExperimentStage.Transition: dialogue = study.meowraTransitionDialogue[index % 4]; break;
                     case ExperimentStage.BlockCompletion: dialogue = study.meowraCompletionDialogue; break;
                 }
             }

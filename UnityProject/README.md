@@ -11,7 +11,8 @@ Setup (four-cell assignment) → neutral consent → overview → optional backg
 
 Meowra is present only in her treatment block. Raw feedback, compiler explanations,
 and the persona questionnaire are no longer part of the active study. Eight task assets are imported from `Stimuli/SetA` and `Stimuli/SetB`. Legacy
-scenarios and persona-instrument definitions have been removed from the repository. Scored sessions are enabled via `StudyDefinition.contentReviewed`. Consent
+scenarios and persona-instrument definitions have been removed from the repository. Scored sessions require `StudyDefinition.contentReviewed`. The 2026-09-29 dialogue
+import reset this flag, so scored sessions are currently disabled pending review. Consent
 placeholders remain unresolved; see [running sessions](../docs/Running_Sessions.md).
 
 The researcher chooses the cell before consent; assignment is applied to treatment
@@ -33,6 +34,14 @@ free-text field for the five suggested variables, pending wording review.
 The timer starts after the task view populates and layout updates, and stops at
 Submit. Transition, evaluation and save times are excluded. Time away from the app
 is included; onset still has frame-level uncertainty. No correctness is displayed.
+
+Meowra progress pages use `meowraTransitions` for body text and
+`meowraTransitionDialogue` for three separate host banner messages. Both arrays
+follow completed-question position under either task set. Validation requires
+three nonempty banner messages, unique host dialogue across slides, and distinct
+banner/body text at each progress position. All dialogue is authored in
+[Meowra_Host.md](../study-content/Meowra_Host.md) and imported; no runtime wording
+is randomized or generated.
 
 ## Data
 
@@ -66,7 +75,8 @@ Close Unity, then run from the repository root:
 Success is exit code 0 and `NAVIGATION_CHECK_OK`; do not add `-quit`.
 The scene check runs all four cells in preview and scored modes, with synthetic
 consent and a temporary content-review override. It checks host visibility, task
-assignment, answer resets/scoring, untimed transitions, both evaluations, preference,
+assignment, answer resets/scoring, distinct Meowra progress banners, untimed
+transitions, both evaluations, preference,
 incremental exports, save failure/retry, and preservation of earlier records.
 Tests write only to isolated temporary session folders.
 

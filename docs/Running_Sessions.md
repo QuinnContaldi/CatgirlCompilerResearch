@@ -1,8 +1,12 @@
 # Run a complete scored session
 
 Scientific protocol: [Research_Design.md](../Research_Design.md).
-Scored sessions have been enabled at the researcher's request. The current version
-label remains `two-condition-draft-v2` so exported data accurately identifies the
+Scored sessions were previously enabled at the researcher's request. The
+2026-09-29 Meowra dialogue import reset `Content Reviewed`; scored sessions are
+currently disabled pending review of the revised copy. Preview remains available.
+After review, enable `Content Reviewed` on `Assets/Data/StudyDefinition.asset`
+and set the appropriate study version before starting a scored session.
+The current version label remains `two-condition-draft-v2` so exported data accurately identifies the
 content used. Consent placeholders are still present; no institutional details or
 scientific freeze have been inferred from the request to enable the software.
 
@@ -47,3 +51,16 @@ completing the app does not make a synthetic test a research participant.
 Importing changed task or study text disables scored sessions again. After reviewing
 the changes, enable `Content Reviewed` on `Assets/Data/StudyDefinition.asset` and
 set the appropriate study version. Importing unchanged content preserves the setting.
+
+## Meowra dialogue revision — 2026-09-29
+
+Meowra's existing introduction, tutorial, task banners, progress and completion
+copy now follows the voice guide in [AGENTS.md](../AGENTS.md). Progress pages use
+separate host banner and body text instead of displaying the same dialogue twice.
+Task-pace advice was removed; encouragement remains independent of answers.
+
+The content import passed source/runtime validation. The navigation smoke check
+passed all four assignments in preview and scored modes using its synthetic
+content-review override, including checks for distinct progress banner text.
+This result does not re-enable scored sessions or establish a content freeze.
+Review the presentation at the intended participant resolution before collection.

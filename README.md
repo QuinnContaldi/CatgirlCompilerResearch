@@ -16,9 +16,11 @@ This implements the revised [research design](Research_Design.md). Meowra appear
 only within her block; evaluation and consent screens are neutral. There is no
 compiler-feedback manipulation or persona questionnaire in the active protocol.
 
-**Scored sessions are enabled:** select assignment cell **1–4**, then **Start scored
-session** to run the complete study and save scored results. Use **Latest live CSVs**
-after completion to open the exports. See [running sessions](docs/Running_Sessions.md).
+**Current status (2026-09-29):** the Meowra dialogue revision was imported and
+reset **Content Reviewed**, so scored sessions are currently disabled. Review the
+revised copy and enable that flag before using **Start scored session**. Select
+assignment cell **1–4** to run the complete study; use **Latest live CSVs** after
+completion to open the exports. See [running sessions](docs/Running_Sessions.md).
 Consent still contains researcher placeholders; enabling the software does not
 resolve them or establish a scientific content freeze.
 
@@ -76,7 +78,6 @@ CatgirlCompilerResearch/
 ├── Research_Design.md        # Sole scientific protocol
 ├── Consent_Text.md           # Editable neutral consent source
 ├── docs/
-│   ├── Content_Review.md     # Dated review; not a protocol or content source
 │   └── Running_Sessions.md   # Scored sessions and saved results
 ├── Stimuli/
 │   ├── SetA/                 # Four task JSON definitions, including keys

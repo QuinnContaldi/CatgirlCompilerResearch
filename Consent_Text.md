@@ -11,7 +11,8 @@ policies, compensation and a pilot-based duration remain unresolved placeholders
 The earlier 12–18 minute estimate was not established for this revised flow.
 This content review does not supply institutional approval or determine which
 consent process applies. Use your institution's reviewed wording before collection.
-Scored sessions are enabled at the researcher's request for complete runs.
+The 2026-09-29 dialogue import reset `Content Reviewed`; scored sessions are
+currently disabled pending review of the revised copy.
 The unresolved wording below is unchanged; this is not a consent approval.
 
 ## Screen text

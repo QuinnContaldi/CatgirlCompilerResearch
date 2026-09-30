@@ -474,8 +474,9 @@ in scripts or edit imported text independently. Preserve validated survey wordin
 This file guides future authors; changing it alone does not change the dialogue displayed in Unity. Apply reviewed wording in `study-content/Meowra_Host.md`, then import it. Keep literature references in researcher-facing documentation, not in Meowra's participant dialogue.
 
 Obsolete compiler-feedback and persona-instrument material has been removed from
-the working tree. Historical versions in Git are not current instructions. `docs/Content_Review.md`
-is a dated review snapshot, not a protocol or content source. Preserve existing
-Unity GUIDs and historical condition IDs when maintaining runtime compatibility.
+the working tree. Historical versions in Git are not current instructions.
+Keep current task pilot considerations in `Stimuli/README.md` and operating status
+in `docs/Running_Sessions.md`; do not restore obsolete review snapshots. Preserve
+existing Unity GUIDs and historical condition IDs when maintaining runtime compatibility.
 
 Do not silently change experimental content after formal collection begins. Before collection, review the revised wording in the pilot and include the exact final text in the content/build freeze.
