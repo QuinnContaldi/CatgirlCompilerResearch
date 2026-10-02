@@ -7,7 +7,7 @@ UEQ-S anchors remain the validated instrument in `UeqsResponse.cs`; do not chang
 ```json
 {
   "overview": "You will complete two sections of four programming questions. After each section, you will rate the study interface. At the end, you will choose a preferred format and may explain your choice. No correctness feedback is provided.",
-  "backgroundPrompt": "Briefly describe your programming experience: years, C/C++ familiarity, programming frequency, student level and relevant coursework. You may leave this blank.",
+  "backgroundPrompt": "How would you rate your experience with C/C++ on a scale from 1 to 10? Use 1 for no experience and 10 for very extensive experience. Enter a number from 1 to 10. You may leave this blank.",
   "preferencePrompt": "If you were invited to participate in another programming-language study of similar length and difficulty, which study format would you prefer?",
   "reasonPrompt": "Why did you prefer that study format? Please describe anything about the presentation or interaction that influenced your choice.",
   "overviewHeading": "Study overview",

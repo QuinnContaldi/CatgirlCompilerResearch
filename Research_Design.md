@@ -1947,8 +1947,10 @@ Before formal data collection:
 1. Complete the consent placeholders and required institutional review.
 2. Pilot all eight questions and both presentations; review distractor plausibility,
    A/B difficulty, answer-position learning, readability, and full-session duration.
-3. Finalize background wording; the current implementation uses one optional
-   free-text response for the five suggested variables in section 32.
+3. Finalize background wording; following the researcher's October 1 revision,
+   the current implementation asks for an optional C/C++ experience rating from
+   1 (no experience) to 10 (very extensive experience), entered in the existing
+   response field. Review this wording in the pilot before freezing it.
 4. Resolve the assignment-timing discrepancy above and any pilot problems.
 5. Freeze content, eligibility/exclusions, and analysis decisions under section 56.
    Prepare the reproducible analysis script listed in section 61; it is not yet

@@ -11,9 +11,9 @@ Setup (four-cell assignment) → neutral consent → overview → optional backg
 
 Meowra is present only in her treatment block. Raw feedback, compiler explanations,
 and the persona questionnaire are no longer part of the active study. Eight task assets are imported from `Stimuli/SetA` and `Stimuli/SetB`. Legacy
-scenarios and persona-instrument definitions have been removed from the repository. Scored sessions require `StudyDefinition.contentReviewed`. The 2026-09-29 dialogue
-import reset this flag, so scored sessions are currently disabled pending review. Consent
-placeholders remain unresolved; see [running sessions](../docs/Running_Sessions.md).
+scenarios and persona-instrument definitions have been removed from the repository. Scored sessions require `StudyDefinition.contentReviewed`. This flag was enabled
+on 2026-10-01 at the researcher's request after confirming the current content is
+finished; see [running sessions](../docs/Running_Sessions.md).
 
 The researcher chooses the cell before consent; assignment is applied to treatment
 presentation after the neutral opening pages. Background currently uses one optional

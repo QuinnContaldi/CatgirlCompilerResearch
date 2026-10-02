@@ -26,65 +26,42 @@ MonoBehaviour:
     Programming-Language Study
 
 
-    Please read this information before deciding whether to participate. You may ask the researcher questions before you begin.
+    We are conducting a research study to learn how different ways of presenting a programming-language study affect participants'' experiences.
 
 
-    KEY INFORMATION
-
-    You are invited to take part in research about how people experience different interfaces for a programming-language study. Participation is voluntary. [RESEARCHER TO COMPLETE: Expected duration, confirmed in the two-condition pilot.] We expect little risk, mainly temporary frustration or tiredness. There is no expected direct benefit to you. [RESEARCHER TO COMPLETE: Payment, course credit, other compensation, or no compensation, consistent with recruitment materials.] Your responses may contribute to understanding how people experience programming-language studies. You may choose not to participate or stop at any time without penalty or loss of benefits to which you are otherwise entitled.
+    If you volunteer, you will be asked about your programming background and complete two sections of four short multiple-choice programming questions. One section uses a plain interface; the other includes a character called Dr. Meowra as a study host. After each section, you will answer eight questions about your experience with the interface. At the end, you will choose which format you would prefer for another similar study and may explain why. The app does not provide hints or tell you whether your answers are correct.
 
 
-    WHAT YOU WILL DO
-
-    You will read a brief overview and may describe your programming background. You will then complete two sections of four short programming questions, selecting one answer per question. The sections use different interface presentations. After each section, you will answer eight rating items about the study interface. At the end, you will choose which format you would prefer for a future similar study and may explain your choice in your own words. The app does not provide hints or tell you whether your answers are correct. The study content is prepared in advance; the study does not send your responses to a live AI service.
+    Your participation should take about 15 minutes.
 
 
-    RISKS AND DISCOMFORTS
-
-    The activities are expected to involve risks similar to ordinary computer-based reading and problem solving. You may experience mild frustration, boredom, fatigue, or eye strain. There is also a possible risk of loss of privacy if research records are accessed without authorization. You may pause or stop if you feel uncomfortable. Tell the researcher if you have a concern or experience a problem.
+    This study is considered to involve minimal risk: the risks are similar in type or intensity to those of everyday activities. You may experience minor frustration or tiredness while reading code and answering questions. There is also a possible risk of loss of privacy if study records are accessed without authorization.
 
 
-    BENEFITS AND PAYMENT
-
-    You should not expect a direct personal benefit. [RESEARCHER TO COMPLETE: Confirm compensation arrangements, including any course-credit alternative if applicable.] The possible benefit is contributing to research on how programming-language studies are presented and experienced.
+    There are no expected direct benefits to you. We hope the findings will help researchers understand how to design programming-language studies with participants'' experiences in mind.
 
 
-    YOUR CHOICE
-
-    Taking part is your choice. You may decline by selecting the return-to-setup button instead of Accept. You may stop later by telling the researcher or closing the study. Programming-background information and the final written explanation are optional. Programming questions, interface ratings, and the preference choice require an answer to advance; if you do not want to answer, you may stop rather than continue. You do not have to give a reason. Responses already submitted are saved as you go.
+    The app uses a randomly assigned participant ID and does not ask for your name. It saves your answers, task accuracy, time spent on each programming question, interface ratings, format preference, any background information or written explanation you provide, and your consent decision and its time. Submitted responses are saved as you go on the study computer. Please do not include your name or other identifying details in written responses.
 
 
-    INFORMATION RECORDED AND PRIVACY
-
-    The app assigns a random participant ID and does not ask for your name. It records any programming-background information you provide, the assigned interface and task order, your selected answers, whether each answer is correct, time spent on each programming question, questionnaire ratings, your preferred study format, and any written explanation you provide. It also records your consent decision and its time. Please do not include your name or other identifying details in written responses.
+    The researchers and the University of Nevada, Reno will treat your identity and the information collected about you with professional standards of confidentiality and protect it to the extent allowed by law. You will not be personally identified in reports or publications. The US Department of Health and Human Services, the University of Nevada, Reno Research Integrity Office, and the Institutional Review Board may look at your study records.
 
 
-    Records are saved locally on the study computer. The app does not automatically upload them. A random ID reduces identification risk but does not guarantee complete anonymity, especially if you include identifying information in a written response.
+    Your participation is completely voluntary. You may decline or stop at any time without giving a reason. Your decision will not affect your grade or result in any penalty. Programming-background information and the final written explanation are optional. Other questions require an answer to continue; you may stop if you do not wish to answer. To stop, tell the researcher or close the study. Responses already submitted remain saved on the study computer.
 
 
-    [RESEARCHER TO COMPLETE: Who may access the records, how they will be protected, how long they will be retained, and whether individual-level data or quotations will be shared or used in future research.]
+    You may ask the researcher questions at any time by emailing qcontaldi@unr.edu.
 
 
-    [RESEARCHER TO COMPLETE: Whether already-submitted responses will be retained if you stop, and how and until when you can request their removal. Because the app does not collect your name, locating a record later may require its participant ID.]
+    If you have questions about your rights as a research participant, or questions, concerns, or complaints about this research, you may contact the University of Nevada, Reno Research Integrity Office at 775.327.2368 or irb@unr.edu. You may report concerns anonymously if you choose.
 
 
-    QUESTIONS AND CONTACTS
-
-    For questions about the study, or to report a study-related problem or harm, contact:
-
-    [RESEARCHER NAME, INSTITUTION, AND EMAIL OR PHONE]
+    By selecting Accept, you confirm that you have read this information, have had an opportunity to ask questions, and voluntarily agree to participate. Selecting Accept does not waive any of your legal rights. If you do not wish to participate, select Return to setup instead.
 
 
-    For questions about your rights as a research participant, or concerns you prefer to discuss with someone independent of the study team, contact:
-
-    [INSTITUTIONAL IRB / RESEARCH ETHICS OFFICE AND EMAIL OR PHONE]
-
-
-    YOUR CONSENT
-
-    By selecting Accept, you indicate that you have read this information, have had an opportunity to ask questions, and voluntarily agree to participate. Selecting Accept does not waive any of your legal rights. If you do not wish to participate, do not select Accept.'
+    Thank you for considering participation in this study.'
   meowraPortrait: {fileID: 21300000, guid: 32f6bc7430c81fdc7913e9cb77c6fdd6, type: 3}
-  contentReviewed: 0
+  contentReviewed: 1
   studyVersion: two-condition-draft-v2
   overview: You will complete two sections of four programming questions. After each section, you will rate the study interface. At the end, you will choose a preferred format and may explain your choice. No correctness feedback is provided.
   neutralIntroduction: You will complete four short programming questions in this section.
@@ -113,7 +90,7 @@ MonoBehaviour:
   - "Purrfect\u2014we've reached the halfway point! Thanks for joining me."
   - My paws are ready to welcome you to the last page, nya!
   meowraCompletionDialogue: That's my hosting shift wrapped up, nya! Thank you for spending this section with me.
-  backgroundPrompt: 'Briefly describe your programming experience: years, C/C++ familiarity, programming frequency, student level and relevant coursework. You may leave this blank.'
+  backgroundPrompt: How would you rate your experience with C/C++ on a scale from 1 to 10? Use 1 for no experience and 10 for very extensive experience. Enter a number from 1 to 10. You may leave this blank.
   preferencePrompt: If you were invited to participate in another programming-language study of similar length and difficulty, which study format would you prefer?
   reasonPrompt: Why did you prefer that study format? Please describe anything about the presentation or interaction that influenced your choice.
   overviewHeading: Study overview
