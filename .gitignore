@@ -26,12 +26,12 @@ MeowraLoggingCheck-*/
 MeowraPersistenceCheck-*/
 /Results/
 /DataExports/
-session.json
-assignment.csv
-trials.csv
-ueqs.csv
-api.csv
-preference.csv
+#session.json
+#assignment.csv
+#trials.csv
+#ueqs.csv
+#api.csv
+#preference.csv
 
 # IDE-generated files.
 .vs/
