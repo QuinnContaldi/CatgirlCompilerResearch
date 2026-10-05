@@ -1,0 +1,187 @@
+{
+    "schemaVersion": 6,
+    "personaProtocol": "two-condition-v1; Meowra only during treatment; no technical feedback; neutral evaluations; untimed transitions",
+    "consentAccepted": true,
+    "consentAcceptedUtc": "2026-10-05T18:01:36.6695190Z",
+    "consentText": "CONSENT TO PARTICIPATE IN RESEARCH\nProgramming-Language Study\n\nWe are conducting a research study to learn how different ways of presenting a programming-language study affect participants' experiences.\n\nIf you volunteer, you will be asked about your programming background and complete two sections of four short multiple-choice programming questions. One section uses a plain interface; the other includes a character called Dr. Meowra as a study host. After each section, you will answer eight questions about your experience with the interface. At the end, you will choose which format you would prefer for another similar study and may explain why. The app does not provide hints or tell you whether your answers are correct.\n\nYour participation should take about 15 minutes.\n\nThis study is considered to involve minimal risk: the risks are similar in type or intensity to those of everyday activities. You may experience minor frustration or tiredness while reading code and answering questions. There is also a possible risk of loss of privacy if study records are accessed without authorization.\n\nThere are no expected direct benefits to you. We hope the findings will help researchers understand how to design programming-language studies with participants' experiences in mind.\n\nThe app uses a randomly assigned participant ID and does not ask for your name. It saves your answers, task accuracy, time spent on each programming question, interface ratings, format preference, any background information or written explanation you provide, and your consent decision and its time. Submitted responses are saved as you go on the study computer. Please do not include your name or other identifying details in written responses.\n\nThe researchers and the University of Nevada, Reno will treat your identity and the information collected about you with professional standards of confidentiality and protect it to the extent allowed by law. You will not be personally identified in reports or publications. The US Department of Health and Human Services, the University of Nevada, Reno Research Integrity Office, and the Institutional Review Board may look at your study records.\n\nYour participation is completely voluntary. You may decline or stop at any time without giving a reason. Your decision will not affect your grade or result in any penalty. Programming-background information and the final written explanation are optional. Other questions require an answer to continue; you may stop if you do not wish to answer. To stop, tell the researcher or close the study. Responses already submitted remain saved on the study computer.\n\nYou may ask the researcher questions at any time by emailing qcontaldi@unr.edu.\n\nIf you have questions about your rights as a research participant, or questions, concerns, or complaints about this research, you may contact the University of Nevada, Reno Research Integrity Office at 775.327.2368 or irb@unr.edu. You may report concerns anonymously if you choose.\n\nBy selecting Accept, you confirm that you have read this information, have had an opportunity to ask questions, and voluntarily agree to participate. Selecting Accept does not waive any of your legal rights. If you do not wish to participate, select Return to setup instead.\n\nThank you for considering participation in this study.",
+    "participantId": "f5232a423ebe42099511be1028ab7e8e",
+    "startedUtc": "2026-10-05T18:01:32.3028090Z",
+    "timingDefinition": "Scenario displayed to Submit; includes time away from app; seconds.",
+    "orderNumber": 2,
+    "assignmentCell": 2,
+    "studyVersion": "two-condition-draft-v2",
+    "unityVersion": "6000.6.1f1",
+    "endedUtc": "2026-10-05T18:06:16.0201690Z",
+    "programmingBackground": "6",
+    "backgroundSubmitted": true,
+    "plannedTaskSets": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "B",
+        "B",
+        "B",
+        "B"
+    ],
+    "preview": false,
+    "completed": true,
+    "plannedScenarioIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "B1",
+        "B2",
+        "B3",
+        "B4"
+    ],
+    "plannedConditions": [
+        2,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1
+    ],
+    "responses": [
+        {
+            "scenarioId": "A1",
+            "condition": 2,
+            "selectedAnswer": 3,
+            "correctAnswer": 0,
+            "scored": true,
+            "correct": false,
+            "responseTimeSeconds": 39.462221,
+            "encouragement": "",
+            "taskSet": "A",
+            "errorCategory": "assignment-comparison"
+        },
+        {
+            "scenarioId": "A2",
+            "condition": 2,
+            "selectedAnswer": 1,
+            "correctAnswer": 1,
+            "scored": true,
+            "correct": true,
+            "responseTimeSeconds": 7.8123726,
+            "encouragement": "",
+            "taskSet": "A",
+            "errorCategory": "type-value-mismatch"
+        },
+        {
+            "scenarioId": "A3",
+            "condition": 2,
+            "selectedAnswer": 2,
+            "correctAnswer": 2,
+            "scored": true,
+            "correct": true,
+            "responseTimeSeconds": 6.8140738999999995,
+            "encouragement": "",
+            "taskSet": "A",
+            "errorCategory": "delimiter-mismatch"
+        },
+        {
+            "scenarioId": "A4",
+            "condition": 2,
+            "selectedAnswer": 3,
+            "correctAnswer": 3,
+            "scored": true,
+            "correct": true,
+            "responseTimeSeconds": 36.9924272,
+            "encouragement": "",
+            "taskSet": "A",
+            "errorCategory": "for-loop-separators"
+        },
+        {
+            "scenarioId": "B1",
+            "condition": 1,
+            "selectedAnswer": 3,
+            "correctAnswer": 0,
+            "scored": true,
+            "correct": false,
+            "responseTimeSeconds": 16.4435202,
+            "encouragement": "",
+            "taskSet": "B",
+            "errorCategory": "assignment-comparison"
+        },
+        {
+            "scenarioId": "B2",
+            "condition": 1,
+            "selectedAnswer": 1,
+            "correctAnswer": 1,
+            "scored": true,
+            "correct": true,
+            "responseTimeSeconds": 11.2478372,
+            "encouragement": "",
+            "taskSet": "B",
+            "errorCategory": "type-value-mismatch"
+        },
+        {
+            "scenarioId": "B3",
+            "condition": 1,
+            "selectedAnswer": 2,
+            "correctAnswer": 2,
+            "scored": true,
+            "correct": true,
+            "responseTimeSeconds": 8.076431099999999,
+            "encouragement": "",
+            "taskSet": "B",
+            "errorCategory": "delimiter-mismatch"
+        },
+        {
+            "scenarioId": "B4",
+            "condition": 1,
+            "selectedAnswer": 3,
+            "correctAnswer": 3,
+            "scored": true,
+            "correct": true,
+            "responseTimeSeconds": 6.153878199999999,
+            "encouragement": "",
+            "taskSet": "B",
+            "errorCategory": "for-loop-separators"
+        }
+    ],
+    "ueqsResponses": [
+        {
+            "blockNumber": 1,
+            "condition": 2,
+            "positions": [
+                7,
+                7,
+                7,
+                7,
+                2,
+                2,
+                1,
+                1
+            ],
+            "submittedUtc": "2026-10-05T18:04:51.1898010Z"
+        },
+        {
+            "blockNumber": 2,
+            "condition": 1,
+            "positions": [
+                7,
+                7,
+                7,
+                7,
+                4,
+                4,
+                4,
+                4
+            ],
+            "submittedUtc": "2026-10-05T18:06:01.2387830Z"
+        }
+    ],
+    "preferredCondition": 1,
+    "preferenceSubmitted": true,
+    "preferenceSubmittedUtc": "2026-10-05T18:06:10.1962060Z",
+    "preferenceReason": "",
+    "reasonSubmitted": true,
+    "reasonSubmittedUtc": "2026-10-05T18:06:16.0200620Z",
+    "correctCount": 6,
+    "scoredCount": 8
+}

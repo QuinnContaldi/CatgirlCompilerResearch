@@ -1,0 +1,9 @@
+participant_id,assignment_cell,condition_order,initial_task_set,task_order,preview,session_completed,trial_number,block_number,trial_in_block,scenario_id,condition,task_set,submitted
+f5232a423ebe42099511be1028ab7e8e,2,"Meowra > Neutral",A,"A1 > A2 > A3 > A4 > B1 > B2 > B3 > B4",false,true,1,1,1,"A1",Meowra,A,true
+f5232a423ebe42099511be1028ab7e8e,2,"Meowra > Neutral",A,"A1 > A2 > A3 > A4 > B1 > B2 > B3 > B4",false,true,2,1,2,"A2",Meowra,A,true
+f5232a423ebe42099511be1028ab7e8e,2,"Meowra > Neutral",A,"A1 > A2 > A3 > A4 > B1 > B2 > B3 > B4",false,true,3,1,3,"A3",Meowra,A,true
+f5232a423ebe42099511be1028ab7e8e,2,"Meowra > Neutral",A,"A1 > A2 > A3 > A4 > B1 > B2 > B3 > B4",false,true,4,1,4,"A4",Meowra,A,true
+f5232a423ebe42099511be1028ab7e8e,2,"Meowra > Neutral",A,"A1 > A2 > A3 > A4 > B1 > B2 > B3 > B4",false,true,5,2,1,"B1",Neutral,B,true
+f5232a423ebe42099511be1028ab7e8e,2,"Meowra > Neutral",A,"A1 > A2 > A3 > A4 > B1 > B2 > B3 > B4",false,true,6,2,2,"B2",Neutral,B,true
+f5232a423ebe42099511be1028ab7e8e,2,"Meowra > Neutral",A,"A1 > A2 > A3 > A4 > B1 > B2 > B3 > B4",false,true,7,2,3,"B3",Neutral,B,true
+f5232a423ebe42099511be1028ab7e8e,2,"Meowra > Neutral",A,"A1 > A2 > A3 > A4 > B1 > B2 > B3 > B4",false,true,8,2,4,"B4",Neutral,B,true
