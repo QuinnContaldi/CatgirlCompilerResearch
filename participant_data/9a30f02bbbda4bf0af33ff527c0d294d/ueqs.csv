@@ -1,0 +1,17 @@
+participant_id,assignment_cell,initial_task_set,preview,condition_order,task_order,block_number,condition,item_number,dimension,left_anchor,right_anchor,position_1_to_7
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",1,Neutral,1,Pragmatic,obstructive,supportive,6
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",1,Neutral,2,Pragmatic,complicated,easy,7
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",1,Neutral,3,Pragmatic,inefficient,efficient,7
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",1,Neutral,4,Pragmatic,confusing,clear,7
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",1,Neutral,5,Hedonic,boring,exciting,4
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",1,Neutral,6,Hedonic,not interesting,interesting,4
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",1,Neutral,7,Hedonic,conventional,inventive,4
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",1,Neutral,8,Hedonic,usual,leading edge,4
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",2,Meowra,1,Pragmatic,obstructive,supportive,6
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",2,Meowra,2,Pragmatic,complicated,easy,7
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",2,Meowra,3,Pragmatic,inefficient,efficient,6
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",2,Meowra,4,Pragmatic,confusing,clear,6
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",2,Meowra,5,Hedonic,boring,exciting,5
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",2,Meowra,6,Hedonic,not interesting,interesting,5
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",2,Meowra,7,Hedonic,conventional,inventive,5
+9a30f02bbbda4bf0af33ff527c0d294d,3,B,false,"Neutral > Meowra","B1 > B2 > B3 > B4 > A1 > A2 > A3 > A4",2,Meowra,8,Hedonic,usual,leading edge,5
